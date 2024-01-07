@@ -1,11 +1,11 @@
-import React from 'react'
+import React from 'react';
 
 function Authentication() {
   return (
-    <div className='w-[80vw] flex justify-between items-center'>
-      
+    <div className="flex w-[80vw] items-center justify-between">
+      <p className="m-2">Test the prettier config ..</p>
     </div>
-  )
+  );
 }
 
-export default Authentication
+export default Authentication;
