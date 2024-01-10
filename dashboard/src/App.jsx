@@ -1,22 +1,21 @@
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
-
-import AppLayout from "./kiddyComponents/AppLayout";
-import Error from "./kiddyComponents/Error";
-import Home from "./kiddyComponents/Home";
-import Authentication from "./kiddyComponents/Authentication";
+import React from 'react';
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import AppLayout from './components/layout/AppLayout';
+import Home from './components/ui/Home';
+import Billings from './components/layout/Billings';
 
 const router = createBrowserRouter([
   {
     element: <AppLayout />,
-    errorElement: <Error />,
+    path: '/',
     children: [
       {
-        path: "/",
+        path: '/',
         element: <Home />,
       },
       {
-        path: "/auth",
-        element: <Authentication />,
+        path: '/billings',
+        element: <Billings />,
       },
     ],
   },
