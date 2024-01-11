@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import {useDispatch} from 'react-redux'
+
 import Navbar from './Navbar';
 import Form from './Form';
 
@@ -17,6 +19,8 @@ const metaData = [
 function Authentication() {
   const [signup, setSignUp] = useState(true);
 
+  const dispatch = useDispatch()
+
   return (
     <div className=" w-full overflow-y-scroll">
       <Navbar />
@@ -32,7 +36,7 @@ function Authentication() {
             Signup
           </span>
           {signup ? (
-            <Form name="Sign up" data={metaData[0]} />
+            <Form name="Sign up" data={metaData[0]}/>
           ) : (
             <div className="h-[32rem] rounded-lg bg-stone-900 opacity-[10%]">
               &nbsp;

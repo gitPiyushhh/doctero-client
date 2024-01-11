@@ -3,21 +3,21 @@ import OverviewCard from './OverviewCard';
 
 const metaData = [
   {
-    name: 'Total earning',
+    name: 'Total patients',
     price: '2,312.23',
     isOrders: true,
     orders: '23',
     isActive: true,
   },
   {
-    name: 'Amount Pending',
+    name: 'Active Patients',
     price: '92,312.20',
     isOrders: true,
     orders: '13',
     isActive: false,
   },
   {
-    name: 'Amount Processed',
+    name: 'Previous patients',
     price: '23,92,312.19',
     isOrders: false,
     isActive: false,
