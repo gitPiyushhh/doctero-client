@@ -1,13 +1,17 @@
 import { configureStore } from "@reduxjs/toolkit";
 import uiReducer from './features/ui'
-import dataReducer from './features/data';
-import authReducer from './features/auth'
+import billingReducer from './features/billing';
+import authReducer from './features/auth';
+import patientReducer from './features/patients';
+import appointmentReducer from './features/appointment';
 
 const store = configureStore({
     reducer: {
         ui: uiReducer,
-        data: dataReducer,
-        auth: authReducer
+        auth: authReducer,
+        patient: patientReducer,
+        appointment: appointmentReducer,
+        billing: billingReducer,
     }
 })
 

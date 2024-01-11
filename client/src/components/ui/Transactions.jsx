@@ -1,11 +1,8 @@
 import React from 'react';
 import Tab from './Tab';
 import Table from '../layout/Table';
-import { useSelector } from 'react-redux';
 
-function Transactions() {
-  const payouts = useSelector((state) => state.data.data);
-
+function Transactions({ isFor, tableHeadMetadata, data }) {
   return (
     <div className="mt-4 w-full px-8 text-stone-800 ">
       <div>
@@ -14,10 +11,10 @@ function Transactions() {
 
       <div className="mt-4 flex space-x-4 p-2">
         <Tab name="Payouts" isActive={false} items={22} />
-        <Tab name="Refunds" isActive={true} items={payouts.length} />
+        <Tab name="Refunds" isActive={true} items={data.length} />
       </div>
 
-      <Table />
+      <Table isFor={isFor} tableHeadMetaData={tableHeadMetadata} data={data} />
     </div>
   );
 }

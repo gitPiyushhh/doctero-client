@@ -29,6 +29,7 @@ export const signup = createAsyncThunk(
 
       // Set to local storage
       localStorage.setItem('token', token);
+      localStorage.setItem('user', user.name);
 
       // 2. Get token and and new user (payload for the next builder state)
       return {
@@ -49,11 +50,8 @@ export const login = createAsyncThunk('auth/login', async function (formData) {
       formData,
     );
 
-    
     const user = data.data.data.user;
     const token = data.data.token;
-    
-      console.log(user)
 
     // Set the token to local storage
     localStorage.setItem('token', token);
@@ -63,7 +61,7 @@ export const login = createAsyncThunk('auth/login', async function (formData) {
     return { user, token };
   } catch (err) {
     console.error(err);
-    alert(err)
+    alert(err);
   }
 });
 
@@ -96,13 +94,13 @@ const authSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         state.status = 'idle';
-        state.user = action.payload.user
-        state.token = action.payload.token
+        state.user = action.payload.user;
+        state.token = action.payload.token;
       })
       .addCase(login.rejected, (state, action) => {
         state.status = 'error';
         state.error = action.error;
-        console.log(state.error)
+        console.log(state.error);
       }),
 });
 

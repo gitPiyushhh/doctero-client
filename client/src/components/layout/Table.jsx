@@ -1,34 +1,15 @@
 import React, { useState } from 'react';
 import TableHead from '../ui/TableHead';
 import TableRow from '../ui/TableRow';
-import { useDispatch, useSelector } from 'react-redux';
-import { filter } from '../../features/data';
+import { useDispatch } from 'react-redux';
+import { filter } from '../../features/billing';
 
-const tableHeadMetaData = [
-  {
-    name: 'Order ID',
-  },
-  {
-    name: 'Status',
-  },
-  {
-    name: 'Transaction ID',
-  },
-  {
-    name: 'Refund date',
-  },
-  {
-    name: 'Order amount',
-    rightAlign: true,
-  },
-];
-
-function Table() {
+function Table({ isFor, tableHeadMetaData, data }) {
   const [query, setQuery] = useState('');
   const dispatch = useDispatch();
 
+
   const width = 100 / tableHeadMetaData.length;
-  const data = useSelector((state) => state.data.data);
 
   function handleQueryChange(e) {
     const targetValue = e.target.value;
@@ -37,11 +18,11 @@ function Table() {
   }
 
   return (
-    <div className="w-ful bg-stone-50 p-4 shadow-md">
+    <div className="w-full bg-stone-50 p-4 shadow-md">
       <div className="flex items-center justify-between">
         <input
           type="text"
-          placeholder="Order ID or Transaction ID"
+          placeholder={`Enter ${isFor} id`}
           value={query}
           onChange={(e) => handleQueryChange(e)}
           className=" bottom-1 h-[48%] w-[30%] rounded-md border bg-stone-100 py-3 pl-4 placeholder:text-[14px] placeholder:text-stone-500"
@@ -74,7 +55,8 @@ function Table() {
 
         <div>
           {data.map((item) => (
-            <TableRow key={item.orderId} data={item} width={width} />
+            <TableRow key={item.patientId} data={item} width={width} />
+            // console.log('Table item: ', item)
           ))}
         </div>
       </div>

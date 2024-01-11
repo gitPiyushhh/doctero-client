@@ -1,43 +1,24 @@
 import React from 'react';
 import OverviewCard from './OverviewCard';
 
-const metaData = [
-  {
-    name: 'Total patients',
-    price: '2,312.23',
-    isOrders: true,
-    orders: '23',
-    isActive: true,
-  },
-  {
-    name: 'Active Patients',
-    price: '92,312.20',
-    isOrders: true,
-    orders: '13',
-    isActive: false,
-  },
-  {
-    name: 'Previous patients',
-    price: '23,92,312.19',
-    isOrders: false,
-    isActive: false,
-  },
-];
 
-function Overview() {
+function Overview({cardMetaData}) {
   return (
     <div className="relative w-full p-8 pt-6 text-stone-800">
       <span className="text-[18px] font-bold">Overview</span>
 
       <div className="mt-6 flex w-full items-start justify-between pr-4">
-        {metaData.map((item) => (
+        {cardMetaData.map((item) => (
           <OverviewCard
-            key={item.name}
-            name={item.name}
-            price={item.price}
-            isOrders={item.isOrders}
-            orders={item.orders}
-            isActive={item.isActive}
+            key={item.heading}
+            heading={item.heading}
+            value={item.value}
+            hasCta={item.hasCta}
+            ctaContent={item.ctaContent}
+            ctaContentType={item.ctaContentType}
+            isHighlighted={item.isHighlighted}
+            highlightContentKey={item.highlightContentKey}
+            highlightContentValue={item.highlightContentValue}
           />
         ))}
       </div>

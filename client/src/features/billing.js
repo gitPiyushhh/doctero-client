@@ -48,8 +48,8 @@ const initialState = {
     data: initialData
 }
 
-const dataSlice = createSlice({
-    name: 'data',
+const billingSlice = createSlice({
+    name: 'billing',
     initialState,
     reducers: {
         filter(state, action) {
@@ -58,6 +58,6 @@ const dataSlice = createSlice({
     }
 })
 
-export const {filter} = dataSlice.actions
+export const {filter} = billingSlice.actions
 
-export default dataSlice.reducer;
+export default billingSlice.reducer;

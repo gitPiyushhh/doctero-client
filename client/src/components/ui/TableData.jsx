@@ -2,10 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 function TableData({ data, type, width, alignRight }) {
+
   if (data.toString().includes('#')) {
     return (
       <div
-        className={`w-[${width}%] flex justify-${alignRight ? 'end' : 'start'}`}
+        className={`w-[${Math.floor(width)}%] flex justify-${alignRight ? 'end' : 'start'}`}
       >
         <Link>
           <span className="text-sm font-semibold text-blue-500">{data}</span>
@@ -17,7 +18,7 @@ function TableData({ data, type, width, alignRight }) {
   if (data === 'Successful' || data === 'Failed' || data === 'Pending') {
     return (
       <div
-        className={`w-[${width}%] flex items-center  gap-2 justify-${
+        className={`w-[${Math.floor(width)}%] flex items-center  gap-2 justify-${
           alignRight ? 'end' : 'start'
         }`}
       >
@@ -39,7 +40,7 @@ function TableData({ data, type, width, alignRight }) {
 
   return (
     <div
-      className={`w-[${width}%] flex text-sm justify-${alignRight ? 'end' : 'start'}`}
+      className={`w-[${Math.floor(width)}%] flex text-sm justify-${alignRight ? 'end' : 'start'}`}
     >
       {data}
     </div>
