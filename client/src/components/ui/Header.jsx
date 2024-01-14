@@ -14,7 +14,7 @@ function Header({ name }) {
 
       <input
         type="text"
-        placeholder={`Search ${name}`}
+        placeholder={`Search in your clinic ..`}
         className=" bottom-1 h-[64%] w-[30%] rounded-md border bg-[#f2f2f2] py-4 pl-4 placeholder:text-[14px] placeholder:text-stone-600"
       />
 
