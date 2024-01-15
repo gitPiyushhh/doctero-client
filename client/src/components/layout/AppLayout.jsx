@@ -19,7 +19,7 @@ function AppLayout() {
   return (
     <div className="flex h-[100dvh] w-[100vw] bg-[#FAFAFA]">
       {token ? (
-        true ? (
+        aadharNumber ? (
           <>
             <Sidebar />
             <Outlet />
