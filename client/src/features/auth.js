@@ -27,11 +27,9 @@ export const signup = createAsyncThunk(
       const user = data.data.data.user;
       const token = data.data.token;
 
-      console.log(data)
-
       // Set to local storage
       localStorage.setItem('token', token);
-      localStorage.setItem('user', user.name);
+      localStorage.setItem('user', JSON.stringify(user));
 
       // 2. Get token and and new user (payload for the next builder state)
       return {
@@ -57,7 +55,8 @@ export const login = createAsyncThunk('auth/login', async function (formData) {
 
     // Set the token to local storage
     localStorage.setItem('token', token);
-    localStorage.setItem('user', user.name);
+    localStorage.setItem('user', JSON.stringify(user));
+    
 
     // 2. Get token and and new user (payload for the next builder state)
     return { user, token };

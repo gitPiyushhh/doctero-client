@@ -1,7 +1,6 @@
 import React from 'react';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import AppLayout from './components/layout/AppLayout';
-import Home from './components/layout/Dashboard';
 import Billings from './components/layout/Billings';
 import Patients from './components/layout/Patients';
 import Appointments from './components/layout/Appointments';
