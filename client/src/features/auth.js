@@ -24,7 +24,7 @@ export const signup = createAsyncThunk(
         formData,
       );
 
-      const user = data.data.data.user;
+      const user = data.data.user;
       const token = data.data.token;
 
       // Set to local storage
