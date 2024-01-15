@@ -7,6 +7,7 @@ function Onboarding() {
   const [slideValue, setSlideValue] = useState(0);
 
   console.log("Vardhan onboarded..")
+  console.log("Vardhan onboarded..")
 
   /*
     Event handlers
