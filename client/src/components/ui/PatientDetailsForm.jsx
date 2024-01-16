@@ -1,9 +1,9 @@
 import React from 'react';
 import { Form, redirect } from 'react-router-dom';
+import { createPatient } from '../../services/apiPatient';
 
 const inputStyles =
   'bg-stone-50 border-[1px] rounded-md p-2 flex-1 placeholder:text-sm text-stone-700 text-sm';
-
 
 /*
   Regex to validate phone number
@@ -15,7 +15,7 @@ const isValidPhone = (str) =>
 
 function PatientDetailsForm() {
   return (
-    <Form method="POST"  className="h-full w-full overflow-scroll">
+    <Form method="POST" className="h-full w-full overflow-scroll">
       <div className="relative my-4 mb-8 border-[1px] p-4 py-8">
         <span className="absolute left-2 top-[-12px] bg-stone-50 text-sm text-stone-400">
           Profile details
@@ -26,8 +26,8 @@ function PatientDetailsForm() {
             <span className="text-stone-700">Name</span>
             <input
               type="text"
-              placeholder="What is your health details"
-              name='name'
+              placeholder="Enter your name"
+              name="name"
               className={inputStyles}
             />
           </div>
@@ -37,7 +37,7 @@ function PatientDetailsForm() {
             <input
               type="text"
               placeholder="Enter email"
-              name='email'
+              name="email"
               className={inputStyles}
             />
           </div>
@@ -47,7 +47,7 @@ function PatientDetailsForm() {
             <input
               type="text"
               placeholder="Enter phone number"
-              name='phone'
+              name="phone"
               className={inputStyles}
             />
           </div>
@@ -65,7 +65,7 @@ function PatientDetailsForm() {
             <input
               type="text"
               placeholder="Enter age"
-              name='age'
+              name="age"
               className={inputStyles}
             />
           </div>
@@ -75,13 +75,48 @@ function PatientDetailsForm() {
             <input
               type="text"
               placeholder="What is your health details"
-              name='gender'
+              name="gender"
               className={inputStyles}
             />
           </div>
         </div>
       </div>
 
+      <div className="relative my-4 mb-8 border-[1px] p-4 py-8">
+        <span className="absolute left-2 top-[-12px] bg-stone-50 text-sm text-stone-400">
+          Location details
+        </span>
+
+        <div className="flex flex-wrap justify-between gap-4">
+          <div className="flex w-[24rem] items-center space-x-4">
+            <span className="text-stone-700">Address</span>
+            <input
+              type="text"
+              placeholder="Enter your address"
+              name="address"
+              className={inputStyles}
+            />
+          </div>
+          <div className="flex w-[24rem] items-center space-x-4">
+            <span className="text-stone-700">State</span>
+            <input
+              type="text"
+              placeholder="Enter your state"
+              name="state"
+              className={inputStyles}
+            />
+          </div>
+          <div className="flex w-[24rem] items-center space-x-4">
+            <span className="text-stone-700">City</span>
+            <input
+              type="text"
+              placeholder="Enter your city"
+              name="city"
+              className={inputStyles}
+            />
+          </div>
+        </div>
+      </div>
       <div className="relative my-4 mb-8 border-[1px] p-4 py-8">
         <span className="absolute left-2 top-[-12px] bg-stone-50 text-sm text-stone-400">
           Medical condition
@@ -93,7 +128,7 @@ function PatientDetailsForm() {
             <textarea
               type="textarea"
               placeholder="What is your health details"
-              name='health'
+              name="health"
               className={`${inputStyles} w-full`}
             />
           </div>
@@ -106,7 +141,7 @@ function PatientDetailsForm() {
         </span>
 
         <div className="flex flex-wrap justify-between">
-          <input type="file" name='avatar'/>
+          <input type="file" name="avatar" />
         </div>
       </div>
 
@@ -125,6 +160,7 @@ function PatientDetailsForm() {
 /*
   Thunks
 */
+
 export async function action({ request }) {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
@@ -139,9 +175,23 @@ export async function action({ request }) {
     return errors;
   }
 
-  console.log(data)
+  /*
+    custom object of patient
+  */
+  const nestedPatient = {
+    name: data.name,
+    gender: data.gender,
+    contact: {
+      phone: data.phone,
+      address: data.address,
+      city: data.city,
+      state: data.state,
+    },
+  };
 
-  return redirect('/just-there')
+  // If new Patient Arrive
+  const newPatient = await createPatient(nestedPatient);
+  return redirect('/onboarding/just-there');
 }
 
 export default PatientDetailsForm;

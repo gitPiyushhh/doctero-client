@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form, redirect } from 'react-router-dom';
-import { createDoctor } from '../../services/apiPatient';
+import { createDoctor } from '../../services/apiDoctor';
 
 const inputStyles =
   'bg-stone-50 border-[1px] rounded-md p-2 flex-1 placeholder:text-sm text-stone-700 text-sm';
