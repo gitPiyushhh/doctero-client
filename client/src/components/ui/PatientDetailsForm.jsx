@@ -175,9 +175,23 @@ export async function action({ request }) {
     return errors;
   }
 
-  console.log(data)
+  /*
+    custom object of patient
+  */
+  const nestedPatient = {
+    name: data.name,
+    gender: data.gender,
+    contact: {
+      phone: data.phone,
+      address: data.address,
+      city: data.city,
+      state: data.state,
+    },
+  };
 
-  return redirect('/onboarding/just-there')
+  // If new Patient Arrive
+  const newPatient = await createPatient(nestedPatient);
+  return redirect('/onboarding/just-there');
 }
 
 export default PatientDetailsForm;
