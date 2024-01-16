@@ -19,7 +19,7 @@ function Sidebar() {
   const  user  = useSelector((state) => state.auth.user?.name) || JSON.parse(localStorage.getItem('user')).name;
 
   return (
-    <div className="absolute left-0 top-0 flex h-[100dvh] w-[16%] flex-col bg-[#1E2640]">
+    <div className="absolute left-0 top-0 flex h-[100dvh] w-[16%] flex-col bg-[#082F4F]">
       <Owner name={user}/>
 
       {metaData.map((item) => (

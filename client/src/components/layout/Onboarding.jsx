@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { Children, useState } from 'react';
+import Category from '../ui/Category';
+import { Outlet } from 'react-router-dom';
 
 function Onboarding() {
   /*
@@ -16,7 +18,7 @@ function Onboarding() {
 
   return (
     <div className="flex h-[100bh] w-full items-center justify-center">
-      <div className="relative flex h-[88%] w-[64%] flex-col items-center justify-center rounded-lg bg-stone-50 p-[4rem] shadow-lg">
+      <div className="relative flex h-[88%] w-[64%] flex-col items-center justify-center rounded-lg bg-stone-50 p-[2rem] shadow-lg">
         <div className="absolute left-0 top-0 h-4 w-full rounded-t-md bg-stone-200"></div>
 
         <div
@@ -40,27 +42,7 @@ function Onboarding() {
           `}
         </style>
 
-        <span className="text-[2.4rem] font-semibold text-stone-700 ">
-          What defines you best ?
-        </span>
-
-        <div className="mt-8 flex w-fit justify-between space-x-4">
-          <div
-            className="cursor-pointer flex-col items-center rounded-md p-6 shadow-md"
-            onClick={handleClick}
-          >
-            <img src="doctor.svg" alt="doctor" />
-            <span className="block text-center text-stone-600">Doctor</span>
-          </div>
-
-          <div
-            className="cursor-pointer flex-col items-center rounded-md p-6 shadow-md"
-            onClick={handleClick}
-          >
-            <img src="user.svg" alt="doctor" />
-            <span className="block text-center text-stone-600">Patient</span>
-          </div>
-        </div>
+        <Outlet context={handleClick}/>
       </div>
     </div>
   );

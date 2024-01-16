@@ -14,12 +14,12 @@ function AppLayout() {
     useSelector((state) => state.auth.user) ||
     JSON.parse(localStorage.getItem('user'));
 
-  const aadharNumber = user?.aadharNumber;
+  const phone = user?.phone;
 
   return (
     <div className="flex h-[100dvh] w-[100vw] bg-[#FAFAFA]">
       {token ? (
-        aadharNumber ? (
+        phone ? (
           <>
             <Sidebar />
             <Outlet />
