@@ -2,9 +2,9 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 
 function Header({ name }) {
-  const user =
-    useSelector((state) => state.auth.user?.name) ||
-    localStorage.getItem('user');
+  const userObj = useSelector(state => state.auth.user) || JSON.parse(localStorage.getItem('user'));
+  const  user  = userObj?.name;
+  const isDoctor = userObj.isDoctor;
 
   return (
     <div className="flex h-[8%] w-full items-center justify-between bg-stone-50 p-8 shadow-md">
@@ -29,7 +29,7 @@ function Header({ name }) {
 
         <div className="flex h-[80%] items-center justify-center rounded-full bg-stone-200 p-1">
           <img
-            src={`/${user ? 'doctor' : 'user'}.svg`}
+            src={`/${isDoctor ? 'doctor' : 'user'}.svg`}
             alt="icon_img"
             className="block h-[32px] w-[32px]"
           />

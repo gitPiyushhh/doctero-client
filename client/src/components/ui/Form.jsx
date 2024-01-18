@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
 
 import Input from './Input';
-import { login, signup } from '../../features/auth';
+import { login, onboard, signup } from '../../features/auth';
 
 function Form({ name, data }) {
+  const navigate = useNavigate();
+
+  const user =
+    useSelector((state) => state.auth.user) ||
+    JSON.parse(localStorage.getItem('user'));
+
+  const isOnboard = user?.isOnboard;
+
   const [formData, setFormData] = useState({});
 
   const dispatch = useDispatch();
@@ -19,7 +27,15 @@ function Form({ name, data }) {
 
   function handleSubmit() {
     // Input validation
-    name === 'Sign up' ? dispatch(signup(formData)) : dispatch(login(formData));
+    // name === 'Sign up' ? dispatch(signup(formData)) : dispatch(login(formData));
+
+    if (name === 'Sign up') {
+      dispatch(signup(formData));
+      navigate('/category')
+    } else {
+      dispatch(login(formData));
+      navigate('/category')
+    }
   }
 
   return (
@@ -29,7 +45,9 @@ function Form({ name, data }) {
           name={item.name}
           key={item.type}
           type={item.type}
-          onChange={(e) => handleInputChange(item.name.toLocaleLowerCase(), e.target.value)}
+          onChange={(e) =>
+            handleInputChange(item.name.toLocaleLowerCase(), e.target.value)
+          }
         />
       ))}
 

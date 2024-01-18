@@ -1,38 +1,43 @@
-import React from 'react';
-import { Outlet } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 import Sidebar from './Sidebar';
 import Authentication from '../ui/Authentication';
+import Category from '../ui/Category';
 import Onboarding from './Onboarding';
+import { onboard } from '../../features/auth';
 
 function AppLayout() {
+  const navigate = useNavigate();
+
   const token =
     useSelector((state) => state.auth.token) || localStorage.getItem('token');
 
-  const user =
-    useSelector((state) => state.auth.user) ||
-    JSON.parse(localStorage.getItem('user'));
+  const user = JSON.parse(localStorage.getItem('user'));
 
-  const phone = user?.phone;
+  const isOnboard = user?.isOnboard;
+
+  useEffect(
+    function () {
+      token && !isOnboard && navigate('/category');
+    },
+    [navigate, isOnboard, token],
+  );
 
   return (
     <div className="flex h-[100dvh] w-[100vw] bg-[#FAFAFA]">
       {token ? (
-        phone ? (
+        isOnboard ? (
           <>
             <Sidebar />
             <Outlet />
           </>
         ) : (
-          <>
-            <Onboarding />
-          </>
+          <Outlet />
         )
       ) : (
-        <>
-          <Authentication />
-        </>
+        <Authentication />
       )}
     </div>
   );

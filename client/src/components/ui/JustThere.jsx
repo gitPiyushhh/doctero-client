@@ -1,7 +1,16 @@
-import React from 'react';
-import { redirect } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { redirect, useNavigate } from 'react-router-dom';
 
 function JustThere() {
+  const navigate = useNavigate();
+
+  useEffect(function() {
+    setTimeout(function() {
+      console.log('Wait')
+    }, 3 * 1000)
+
+    navigate('/category')
+  }, [])
 
   return (
     <div className="clear-start flex w-full flex-col items-center justify-center text-stone-800">
@@ -14,6 +23,15 @@ function JustThere() {
       <span>Taking you to clinic ..</span>
     </div>
   );
+}
+
+export async function action({ request }) {
+  setTimeout(function() {
+    console.log('Wait')
+  }, 3 * 1000)
+
+  
+  return redirect('/dashboard');
 }
 
 export default JustThere;

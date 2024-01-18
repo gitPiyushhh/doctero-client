@@ -1,3 +1,6 @@
+import { onboard } from '../features/auth';
+import store from '../store';
+
 const API_URL = 'http://127.0.0.1:8000/api/v1';
 
 export async function createPatient(newPatient) {
@@ -17,11 +20,9 @@ export async function createPatient(newPatient) {
       throw new Error(`${errorMessage}`);
     }
 
-    const { data } = res.json();
-
+    const data = await res.json();
     return data;
   } catch (err) {
     alert(err.message);
-    console.error(err);
   }
 }

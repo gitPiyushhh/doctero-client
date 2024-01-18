@@ -8,7 +8,6 @@ function Onboarding() {
   */
   const [slideValue, setSlideValue] = useState(0);
 
-
   /*
     Event handlers
   */
@@ -42,7 +41,7 @@ function Onboarding() {
           `}
         </style>
 
-        <Outlet context={handleClick}/>
+        <Outlet context={handleClick} />
       </div>
     </div>
   );
