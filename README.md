@@ -20,4 +20,4 @@ Backend:
 Node.js
 Express.js
 MongoDB (or your preferred database)
-Authentication: JWT (JSON Web Tokens)
+Authentication: JWT (JSON Web Tokens).
