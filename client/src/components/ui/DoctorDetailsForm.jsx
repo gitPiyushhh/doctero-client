@@ -4,6 +4,7 @@ import { createDoctor } from '../../services/apiDoctor';
 import { CityDropdown, StateDropdown } from './StatesAndCities';
 import { state_arr } from '../../../CONSTANTS';
 import { updateUser } from '../../services/apiAuth';
+import { useSelector } from 'react-redux';
 
 const inputStyles =
   'bg-stone-50 border-[1px] rounded-md p-2 flex-1 placeholder:text-stone-500 placholder:font-light text-stone-700 text-sm';
@@ -14,6 +15,8 @@ let state = null;
 function DoctorDetailsForm() {
   const [selectedState, setSelectedState] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
+
+  const userObj = useSelector(state => state.auth.user) || JSON.parse(localStorage.getItem('user'));
 
   const handleStateSelect = (state) => {
     setSelectedState(state);
@@ -68,8 +71,9 @@ function DoctorDetailsForm() {
                   type="text"
                   placeholder="What is your name"
                   name="name"
+                  defaultValue={userObj.name}
                   required
-                  className={inputStyles}
+                  className={`${inputStyles} !cursor-pointer !bg-stone-200`}
                 />
               </div>
 
@@ -84,8 +88,8 @@ function DoctorDetailsForm() {
                   type="email"
                   placeholder="What is your email"
                   name="email"
-                  // required
-                  className={inputStyles}
+                  defaultValue={userObj.email}
+                  className={`${inputStyles} !bg-stone-200 !cursor-pointer`}
                 />
               </div>
 

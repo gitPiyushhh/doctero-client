@@ -26,12 +26,12 @@ const metaDataPatient = [
 ];
 
 function Sidebar() {
-  const userObj = useSelector(state => state.auth.user) || JSON.parse(localStorage.getItem('user'));
+  const userObj = JSON.parse(localStorage.getItem('user'));
   const  user  = userObj?.name;
   const isDoctor = userObj.isDoctor;
 
   return (
-    <div className="absolute left-0 top-0 flex h-[100dvh] w-[16%] flex-col bg-[#082F4F]">
+    <div className={`absolute left-0 top-0 flex h-[100dvh] w-[16%] flex-col ${isDoctor ? 'bg-[#082F4F]' : 'bg-[#236758]'}`}>
       <Owner name={user}/>
 
       

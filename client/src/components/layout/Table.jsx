@@ -3,11 +3,11 @@ import TableHead from '../ui/TableHead';
 import TableRow from '../ui/TableRow';
 import { useDispatch } from 'react-redux';
 import { filter } from '../../features/billing';
+import NoData from './NoData';
 
-function Table({ isFor, tableHeadMetaData, data }) {
+function Table({ isFor, tableHeadMetaData, data, keyName }) {
   const [query, setQuery] = useState('');
   const dispatch = useDispatch();
-
 
   const width = 100 / tableHeadMetaData.length;
 
@@ -53,12 +53,17 @@ function Table({ isFor, tableHeadMetaData, data }) {
           ))}
         </div>
 
-        <div>
-          {data.map((item) => (
-            <TableRow key={item.patientId} data={item} width={width} />
-            // console.log('Table item: ', item)
-          ))}
-        </div>
+        {data.length ? (
+          <div>
+            {data.map((item) => (
+
+              <TableRow key={`${JSON.stringify(item)}`} data={item} width={width} />
+              // console.log('Table item: ', item)
+            ))}
+          </div>
+        ) : (
+          <NoData />
+        )}
       </div>
     </div>
   );

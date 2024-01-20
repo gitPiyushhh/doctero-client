@@ -6,6 +6,7 @@ import { CityDropdown, StateDropdown } from './StatesAndCities';
 import store from '../../store';
 import { updateUser } from '../../services/apiAuth';
 import { patchUser } from '../../features/auth';
+import { useSelector } from 'react-redux';
 
 
 const inputStyles =
@@ -25,6 +26,8 @@ let state = null;
 function PatientDetailsForm() {
   const [selectedState, setSelectedState] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
+
+  const userObj = useSelector(state => state.auth.user) || JSON.parse(localStorage.getItem('user'));
 
   const handleStateSelect = (state) => {
     setSelectedState(state);
@@ -79,7 +82,8 @@ function PatientDetailsForm() {
                   type="text"
                   placeholder="Enter your name"
                   name="name"
-                  className={inputStyles}
+                  defaultValue={userObj.name}
+                  className={`${inputStyles} !bg-stone-200 !cursor-pointer`}
                 />
               </div>
 
@@ -93,8 +97,10 @@ function PatientDetailsForm() {
                 <input
                   type="text"
                   placeholder="Enter email"
+                  value={userObj.email}
                   name="email"
-                  className={inputStyles}
+                  disabled
+                  className={`${inputStyles} !bg-stone-200 !cursor-pointer`}
                 />
               </div>
 

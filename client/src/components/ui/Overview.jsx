@@ -2,7 +2,7 @@ import React from 'react';
 import OverviewCard from './OverviewCard';
 
 
-function Overview({cardMetaData}) {
+function Overview({cardMetaData, data}) {
   return (
     <div className="relative w-full p-8 pt-6 text-stone-800">
       <span className="text-[18px] font-bold">Overview</span>

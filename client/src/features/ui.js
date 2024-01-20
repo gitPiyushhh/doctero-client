@@ -4,7 +4,7 @@ import { createSlice } from "@reduxjs/toolkit"
   Intiial state
 */
 const initialState = {
-    month: ''
+    duration: ''
 }
 
 const uiSlice = createSlice({

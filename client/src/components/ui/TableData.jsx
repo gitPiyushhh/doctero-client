@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-function TableData({ data, type, width, alignRight }) {
+function TableData({ data, type, width, alignRight, marginLeft }) {
 
   if (data.toString().includes('#')) {
     return (

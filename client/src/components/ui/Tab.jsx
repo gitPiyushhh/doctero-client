@@ -1,17 +1,27 @@
 import React from 'react';
 
-function Tab({ isActive, name, items }) {
+function Tab({ isActive, name, items, handleChange }) {
+  const handleClick = () => {
+    handleChange(name.toLocaleLowerCase());
+  };
+
   if (isActive) {
     return (
-      <div className="rounded-full bg-[#146EB4] text-stone-50 px-4 py-2 text-sm font-semibold cursor-pointer">
-        {name}{" "}({items})
+      <div
+        className="block w-fit cursor-pointer rounded-full bg-[#146EB4] px-4 py-2 text-sm font-semibold text-stone-50"
+        onClick={handleClick}
+      >
+        {name} ({items})
       </div>
     );
   }
 
   return (
-    <div className="rounded-full bg-stone-200 px-4 py-2 text-sm font-semibold cursor-pointer">
-      {name}{" "}({items})
+    <div
+      className="cursor-pointer rounded-full bg-stone-200 px-4 py-2 text-sm font-semibold"
+      onClick={handleClick}
+    >
+      {name} ({items})
     </div>
   );
 }

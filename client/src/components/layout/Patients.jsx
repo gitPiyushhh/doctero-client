@@ -60,11 +60,12 @@ function Patients() {
   return (
     <div className="absolute left-[16%] top-0 z-10 h-[100dvh] w-[84%] overflow-y-scroll">
       <Header name="Patients" />
-      <Overview cardMetaData={cardMetaData} />
+      <Overview cardMetaData={cardMetaData} data={[]} />
       <Transactions
         isFor="Patient"
         tableHeadMetadata={tableHeadMetaData}
         data={data}
+        key={Date.now()}
       />
     </div>
   );

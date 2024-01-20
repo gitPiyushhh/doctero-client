@@ -1,51 +1,62 @@
-import { createSlice } from '@reduxjs/toolkit';
-const initialData = [
-    {
-      patientId: '#5678',
-      name: 'Sara',
-      contact: '19876543210',
-      problem: 'Fever',
-      startDate: '2022-03-15T10:30:00Z',
-      action: 'visit',
-    },
-    {
-      patientId: '#7890',
-      name: 'John',
-      contact: '15551234567',
-      problem: 'Back Pain',
-      startDate: '2022-03-16T09:45:00Z',
-      action: 'call',
-    },
-    {
-      patientId: '#2345',
-      name: 'Aisha',
-      contact: '17778889999',
-      problem: 'Headache',
-      startDate: '2022-03-17T14:15:00Z',
-      action: 'call',
-    },
-    {
-      patientId: '#6789',
-      name: 'David',
-      contact: '16504321987',
-      problem: 'Allergies',
-      startDate: '2022-03-18T11:00:00Z',
-      action: 'visit',
-    },
-    {
-      patientId: '#3456',
-      name: 'Maria',
-      contact: '18887776666',
-      problem: 'Stomachache',
-      startDate: '2022-03-19T16:45:00Z',
-      action: 'call',
-    },
-];
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import axios from 'axios';
 
+const API_URL = 'http://localhost:8000/api/v1/therapists';
+/*
+  Meta data
+*/
+const initialData = [];
+
+/*
+  Intial state
+*/
 const initialState = {
-  data: initialData,
+  status: 'idle',
+  data: { appointments: initialData },
+  remote: { appointments: initialData },
+  activeTab: 'physical',
+  tabData: [],
+  error: '',
 };
 
+/*
+  Thunks
+*/
+export const getAllAppointments = createAsyncThunk(
+  'appointment/getAllAppointments',
+  async function (doctor, { getState }) {
+    try {
+      const data = await axios.get(`${API_URL}/appointments/${doctor}`);
+
+      const appointments = data.data.data.appointments;
+      return { appointments };
+    } catch (err) {
+      alert(err.response.data.message);
+      console.error(err);
+    }
+  },
+);
+
+export const getAllRemoteAppointments = createAsyncThunk(
+  'appointment/getAllRemoteAppointments',
+  async function (doctor, { getState }) {
+    try {
+      const data = await axios.get(
+        `${API_URL}/appointments/${doctor}?type=Remote`,
+      );
+
+      const appointments = data.data.data.appointments;
+      return { appointments };
+    } catch (err) {
+      alert(err.response.data.message);
+      console.error(err);
+    }
+  },
+);
+
+/*
+  Slice
+*/
 const appointmentSlice = createSlice({
   name: 'appointment',
   initialState,
@@ -57,9 +68,39 @@ const appointmentSlice = createSlice({
           item.patientId.includes(action.payload),
       );
     },
+    changeActiveTab(state, action) {
+      state.tabData =
+        action.payload === 'physical'
+          ? state.data
+          : state.remote.appointments;
+    },
   },
+  extraReducers: (builder) =>
+    builder
+      .addCase(getAllAppointments.pending, (state, action) => {
+        state.status = 'loading';
+      })
+      .addCase(getAllAppointments.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.data = action.payload;
+      })
+      .addCase(getAllAppointments.rejected, (state, action) => {
+        state.status = 'error';
+        state.error = action.error.message;
+      })
+      .addCase(getAllRemoteAppointments.pending, (state, action) => {
+        state.status = 'loading';
+      })
+      .addCase(getAllRemoteAppointments.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.remote = action.payload;
+      })
+      .addCase(getAllRemoteAppointments.rejected, (state, action) => {
+        state.status = 'error';
+        state.error = action.error.message;
+      }),
 });
 
-export const { filter } = appointmentSlice.actions;
+export const { filter, changeActiveTab } = appointmentSlice.actions;
 
 export default appointmentSlice.reducer;
