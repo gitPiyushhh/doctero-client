@@ -5,18 +5,24 @@ import Header from '../ui/Header';
 import Overview from '../ui/Overview';
 import Transactions from '../ui/Transactions';
 import {
-  changeActiveTab,
   getAllAppointments,
   getAllRemoteAppointments,
+  getSortedOldestPhysicalAppointments,
+  getSortedOldestRemoteAppointments,
+  getSortedRecentPhysicalAppointments,
+  getSortedRecentRemoteAppointments,
+  getSpanPhysicalAppointments,
+  getSpanRemoteAppointments,
+  getTodayAppointments,
+  updateSortAppointments,
+  updateSpanAppointments,
 } from '../../features/appointment';
 import moment from 'moment/moment';
+import FullPageSpinner from './FullPageSpinner';
 
 const tableHeadMetaData = [
   {
     name: 'Appointment ID',
-  },
-  {
-    name: 'Patient ID',
   },
   {
     name: 'Name',
@@ -32,27 +38,6 @@ const tableHeadMetaData = [
     rightAlign: true,
   },
 ];
-
-const transformAppointment = (appointment) => {
-  return {
-    appointmentId: `#${
-      appointment._id.slice(0, 4) +
-      '...' +
-      appointment._id.slice(-4, appointment._id.length)
-    }`,
-    patientId: `#${
-      appointment.patient._id.slice(0, 4) +
-      '...' +
-      appointment.patient._id.slice(-4, appointment.patient._id.length)
-    }`,
-    name: appointment.patient.name,
-    problem: `${
-      appointment.notes.length ? appointment.notes : 'No problem spcified'
-    }`,
-    date: `${transformDate(appointment.date, appointment.startTime)}`,
-    type: `${appointment.type}`,
-  };
-};
 
 function transformDate(date, time) {
   const currentDate = new Date();
@@ -106,24 +91,37 @@ function Appointments() {
   const user = JSON.parse(localStorage.getItem('user'));
 
   const dispatch = useDispatch();
+  const tableDataPhysical = useSelector(
+    (state) => state.appointment.tableDataPhysical,
+  );
+  const tableDataRemote = useSelector(
+    (state) => state.appointment.tableDataRemote,
+  );
+  const span = useSelector((state) => state.appointment.span);
+  const sort = useSelector((state) => state.appointment.sort);
+  const todayAppointments = useSelector(
+    (state) => state.appointment.todayAppointments,
+  );
 
   const { appointments } = useSelector((state) => state.appointment.data);
   const { appointments: remoteAppointments } = useSelector(
     (state) => state.appointment.remote,
   );
-
-  const appointmentsFormatted = appointments.map(transformAppointment);
-  const remoteAppointmentsFormatted =
-    remoteAppointments.map(transformAppointment);
+  const status = useSelector((state) => state.appointment.status);
 
   const handleFetch = useCallback(() => {
     if (user.doctor) {
-      dispatch(getAllAppointments(user.doctor));
-      dispatch(getAllRemoteAppointments(user.doctor));
-    } else alert('You are not a doctor');
+      dispatch(getAllAppointments({doctor: user.doctor}));
+      dispatch(getAllRemoteAppointments({doctor: user.doctor}));
+      dispatch(getTodayAppointments({doctor: user.doctor}));
+    } else {
+      dispatch(getAllAppointments({ patient: user.patient }));
+      dispatch(getAllRemoteAppointments({ patient: user.patient }));
+      dispatch(getTodayAppointments({ patient: user.patient }));
+    }
 
     // user.doctor && dispatch(getAllAppointments(user.doctor));
-  }, [dispatch, user.doctor]);
+  }, [dispatch, user.doctor, user.patient]);
 
   useEffect(() => {
     handleFetch();
@@ -173,29 +171,20 @@ function Appointments() {
     null,
   );
 
-  const formattedCurrentDate = currentDate.toISOString().split('T')[0];
-
-  const todayAppointments = appointments.reduce((acc, appointment) => {
-    if (appointment.date.split('T')[0] === formattedCurrentDate) {
-      return acc + 1;
-    }
-    return acc;
-  }, 0);
-
   /*
     Meta data
   */
   const cardMetaData = [
     {
       heading: 'Total Appointments',
-      value: appointments.length,
+      value: appointments.length + remoteAppointments.length,
       isHighlighted: true,
       highlightContentKey: 'Today remaining:',
       highlightContentValue: `${todayAppointments} appointments`,
     },
     {
       heading: 'Online appointments',
-      value: remoteAppointmentsFormatted.length,
+      value: remoteAppointments.length,
       isHighlighted: false,
     },
     {
@@ -216,47 +205,229 @@ function Appointments() {
     },
   ];
 
+  const sortOptions = [
+    // {
+    //   name: 'Sort',
+    //   handler: () => {},
+    // },
+    {
+      name: 'Recent first',
+      handler: handleSortRecent,
+    },
+    {
+      name: 'Oldest first',
+      handler: handleSortOldest,
+    },
+  ];
+
+  const spanOptions = [
+    {
+      name: 'Month',
+      handler: handleSpanMonth,
+    },
+    {
+      name: 'Week',
+      handler: handleSpanWeek,
+    },
+    {
+      name: 'Tomorrow',
+      handler: handleSpanTomorrow,
+    },
+    {
+      name: 'Today',
+      handler: handleSpanDay,
+    },
+  ];
+
+  /*
+    Event handlers
+  */
+  function handleSortRecent() {
+    if (user.doctor) {
+      dispatch(
+        getSortedOldestPhysicalAppointments({ doctor: user.doctor, span }),
+      );
+      dispatch(
+        getSortedOldestRemoteAppointments({ doctor: user.doctor, span }),
+      );
+      dispatch(updateSortAppointments('Recent first'));
+    } else {
+      dispatch(
+        getSortedOldestPhysicalAppointments({ patient: user.patient, span }),
+      );
+      dispatch(
+        getSortedOldestRemoteAppointments({ patient: user.patient, span }),
+      );
+      dispatch(updateSortAppointments('Recent first'));
+    }
+  }
+
+  function handleSortOldest() {
+    if (user.doctor) {
+      dispatch(updateSortAppointments('Oldest first'));
+      dispatch(
+        getSortedRecentPhysicalAppointments({ doctor: user.doctor, span }),
+      );
+      dispatch(
+        getSortedRecentRemoteAppointments({ doctor: user.doctor, span }),
+      );
+    } else {
+      dispatch(updateSortAppointments('Oldest first'));
+    dispatch(
+      getSortedRecentPhysicalAppointments({ patient: user.patient, span }),
+    );
+    dispatch(getSortedRecentRemoteAppointments({ patient: user.patient, span }));
+    }
+  }
+
+  function handleSpanMonth() {
+    if(user.doctor) {
+      dispatch(updateSpanAppointments('Month'));
+      dispatch(
+        getSpanPhysicalAppointments({ doctor: user.doctor, span: 'Month' }),
+      );
+      dispatch(
+        getSpanRemoteAppointments({ doctor: user.doctor, span: 'Month' }),
+      );
+    } else {
+      dispatch(updateSpanAppointments('Month'));
+      dispatch(
+        getSpanPhysicalAppointments({ patient: user.patient, span: 'Month' }),
+      );
+      dispatch(
+        getSpanRemoteAppointments({ patient: user.patient, span: 'Month' }),
+      );
+    }
+  }
+
+  function handleSpanWeek() {
+    if(user.doctor) {
+      dispatch(updateSpanAppointments('Week'));
+      dispatch(
+        getSpanPhysicalAppointments({ doctor: user.doctor, span: 'Week' }),
+      );
+      dispatch(
+        getSpanRemoteAppointments({ doctor: user.doctor, span: 'Week' }),
+      );
+    } else {
+      dispatch(updateSpanAppointments('Week'));
+      dispatch(
+        getSpanPhysicalAppointments({ patient: user.patient, span: 'Week' }),
+      );
+      dispatch(
+        getSpanRemoteAppointments({ patient: user.patient, span: 'Week' }),
+      );
+    }
+  }
+
+  function handleSpanTomorrow() {
+    if(user.doctor) {
+      dispatch(updateSpanAppointments('Tomorrow'));
+      dispatch(
+        getSpanPhysicalAppointments({ doctor: user.doctor, span: 'Tomorrow' }),
+      );
+      dispatch(
+        getSpanRemoteAppointments({ doctor: user.doctor, span: 'Tomorrow' }),
+      );
+    } else {
+      dispatch(updateSpanAppointments('Tomorrow'));
+      dispatch(
+        getSpanPhysicalAppointments({ patient: user.patient, span: 'Tomorrow' }),
+      );
+      dispatch(
+        getSpanRemoteAppointments({ patient: user.patient, span: 'Tomorrow' }),
+      );
+    }
+  }
+
+  function handleSpanDay() {
+    if(user.doctor) {
+      dispatch(updateSpanAppointments('Today'));
+      dispatch(
+        getSpanPhysicalAppointments({ doctor: user.doctor, span: 'Today' }),
+      );
+      dispatch(
+        getSpanRemoteAppointments({ doctor: user.doctor, span: 'Today' }),
+      );
+    } else {
+      dispatch(updateSpanAppointments('Today'));
+      dispatch(
+        getSpanPhysicalAppointments({ patient: user.patient, span: 'Today' }),
+      );
+      dispatch(
+        getSpanRemoteAppointments({ patient: user.patient, span: 'Today' }),
+      );
+    }
+  }
+
   return (
     <div className="absolute left-[16%] top-0 z-10 h-[100dvh] w-[84%] overflow-y-scroll">
-      <Header name="Appointments" />
-      <Overview cardMetaData={cardMetaData} data={appointments} />
-
-      <div className="mt-4 w-full px-8 text-stone-800">
-        <span className="text-[18px] font-bold">Appointments | This Month</span>
-
-        <div className="mb-2 mt-4 flex space-x-4">
-          <div
-            className={`cursor-pointer rounded-full bg-stone-200 px-4 py-2 text-sm font-semibold ${
-              tabLocal === 'physical' && '!bg-[#146EB4] text-stone-50'
-            }`}
-          onClick={(tabLocal) => setTabLocal("physical")}>
-            Refund ({appointmentsFormatted.length})
-          </div>
-
-          <div
-            className={`cursor-pointer rounded-full bg-stone-200 px-4 py-2 text-sm font-semibold ${
-              tabLocal === 'online' && '!bg-[#146EB4] text-stone-50'
-            }`}
-            onClick={(tabLocal) => setTabLocal("online")}>
-            Payload ({remoteAppointmentsFormatted.length})
-          </div>
-        </div>
-      </div>
-
-      {tabLocal === 'physical' ? (
-        <Transactions
-          isFor="Appointments"
-          tableHeadMetadata={tableHeadMetaData}
-          data={appointmentsFormatted}
-          keyName="appointmentId"
-        />
+      {status === 'loading' ? (
+        <FullPageSpinner />
       ) : (
-        <Transactions
-          isFor="Appointments"
-          data={remoteAppointmentsFormatted}
-          tableHeadMetadata={tableHeadMetaData}
-          keyName="appointmentId"
-        />
+        <>
+          <Header name="Appointments" />
+          <Overview
+            cardMetaData={cardMetaData}
+            data={appointments}
+            spanOptions={spanOptions}
+            name={span}
+          />
+
+          <div className="mt-4 w-full px-8 text-stone-800">
+            <span className="text-[18px] font-bold">Appointments | {span}</span>
+
+            <div className="mb-2 mt-4 flex space-x-4">
+              <div
+                className={`cursor-pointer rounded-full bg-stone-200 px-4 py-2 text-sm font-semibold ${
+                  (tabLocal === 'physical' && `${user.doctor ? '!bg-[#146EB4]'
+                : '!bg-[#349882]'} text-stone-50`)
+                }`}
+                onClick={() => setTabLocal('physical')}
+              >
+                Physical ({tableDataPhysical.length})
+              </div>
+
+              <div
+                className={`cursor-pointer rounded-full bg-stone-200 px-4 py-2 text-sm font-semibold ${
+                  (tabLocal === 'online' && `${user.doctor ? '!bg-[#146EB4]'
+                : '!bg-[#349882]'} text-stone-50`)
+                }`}
+                onClick={() => setTabLocal('online')}
+              >
+                Tele-consultancy ({tableDataRemote.length})
+              </div>
+            </div>
+          </div>
+
+          <div className="item-center flex w-full justify-center">
+            {status === 'loading' ? (
+              <FullPageSpinner />
+            ) : tabLocal === 'physical' ? (
+              <Transactions
+                isFor="Appointments"
+                tableHeadMetadata={tableHeadMetaData}
+                data={tableDataPhysical}
+                keyName="appointmentId"
+                isDownloadable={true}
+                sortOptions={sortOptions}
+                // name="Sort &#x25B2;&#x25BC;"
+                name={sort}
+              />
+            ) : (
+              <Transactions
+                isFor="Appointments"
+                tableHeadMetadata={tableHeadMetaData}
+                data={tableDataRemote}
+                keyName="appointmentId"
+                isDownloadable={true}
+                sortOptions={sortOptions}
+                // name="Sort &#x25B2;&#x25BC;"
+                name={sort}
+              />
+            )}
+          </div>
+        </>
       )}
     </div>
   );

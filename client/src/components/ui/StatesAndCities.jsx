@@ -29,8 +29,7 @@ export const CityDropdown = ({ stateIndex, className, onSelect }) => {
 
   return (
     <select className={`font-light ${className}`} onChange={handleCityChange}>
-      <option value="" className='text-stone-400'>Select City
-      </option>
+      <option value="" className='text-stone-400'>Select City</option>
       {cityArr.map((city, index) => (
         <option key={index} value={city.trim()}>
           {city.trim()}

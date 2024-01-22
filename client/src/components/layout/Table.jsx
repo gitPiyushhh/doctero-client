@@ -4,8 +4,9 @@ import TableRow from '../ui/TableRow';
 import { useDispatch } from 'react-redux';
 import { filter } from '../../features/billing';
 import NoData from './NoData';
+import Options from '../ui/Options';
 
-function Table({ isFor, tableHeadMetaData, data, keyName }) {
+function Table({ isFor, name, tableHeadMetaData, data, isDownloadable, sortOptions }) {
   const [query, setQuery] = useState('');
   const dispatch = useDispatch();
 
@@ -19,26 +20,7 @@ function Table({ isFor, tableHeadMetaData, data, keyName }) {
 
   return (
     <div className="w-full bg-stone-50 p-4 shadow-md">
-      <div className="flex items-center justify-between">
-        <input
-          type="text"
-          placeholder={`Enter ${isFor} id`}
-          value={query}
-          onChange={(e) => handleQueryChange(e)}
-          className=" bottom-1 h-[48%] w-[30%] rounded-md border bg-stone-100 py-3 pl-4 placeholder:text-[14px] placeholder:text-stone-500"
-        />
-
-        <div className="flex space-x-4">
-          <div className="text-md flex w-fit cursor-pointer items-center space-x-1 rounded-sm border border-stone-400 px-2 py-1">
-            <span>Sort</span>
-            <img src="/sort.svg" alt="icon" />
-          </div>
-
-          <div className="flex w-fit cursor-pointer items-center rounded-sm border border-stone-400 px-1.5">
-            <img src="/download.svg" alt="icon" />
-          </div>
-        </div>
-      </div>
+      <Options isFor={isFor} name={name} query={query} handleQueryChange={handleQueryChange} isDownloadable={isDownloadable} sortOptions={sortOptions}/>
 
       {/* Table here */}
       <div role="table" className="mt-4">
@@ -58,7 +40,6 @@ function Table({ isFor, tableHeadMetaData, data, keyName }) {
             {data.map((item) => (
 
               <TableRow key={`${JSON.stringify(item)}`} data={item} width={width} />
-              // console.log('Table item: ', item)
             ))}
           </div>
         ) : (

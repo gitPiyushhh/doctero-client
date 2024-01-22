@@ -2,14 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 function TableData({ data, type, width, alignRight, marginLeft }) {
-
-  if (data.toString().includes('#')) {
+  if (data?.toString().includes('#')) {
     return (
       <div
         className={`w-[${Math.floor(width)}%] flex justify-${alignRight ? 'end' : 'start'}`}
       >
         <Link>
-          <span className="text-sm font-semibold text-blue-500">{data}</span>
+          <span className={`text-sm font-semibold text-blue-500`}>{data}</span>
         </Link>
       </div>
     );
