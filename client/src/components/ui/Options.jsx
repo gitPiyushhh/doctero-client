@@ -6,6 +6,7 @@ function Options({
   name,
   query,
   handleQueryChange,
+  isFilterable,
   isDownloadable,
   sortOptions,
   filterOptions,
@@ -35,11 +36,11 @@ function Options({
       />
 
       <div className="flex items-center justify-between space-x-4">
-        <div className="flex space-x-4">
+        {isFilterable && <div className="flex space-x-4">
           <div className="text-md flex w-fit cursor-pointer items-center space-x-1 rounded-sm border border-stone-400 px-2 py-1">
             <Dropdown options={sortOptions} name={name} onSelect={handleSortOptionClick} />
           </div>
-        </div>
+        </div>}
 
         {isDownloadable && (
         <div className="flex w-fit cursor-pointer py-[6px] items-center rounded-sm border border-stone-400 px-1.5">

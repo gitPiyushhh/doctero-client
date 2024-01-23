@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
+import { transformDate } from '../utilities/transformDate';
 
 const API_URL = 'http://localhost:8000/api/v1';
 /*
@@ -7,18 +8,6 @@ const API_URL = 'http://localhost:8000/api/v1';
 */
 const initialData = [];
 
-function transformDate(date, time) {
-  const currentDate = new Date();
-
-  const comparatorDate = new Date(date.split('T')[0]);
-
-  return comparatorDate.getDate() === currentDate.getDate() &&
-    comparatorDate.getMonth() === currentDate.getMonth()
-    ? `Today, ${time > 12 ? `${time % 12} PM` : `${time} AM`}`
-    : `${date?.slice(0, 10).split('-').reverse().join('-')}, ${
-        time > 12 ? `${time % 12} PM` : `${time} AM`
-      }`;
-}
 
 const transformAppointment = (appointment) => {
   return {

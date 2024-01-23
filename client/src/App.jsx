@@ -9,10 +9,16 @@ import Dashboard from './components/layout/Dashboard';
 import Teleconsultancy from './components/layout/Teleconsultancy';
 import Medstore from './components/layout/Medstore';
 import Category from './components/ui/Category';
-import PatientDetailsForm, {action as createPatientAction} from './components/ui/PatientDetailsForm';
-import DoctorDetailsForm, {action as createDoctorAction} from './components/ui/DoctorDetailsForm';
-import JustThere, {action as justThereAction}  from './components/ui/JustThere';
+import PatientDetailsForm, {
+  action as createPatientAction,
+} from './components/ui/PatientDetailsForm';
+import DoctorDetailsForm, {
+  action as createDoctorAction,
+} from './components/ui/DoctorDetailsForm';
+import JustThere from './components/ui/JustThere';
 import Doctors from './components/layout/Doctors';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 const router = createBrowserRouter([
   {
@@ -26,12 +32,12 @@ const router = createBrowserRouter([
       {
         path: '/form-patient',
         element: <PatientDetailsForm />,
-        action: createPatientAction
+        action: createPatientAction,
       },
       {
         path: '/form-doctor',
         element: <DoctorDetailsForm />,
-        action: createDoctorAction
+        action: createDoctorAction,
       },
       {
         path: '/just-there',
@@ -73,8 +79,20 @@ const router = createBrowserRouter([
   },
 ]);
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    staleTime: 60 * 1000,
+  },
+});
+
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <RouterProvider router={router}>
+        <AppLayout />
+      </RouterProvider>
+    </QueryClientProvider>
+  );
 }
 
 export default App;

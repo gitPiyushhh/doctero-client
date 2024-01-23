@@ -6,7 +6,7 @@ import { filter } from '../../features/billing';
 import NoData from './NoData';
 import Options from '../ui/Options';
 
-function Table({ isFor, name, tableHeadMetaData, data, isDownloadable, sortOptions }) {
+function Table({ isFor, name, tableHeadMetaData, data, isDownloadable, sortOptions, isFilterable }) {
   const [query, setQuery] = useState('');
   const dispatch = useDispatch();
 
@@ -20,7 +20,7 @@ function Table({ isFor, name, tableHeadMetaData, data, isDownloadable, sortOptio
 
   return (
     <div className="w-full bg-stone-50 p-4 shadow-md">
-      <Options isFor={isFor} name={name} query={query} handleQueryChange={handleQueryChange} isDownloadable={isDownloadable} sortOptions={sortOptions}/>
+      <Options isFor={isFor} name={name} query={query} handleQueryChange={handleQueryChange} isDownloadable={isDownloadable} sortOptions={sortOptions} isFilterable={isFilterable}/>
 
       {/* Table here */}
       <div role="table" className="mt-4">

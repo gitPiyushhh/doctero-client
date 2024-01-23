@@ -2,7 +2,7 @@ import React from 'react';
 import OverviewCard from './OverviewCard';
 import Dropdown from './Dropdown';
 
-function Overview({ cardMetaData, data, spanOptions, name }) {
+function Overview({ cardMetaData, spanOptions, name }) {
   const handleSortOptionClick = (index) => {
     const selectedOption = spanOptions[index];
     if (selectedOption) {

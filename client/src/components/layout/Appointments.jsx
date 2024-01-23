@@ -409,6 +409,7 @@ function Appointments() {
                 tableHeadMetadata={tableHeadMetaData}
                 data={tableDataPhysical}
                 keyName="appointmentId"
+                isFilterable={true}
                 isDownloadable={true}
                 sortOptions={sortOptions}
                 // name="Sort &#x25B2;&#x25BC;"
@@ -420,6 +421,7 @@ function Appointments() {
                 tableHeadMetadata={tableHeadMetaData}
                 data={tableDataRemote}
                 keyName="appointmentId"
+                isFilterable={true}
                 isDownloadable={true}
                 sortOptions={sortOptions}
                 // name="Sort &#x25B2;&#x25BC;"
