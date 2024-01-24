@@ -1,8 +1,23 @@
-# React + Vite
+Doctor and Patient Dashboard
+Overview
+The Doctor and Patient Dashboard is a web application designed to facilitate communication and information exchange between healthcare providers (doctors) and patients. The platform aims to streamline appointment scheduling, medical record access, and overall patient care management.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Features
+User Authentication: Secure user authentication for both doctors and patients.
+Appointment Management: Schedule, view, and manage appointments efficiently.
+Medical Records: Access and update patient medical records securely.
+Messaging System: Enable communication between doctors and patients through a secure messaging system.
+Dashboard Interface: Intuitive dashboard interfaces for both doctors and patients.
+Technologies Used
+Frontend:
 
-Currently, two official plugins are available:
+HTML
+CSS
+JavaScript
+React.js (or your preferred frontend framework/library)
+Backend:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Node.js
+Express.js
+MongoDB (or your preferred database)
+Authentication: JWT (JSON Web Tokens).

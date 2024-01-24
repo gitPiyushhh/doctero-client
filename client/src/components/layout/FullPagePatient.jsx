@@ -29,7 +29,7 @@ const patients = [
 
 function FullPagePatient() {
   return (
-    <div className="flex h-full w-full flex-col gap-6">
+    <div className="flex h-full w-full flex-col gap-8">
       <div className="col-span-4 flex items-center space-x-4">
         <img
           src="/User.png"
@@ -96,7 +96,7 @@ function FullPagePatient() {
 
       <div className='flex space-x-4'>
         {patients[0].problems.map((problem) => (
-          <span className="px-2 rounded-sm py-1 text-sm bg-stone-100 text-stone-500">{problem}</span>
+          <span className="px-2 rounded-sm py-1 text-sm bg-stone-100 text-stone-500" key={problem}>{problem}</span>
         ))}
       </div>
 

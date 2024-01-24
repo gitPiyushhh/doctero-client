@@ -4,11 +4,11 @@ import moment from 'moment/moment';
 import Header from '../ui/Header';
 import Overview from '../ui/Overview';
 import Transactions from '../ui/Transactions';
-import { isError, useQuery } from 'react-query';
 import { getPatientsForDoctor } from '../../services/apiPatient';
 import FullPageSpinner from './FullPageSpinner';
 import { useDispatch, useSelector } from 'react-redux';
 import { changeSpan } from '../../features/patients';
+import { useQuery } from '@tanstack/react-query';
 
 function getAllActivePatients(data) {
   const currentDate = moment();

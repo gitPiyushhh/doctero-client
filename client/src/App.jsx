@@ -17,8 +17,8 @@ import DoctorDetailsForm, {
 } from './components/ui/DoctorDetailsForm';
 import JustThere from './components/ui/JustThere';
 import Doctors from './components/layout/Doctors';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { Provider } from 'react-redux';
+import store from './store';
 
 const router = createBrowserRouter([
   {
@@ -79,20 +79,34 @@ const router = createBrowserRouter([
   },
 ]);
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    staleTime: 60 * 1000,
-  },
-});
-
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
+    <Provider store={store}>
       <RouterProvider router={router}>
         <AppLayout />
       </RouterProvider>
-    </QueryClientProvider>
+    </Provider>
   );
 }
 
 export default App;
+
+
+// import { QueryClient, QueryClientProvider } from 'react-query';
+
+// const queryClient = new QueryClient({
+//   defaultOptions: {
+//     queries: {
+//       refetchOnWindowFocus: false,
+//     },
+//   },
+// });
+
+// // Use QueryClientProvider to wrap your entire React application
+// function App() {
+//   return (
+//     <QueryClientProvider client={queryClient}>
+//       {/* Your app components go here */}
+//     </QueryClientProvider>
+//   );
+// }
