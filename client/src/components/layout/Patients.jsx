@@ -104,7 +104,9 @@ function Patients() {
     },
     {
       heading: 'Active patients',
-      value: (patients && patients.length - getAllDormatPatients(patients).length)|| 0,
+      value:
+        (patients && patients.length - getAllDormatPatients(patients).length) ||
+        0,
       hasCta: false,
     },
     {
@@ -118,30 +120,30 @@ function Patients() {
   const spanOptions = [
     {
       name: 'Year',
-      handler:  () => {
+      handler: () => {
         dispatch(changeSpan('Year'));
-        setRefetchKey((prevKey) => prevKey + 1); 
+        setRefetchKey((prevKey) => prevKey + 1);
       },
     },
     {
       name: 'Month',
       handler: () => {
         dispatch(changeSpan('Month'));
-        setRefetchKey((prevKey) => prevKey + 1); 
+        setRefetchKey((prevKey) => prevKey + 1);
       },
     },
     {
       name: 'Week',
       handler: () => {
         dispatch(changeSpan('Week'));
-        setRefetchKey((prevKey) => prevKey + 1); 
+        setRefetchKey((prevKey) => prevKey + 1);
       },
     },
     {
       name: 'Today',
       handler: () => {
         dispatch(changeSpan('Today'));
-        setRefetchKey((prevKey) => prevKey + 1); 
+        setRefetchKey((prevKey) => prevKey + 1);
       },
     },
   ];
@@ -149,7 +151,12 @@ function Patients() {
   /*
     React query
   */
-  if (isLoading) return <FullPageSpinner />;
+  if (isLoading)
+    return (
+      <div className="flex w-full items-center justify-center">
+        <FullPageSpinner />
+      </div>
+    );
 
   if (error) {
     // Handle the error appropriately, e.g., display an error message
