@@ -13,7 +13,7 @@ function AppointmentCard({ data, isActive }) {
           <span className={`text-md font-semibold  ${isActive ? 'text-[#146EB4]' : 'text-stone-700'}  `}>
             {data?.name || 'Name'}
           </span>
-          <span className={`text-sm ${isActive ? 'text-blue-400' : 'text-stone-700'}  text-stone-400`}>
+          <span className={`text-sm ${isActive ? 'text-[#146fb4d7]' : 'text-stone-400'}`}>
             {data?.notes || 'Notes here'}
           </span>
         </div>

@@ -2,7 +2,7 @@ import React from 'react';
 
 function DashboardCard({ data }) {
   return (
-    <div className="flex w-[24%] cursor-pointer  items-center justify-start space-x-6 rounded-md bg-stone-50 py-8 text-stone-700 shadow-md">
+    <div className="flex w-[24%] cursor-pointer  items-center justify-start space-x-6 rounded-md bg-stone-50 py-6 text-stone-700 shadow-md">
       <img
         src={`${data.icon}.svg`}
         alt="Data_icon"
