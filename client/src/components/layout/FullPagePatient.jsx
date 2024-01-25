@@ -1,33 +1,43 @@
-import React from 'react';
+import React from "react";
+import { getFirstAppointentsForDoctor } from "../../services/apiAppointment";
+import { useQuery } from "@tanstack/react-query";
+import FullPageSpinner from "./FullPageSpinner";
+import { useSelector } from "react-redux";
 
-const patients = [
-  {
-    contact: {
-      location: {
-        type: 'Point',
-        cordinates: [],
-      },
-      phone: '6666777788',
-      address: 'Flat-501, Darshan R Nilaya, Roopena Agrahara ',
-      city: 'Alipur',
-      state: 'Andaman & Nicobar',
-    },
-    billing: {
-      invoices: [],
-    },
-    _id: '65afbf511750d5d8bde59dc9',
-    name: 'Samupatient',
-    gender: 'Female',
-    numberOfAppointments: 0,
-    problems: ['Asthama', 'Hyperension', 'Khasi'],
-    amountPaid: 0,
-    dob: '03-09-2000',
-    amountRemaining: 0,
-    __v: 0,
-  },
-];
+function transformDate(date) {
+  const currentDate = new Date();
 
-function FullPagePatient() {
+  const comparatorDate = new Date(date.split("T")[0]);
+
+  return comparatorDate.getDate() === currentDate.getDate() &&
+    comparatorDate.getMonth() === currentDate.getMonth()
+    ? `Today`
+    : `${date?.slice(0, 10).split("-").reverse().join("-")}`;
+}
+
+function FullPagePatient({ data }) {
+  const user = JSON.parse(localStorage.getItem("user"));
+  const activePatient = useSelector((state) => state.dashboard.activePatient);
+
+  console.log(activePatient);
+
+  const {
+    isLoading,
+    isError,
+    data: startFrom,
+  } = useQuery({
+    queryKey: ["startFrom", activePatient],
+    queryFn: () =>
+      getFirstAppointentsForDoctor({
+        doctor: user.doctor,
+        patient: activePatient && activePatient,
+      }),
+  });
+
+  if (isLoading) {
+    return <FullPageSpinner />;
+  }
+
   return (
     <div className="flex h-full w-full flex-col gap-8">
       <div className="col-span-4 flex items-center space-x-4">
@@ -39,13 +49,13 @@ function FullPagePatient() {
 
         <div className="flex flex-col">
           <span className="text-lg font-semibold text-stone-700">
-            {patients[0].name}
+            {data?.name}
           </span>
           <span className="text-sm text-stone-400">
-            {patients[0].contact.address}
+            {data?.contact.address}
           </span>
           <span className="text-sm text-stone-400">
-            {patients[0].contact.city}, {patients[0].contact.state}
+            {data?.contact.city}, {data?.contact.state}
           </span>
         </div>
       </div>
@@ -53,64 +63,82 @@ function FullPagePatient() {
       <div className="flex w-full flex-wrap items-center justify-between gap-4">
         <div className="flex w-[30%] flex-col ">
           <span className="text-stone-600">DOB</span>
-          <span className="text-md text-stone-400">
-            {patients[0]?.dob || 'NA'}
-          </span>
+          <span className="text-md text-stone-400">{data?.dob || "NA"}</span>
         </div>
 
         <div className="flex w-[30%] flex-col">
           <span className="text-stone-600">Gender</span>
           <span className="text-md text-stone-400">
-            {patients[0]?.gender || 'NA'}
+            {data?.gender
+              ?.charAt(0)
+              .toUpperCase()
+              .concat(data.gender.slice(1)) || "NA"}
           </span>
         </div>
 
         <div className="flex w-[30%] flex-col">
           <span className="text-stone-600">Weight</span>
           <span className="text-md text-stone-400">
-            {patients[0]?.weight || 'NA'}
+            {data?.weight + " kg" || "NA"}
           </span>
         </div>
 
         <div className="flex w-[30%] flex-col">
           <span className="text-stone-600">Height</span>
           <span className="text-md text-stone-400">
-            {patients[0]?.height || 'NA'}
+            {data?.height + " ft/in" || "NA"}
           </span>
         </div>
 
         <div className="flex w-[30%] flex-col">
-          <span className="text-stone-600">Last appointment</span>
+          <span className="text-stone-600">Blood group</span>
           <span className="text-md text-stone-400">
-            {patients[0]?.activeTill || 'NA'}
+            {data?.bloodGroup || "NA"}
           </span>
         </div>
 
         <div className="flex w-[30%] flex-col">
           <span className="text-stone-600">Started from</span>
           <span className="text-md text-stone-400">
-            {patients[0]?.startedFrom || 'NA'}
+            {(startFrom?.date && transformDate(startFrom?.date)) || "NA"}
           </span>
         </div>
       </div>
 
-      <div className='flex space-x-4'>
-        {patients[0].problems.map((problem) => (
-          <span className="px-2 rounded-sm py-1 text-sm bg-stone-100 text-stone-500" key={problem}>{problem}</span>
-        ))}
+      <div className="flex space-x-4">
+        {data?.problems?.length === 0 ? (
+          <span
+            className="px-2 rounded-sm py-1 text-sm bg-stone-100 text-stone-500"
+          >
+            No problem specified
+          </span>
+        ) : (
+          data?.problems?.map((problem) => (
+            <span
+              className="px-2 rounded-sm py-1 text-sm bg-stone-100 text-stone-500"
+              key={problem}
+            >
+              {problem}
+            </span>
+          ))
+        )}
       </div>
 
-      <div className='flex space-x-4'>
-        <div className='bg-[#146EB4] px-4 py-3 items-center w-fit flex space-x-2 rounded-md cursor-pointer'>
-          <img src="/phone.svg" alt="phone_icon" className=''/>
+      <div className="flex space-x-4">
+        <div className="bg-[#146EB4] px-4 py-3 items-center w-fit flex space-x-2 rounded-md cursor-pointer">
+          <img src="/phone.svg" alt="phone_icon" className="" />
 
-          <span className='text-sm'>{patients[0]?.contact.phone}</span>
+          <span className="text-sm">{data?.contact.phone}</span>
         </div>
-        
-        <div className='border-[#146EB4] border-[1px] items-center px-4 py-3 w-fit flex space-x-2 rounded-md cursor-pointer'>
-          <img src="/document.svg" alt="phone_icon" className='w-[1rem] h-[1rem]'/>
 
-          <span className='text-sm text-[#146EB4]'>Documents</span>
+        <div className="border-[#146EB4] border-[1px] items-center px-4 py-3 w-fit flex space-x-2 rounded-md cursor-pointer">
+          <img
+            src="/document.svg"
+            alt="phone_icon"
+            className="w-[1rem] h-[1rem]"
+          />
+
+          <span className="text-sm text-[#146EB4]">Documents</span>
         </div>
       </div>
     </div>

@@ -4,6 +4,7 @@ import billingReducer from './features/billing';
 import authReducer from './features/auth';
 import patientReducer from './features/patients';
 import appointmentReducer from './features/appointment';
+import dashboardReducer from './features/dashboard';
 import { doctorApi } from "./services/doctorApi";
 
 
@@ -13,6 +14,7 @@ const store = configureStore({
         auth: authReducer,
         patient: patientReducer,
         appointment: appointmentReducer,
+        dashboard: dashboardReducer,
         billing: billingReducer,
         [doctorApi.reducerPath]: doctorApi.reducer,
     },

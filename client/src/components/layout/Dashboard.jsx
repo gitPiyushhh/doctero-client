@@ -1,26 +1,76 @@
-import React from 'react';
-import Header from '../ui/Header';
-import DashboardCard from '../ui/DashboardCard';
-import AppointmentCard from '../ui/AppointmentCard';
-import PatientFullPage from './FullPagePatient';
-import { getAppointentsForDoctor } from '../../services/apiAppointment';
-import FullPageSpinner from './FullPageSpinner';
-import { useQuery } from '@tanstack/react-query';
+import React, { useCallback, useEffect, useState } from "react";
+import Header from "../ui/Header";
+import DashboardCard from "../ui/DashboardCard";
+import AppointmentCard from "../ui/AppointmentCard";
+import PatientFullPage from "./FullPagePatient";
+import {
+  getAppointentsForDoctor,
+  getFirstAppointentsForDoctor,
+  getTodayAppointentsForDoctor,
+} from "../../services/apiAppointment";
+import FullPageSpinner from "./FullPageSpinner";
+import { useQuery } from "@tanstack/react-query";
+import { getPatientsForDoctor } from "../../services/apiPatient";
+import NoData from "./NoData";
+import { useDispatch } from "react-redux";
+import { changeActivePatient } from "../../features/dashboard";
 
 function Dashboard() {
-  const user = JSON.parse(localStorage.getItem('user'));
+  const user = JSON.parse(localStorage.getItem("user"));
+  const dispatch = useDispatch();
 
   /*
     React query
   */
   const {
-    isLoading,
-    isError,
+    isLoading: isLoadingAppointments,
+    isError: isErrorAppointments,
     data: appointments,
   } = useQuery({
-    queryKey: ['appointment'],
+    queryKey: ["appointment"],
     queryFn: () => getAppointentsForDoctor({ doctor: user.doctor }),
   });
+
+  const {
+    isLoading: isLoadingPatients,
+    isError: isErrorPatients,
+    data: patients,
+  } = useQuery({
+    queryKey: ["patient"],
+    queryFn: () => getPatientsForDoctor({ doctor: user.doctor }),
+  });
+
+  const { data: todayAppointments } = useQuery({
+    queryKey: ["todayAppointments"],
+    queryFn: () => getTodayAppointentsForDoctor({ doctor: user.doctor }),
+  });
+
+  /*
+    Event handlers
+  */
+  const handleActiveAppointmentChange = useCallback(() => {
+    if (todayAppointments) setActiveAppointment(todayAppointments[0]);
+  }, [todayAppointments]);
+
+  function handleCardClick(data) {
+    setActiveAppointment(data)
+    dispatch(changeActivePatient(data._id))
+  } 
+
+  /*
+    Local state
+  */
+  const [activeAppointment, setActiveAppointment] = useState(null);
+
+  /*
+    Effects
+  */
+  useEffect(
+    function () {
+      handleActiveAppointmentChange();
+    },
+    [appointments, handleActiveAppointmentChange]
+  );
 
   /*
     Meta data
@@ -28,28 +78,32 @@ function Dashboard() {
   const cardsMetaData = [
     {
       icon: 3,
-      name: 'Patients',
-      value: '211',
+      name: "Patients",
+      value: (patients && patients.length) || "__",
     },
     {
       icon: 4,
-      name: 'Income',
-      value: '2,111',
+      name: "Income",
+      value: "2,111",
     },
     {
       icon: 2,
-      name: 'Appointments',
-      value: appointments && appointments.length,
+      name: "Appointments",
+      value: (appointments && appointments?.length) || "__",
     },
     {
       icon: 5,
-      name: 'Videos',
-      value: '7',
+      name: "Videos",
+      value: "7",
     },
   ];
 
-  if(isLoading) {
-    return <FullPageSpinner />
+  if (isLoadingAppointments || isLoadingPatients) {
+    return <FullPageSpinner />;
+  }
+
+  if (isErrorAppointments || isErrorPatients) {
+    return <NoData />;
   }
 
   return (
@@ -68,19 +122,29 @@ function Dashboard() {
         <div className=" flex w-[40%] flex-col items-start justify-between gap-2">
           <span className="text-md text-stone-500">Today appointments</span>
           <div className="flex h-[24rem] w-full flex-col overflow-scroll rounded-md bg-white px-4 py-2 shadow-sm">
-            {cardsMetaData.map((appointment) => (
-              <>
-                <AppointmentCard isActive={true} />
-                <AppointmentCard />
-              </>
-            ))}
+            {todayAppointments && todayAppointments.length > 0 ? (
+              todayAppointments.map((appointment) => (
+                <AppointmentCard
+                  key={appointment._id}
+                  isActive={appointment?._id === activeAppointment?._id}
+                  data={appointment}
+                  handleCardClick={handleCardClick}
+                />
+              ))
+            ) : (
+                <NoData />
+            )}
           </div>
         </div>
 
         <div className=" flex w-[64%] flex-col items-start justify-between gap-2 px-8">
           <span className="text-md text-stone-500">Patient details</span>
-          <div className="flex h-full w-full flex-col rounded-md bg-white px-8 py-4 shadow-sm">
-            <PatientFullPage />
+          <div className="flex h-[24rem] w-full flex-col rounded-md bg-white px-8 py-4 shadow-sm">
+            {activeAppointment ? (
+              <PatientFullPage data={activeAppointment.patient} />
+            ) : (
+              <NoData />
+            )}
           </div>
         </div>
       </div>

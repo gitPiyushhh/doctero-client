@@ -13,7 +13,7 @@ function NoData() {
     //     No data found 
     // </div>
     
-    <div className={`w-full h-[24rem] flex justify-center items-center border-[1px] bg-[#FDFDFD]`} style={styles}>
+    <div className={`w-auto h-full flex justify-center items-center border-[1px] bg-[#FDFDFD]`} style={styles}>
         <img src="/noDataDog.png" alt="no-data" className='h-full w-auto'/>
     </div>
   )
