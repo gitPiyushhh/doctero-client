@@ -90,23 +90,3 @@ function App() {
 }
 
 export default App;
-
-
-// import { QueryClient, QueryClientProvider } from 'react-query';
-
-// const queryClient = new QueryClient({
-//   defaultOptions: {
-//     queries: {
-//       refetchOnWindowFocus: false,
-//     },
-//   },
-// });
-
-// // Use QueryClientProvider to wrap your entire React application
-// function App() {
-//   return (
-//     <QueryClientProvider client={queryClient}>
-//       {/* Your app components go here */}
-//     </QueryClientProvider>
-//   );
-// }

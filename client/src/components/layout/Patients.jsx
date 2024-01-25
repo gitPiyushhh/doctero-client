@@ -1,22 +1,23 @@
-import React, { useState } from 'react';
-import moment from 'moment/moment';
+import React, { useState } from "react";
+import moment from "moment/moment";
 
-import Header from '../ui/Header';
-import Overview from '../ui/Overview';
-import Transactions from '../ui/Transactions';
-import { getPatientsForDoctor } from '../../services/apiPatient';
-import FullPageSpinner from './FullPageSpinner';
-import { useDispatch, useSelector } from 'react-redux';
-import { changeSpan } from '../../features/patients';
-import { useQuery } from '@tanstack/react-query';
+import Header from "../ui/Header";
+import Overview from "../ui/Overview";
+import Transactions from "../ui/Transactions";
+import { getPatientsForDoctor } from "../../services/apiPatient";
+import FullPageSpinner from "./FullPageSpinner";
+import { useDispatch, useSelector } from "react-redux";
+import { changeSpan } from "../../features/patients";
+import { useQuery } from "@tanstack/react-query";
+import toast, { Toaster } from "react-hot-toast";
 
 function getAllActivePatients(data) {
   const currentDate = moment();
   const activePatients = data?.filter((patient) => {
-    const activeTillDate = moment(patient?.date, 'MM-DD-YYYY, h:mm A');
+    const activeTillDate = moment(patient?.date, "MM-DD-YYYY, h:mm A");
     return (
-      activeTillDate.isAfter(currentDate.subtract(15, 'days')) ||
-      currentDate.isSame(activeTillDate, 'day') ||
+      activeTillDate.isAfter(currentDate.subtract(15, "days")) ||
+      currentDate.isSame(activeTillDate, "day") ||
       currentDate.isBefore(activeTillDate)
     );
   });
@@ -27,10 +28,10 @@ function getAllActivePatients(data) {
 function getAllDormatPatients(data) {
   const currentDate = moment();
   const activePatients = data?.filter((patient) => {
-    const activeTillDate = moment(patient?.date, 'MM-DD-YYYY, h:mm A');
+    const activeTillDate = moment(patient?.date, "MM-DD-YYYY, h:mm A");
     return (
       currentDate.isAfter(activeTillDate) &&
-      activeTillDate.isBefore(moment(currentDate).subtract(15, 'days'))
+      activeTillDate.isBefore(moment(currentDate).subtract(15, "days"))
     );
   });
 
@@ -38,9 +39,11 @@ function getAllDormatPatients(data) {
 }
 
 function Patients() {
-  const user = JSON.parse(localStorage.getItem('user'));
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const [refetchKey, setRefetchKey] = useState(0);
+
+  
 
   /*
     Global UI state
@@ -54,10 +57,9 @@ function Patients() {
   const {
     isLoading,
     data: patients,
-    error,
-    refetch,
+    isError: error,
   } = useQuery({
-    queryKey: ['patient', refetchKey],
+    queryKey: ["patient", refetchKey],
     queryFn: () => getPatientsForDoctor({ doctor: user.doctor, span }),
   });
 
@@ -66,51 +68,51 @@ function Patients() {
   */
   const tableHeadMetaData = [
     {
-      name: 'Patient ID',
+      name: "Patient ID",
     },
     {
-      name: 'Name',
+      name: "Name",
     },
     {
-      name: 'Gender',
+      name: "Gender",
     },
     {
-      name: 'Problem',
+      name: "Problem",
     },
     {
-      name: 'Active till',
+      name: "Active till",
     },
     {
-      name: 'Contact',
+      name: "Contact",
       rightAlign: true,
     },
   ];
 
   const cardMetaData = [
     {
-      heading: 'Total Patients',
+      heading: "Total Patients",
       value: patients?.length || 0,
       hasCta: true,
       ctaContent: 13,
-      ctaContentType: 'Orders',
+      ctaContentType: "Orders",
       isHighlighted: true,
-      highlightContentKey: 'Patient retainment percentage:',
+      highlightContentKey: "Patient retainment percentage:",
       highlightContentValue: `${
         patients &&
         Math.ceil(
-          (getAllActivePatients(patients).length / patients.length) * 100,
+          (getAllActivePatients(patients).length / patients.length) * 100
         )
       }%`,
     },
     {
-      heading: 'Active patients',
+      heading: "Active patients",
       value:
         (patients && patients.length - getAllDormatPatients(patients).length) ||
         0,
       hasCta: false,
     },
     {
-      heading: 'Dormat patients',
+      heading: "Dormat patients",
       value: (patients && getAllDormatPatients(patients).length) || 0,
       ctaContentType: false,
       isHighlighted: false,
@@ -119,30 +121,30 @@ function Patients() {
 
   const spanOptions = [
     {
-      name: 'Year',
+      name: "Year",
       handler: () => {
-        dispatch(changeSpan('Year'));
+        dispatch(changeSpan("Year"));
         setRefetchKey((prevKey) => prevKey + 1);
       },
     },
     {
-      name: 'Month',
+      name: "Month",
       handler: () => {
-        dispatch(changeSpan('Month'));
+        dispatch(changeSpan("Month"));
         setRefetchKey((prevKey) => prevKey + 1);
       },
     },
     {
-      name: 'Week',
+      name: "Week",
       handler: () => {
-        dispatch(changeSpan('Week'));
+        dispatch(changeSpan("Week"));
         setRefetchKey((prevKey) => prevKey + 1);
       },
     },
     {
-      name: 'Today',
+      name: "Today",
       handler: () => {
-        dispatch(changeSpan('Today'));
+        dispatch(changeSpan("Today"));
         setRefetchKey((prevKey) => prevKey + 1);
       },
     },
@@ -159,12 +161,17 @@ function Patients() {
     );
 
   if (error) {
-    // Handle the error appropriately, e.g., display an error message
-    return <div>Error loading patients: {error.message}</div>;
+    toast.error("Error loading the data..");
+    return <Toaster position="top-right"/>
+  }
+
+  if(patients.length) {
+    toast.success(`You got ${patients.length} results`)
   }
 
   return (
     <div className="absolute left-[16%] top-0 z-10 h-[100dvh] w-[84%] overflow-y-scroll">
+      <Toaster position="top-right"/>
       <Header name="Patients" />
       <Overview
         cardMetaData={cardMetaData}

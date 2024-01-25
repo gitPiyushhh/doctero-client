@@ -5,7 +5,6 @@ import AppointmentCard from "../ui/AppointmentCard";
 import PatientFullPage from "./FullPagePatient";
 import {
   getAppointentsForDoctor,
-  getFirstAppointentsForDoctor,
   getTodayAppointentsForDoctor,
 } from "../../services/apiAppointment";
 import FullPageSpinner from "./FullPageSpinner";
@@ -100,10 +99,6 @@ function Dashboard() {
 
   if (isLoadingAppointments || isLoadingPatients) {
     return <FullPageSpinner />;
-  }
-
-  if (isErrorAppointments || isErrorPatients) {
-    return <NoData />;
   }
 
   return (

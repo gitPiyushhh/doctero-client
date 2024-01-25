@@ -1,28 +1,25 @@
-import React, { useEffect } from 'react';
-import { Outlet, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
-import Sidebar from './Sidebar';
-import Authentication from '../ui/Authentication';
-import Category from '../ui/Category';
-import Onboarding from './Onboarding';
-import { onboard } from '../../features/auth';
+import Sidebar from "./Sidebar";
+import Authentication from "../ui/Authentication";
 
 function AppLayout() {
   const navigate = useNavigate();
 
   const token =
-    useSelector((state) => state.auth.token) || localStorage.getItem('token');
+    useSelector((state) => state.auth.token) || localStorage.getItem("token");
 
-  const user = JSON.parse(localStorage.getItem('user'));
+  const user = JSON.parse(localStorage.getItem("user"));
 
   const isOnboard = user?.isOnboard;
 
   useEffect(
     function () {
-      token && !isOnboard && navigate('/category');
+      token && !isOnboard && navigate("/category");
     },
-    [navigate, isOnboard, token],
+    [navigate, isOnboard, token]
   );
 
   return (
