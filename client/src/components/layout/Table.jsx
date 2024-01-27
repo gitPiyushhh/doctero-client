@@ -1,16 +1,28 @@
-import React, { useState } from 'react';
-import TableHead from '../ui/TableHead';
-import TableRow from '../ui/TableRow';
-import { useDispatch } from 'react-redux';
-import { filter } from '../../features/billing';
-import NoData from './NoData';
-import Options from '../ui/Options';
+import React, { useState } from "react";
+import TableHead from "../ui/TableHead";
+import TableRow from "../ui/TableRow";
+import { useDispatch } from "react-redux";
+import { filter } from "../../features/billing";
+import NoData from "./NoData";
+import Options from "../ui/Options";
 
-function Table({ isFor, name, tableHeadMetaData, data, isDownloadable, sortOptions, isFilterable }) {
-  const [query, setQuery] = useState('');
+function Table({
+  isFor,
+  name,
+  tableHeadMetaData,
+  data,
+  handleRowClick,
+  isDownloadable,
+  sortOptions,
+  isFilterable,
+}) {
+  const [query, setQuery] = useState("");
   const dispatch = useDispatch();
 
-  const width = 100 / tableHeadMetaData.length;
+  const width =
+    100 / tableHeadMetaData.length >= 25
+      ? 100 / tableHeadMetaData.length - 1
+      : 100 / tableHeadMetaData.length ;
 
   function handleQueryChange(e) {
     const targetValue = e.target.value;
@@ -19,8 +31,16 @@ function Table({ isFor, name, tableHeadMetaData, data, isDownloadable, sortOptio
   }
 
   return (
-    <div className="w-full bg-stone-50 p-4 shadow-md">
-      <Options isFor={isFor} name={name} query={query} handleQueryChange={handleQueryChange} isDownloadable={isDownloadable} sortOptions={sortOptions} isFilterable={isFilterable}/>
+    <div className="w-full bg-stone-50 p-4 shadow-md mb-4">
+      <Options
+        isFor={isFor}
+        name={name}
+        query={query}
+        handleQueryChange={handleQueryChange}
+        isDownloadable={isDownloadable}
+        sortOptions={sortOptions}
+        isFilterable={isFilterable}
+      />
 
       {/* Table here */}
       <div role="table" className="mt-4">
@@ -38,8 +58,12 @@ function Table({ isFor, name, tableHeadMetaData, data, isDownloadable, sortOptio
         {data.length ? (
           <div>
             {data.map((item) => (
-
-              <TableRow key={`${JSON.stringify(item)}`} data={item} width={width} />
+              <TableRow
+                key={`${JSON.stringify(item)}`}
+                data={item}
+                width={width}
+                handleRowClick={handleRowClick ? handleRowClick : () => console.log("No row click handler assigned!")}
+              />
             ))}
           </div>
         ) : (

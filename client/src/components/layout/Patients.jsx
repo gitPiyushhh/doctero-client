@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import moment from "moment/moment";
 
 import Header from "../ui/Header";
@@ -90,9 +90,6 @@ function Patients() {
     {
       heading: "Total Patients",
       value: patients?.length || 0,
-      hasCta: true,
-      ctaContent: 13,
-      ctaContentType: "Orders",
       isHighlighted: true,
       highlightContentKey: "Patient retainment percentage:",
       highlightContentValue: `${
@@ -149,18 +146,22 @@ function Patients() {
   ];
 
   /*
-    React query
+    Toasts 
   */
+  useEffect(() => {
+    if (patients?.length) {
+      setTimeout(() => {
+        toast.success(`You got ${patients.length} results`);
+      }, 0);
+    }
+  }, [patients]);
+
   if (isLoading)
     return (
-      <div className="flex w-full items-center justify-center">
+      <div className="absolute left-[16%] top-0 z-10 h-[100dvh] w-[84%]">
         <FullPageSpinner />
       </div>
     );
-
-  if (patients.length) {
-    toast.success(`You got ${patients.length} results`);
-  }
 
   if (error) {
     toast.error("Error loading the data..");
@@ -170,7 +171,7 @@ function Patients() {
   return (
     <div className="absolute left-[16%] top-0 z-10 h-[100dvh] w-[84%] overflow-y-scroll">
       <Toaster position="top-right" />
-      
+
       <Header name="Patients" />
       <Overview
         cardMetaData={cardMetaData}

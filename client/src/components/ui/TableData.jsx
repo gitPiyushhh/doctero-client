@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 function TableData({ data, type, width, alignRight, marginLeft }) {
-  console.log("Data width: ", Math.floor(width))
 
   if (data?.toString().includes('#')) {
     return (
@@ -10,7 +9,7 @@ function TableData({ data, type, width, alignRight, marginLeft }) {
         className={`w-[${Math.floor(width)}%] flex justify-${alignRight ? 'end' : 'start'}`}
       >
         <Link>
-          <span className={`text-sm font-semibold text-blue-500`}>{data}</span>
+          <span className={`text-sm font-semibold text-blue-500`}>{`${data.slice(0, 4)}...${data.slice(-4, data.length)}`}</span>
         </Link>
       </div>
     );

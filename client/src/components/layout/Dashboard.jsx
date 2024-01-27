@@ -108,9 +108,9 @@ function Dashboard() {
   /*
     Conditional rendering
   */
-  if(!user.doctor) {
-    return <DashboardPatient />
-  }
+  // if(!user.doctor) {
+  //   return <DashboardPatient />
+  // }
 
   if (isLoadingAppointments || isLoadingPatients) {
     return <FullPageSpinner />;

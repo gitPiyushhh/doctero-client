@@ -1,9 +1,9 @@
 import React from 'react';
 import TableData from './TableData';
 
-function TableRow({ data, width }) {
+function TableRow({ data, width, handleRowClick }) {
   return (
-    <div className="flex flex-wrap max-w-full justify-between border-b-[1px] p-4 ">
+    <div className="flex flex-wrap max-w-full justify-between border-b-[1px] p-4 cursor-pointer" onClick={() => handleRowClick(data)}>
       {Object.keys(data).map((item, index) => (
         <TableData
           key={Math.random()}

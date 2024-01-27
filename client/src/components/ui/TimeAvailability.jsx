@@ -22,6 +22,7 @@ function TimeAvailability({ doctorPropToBeTakenm, occupiedToBeTaken }) {
         {timeSlots.map((timeSlot) => (
           <span
             className={`${occupied.includes(timeSlot) ? 'bg-stone-200' : 'bg-[#7C51C2]'} ${occupied.includes(timeSlot) ? 'text-stone-700' : 'text-stone-50'}  w-[4rem] p-1 flex justify-center items-center text-sm rounded-full ${occupied.includes(timeSlot) ? 'cursor-not-allowed' : 'cursor-pointer'} `}
+            key={timeSlot}
           >
             {timeSlot > 12 ? `${timeSlot % 12} pm` : `${timeSlot} am`}
           </span>
