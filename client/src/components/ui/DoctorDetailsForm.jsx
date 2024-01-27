@@ -1,22 +1,36 @@
-import React, { useState } from 'react';
-import { Form, redirect } from 'react-router-dom';
-import { createDoctor } from '../../services/apiDoctor';
-import { CityDropdown, StateDropdown } from './StatesAndCities';
-import { state_arr } from '../../../CONSTANTS';
-import { updateUser } from '../../services/apiAuth';
-import { useSelector } from 'react-redux';
+import React, { useState } from "react";
+import { Form, redirect } from "react-router-dom";
+import { createDoctor } from "../../services/apiDoctor";
+import { CityDropdown, StateDropdown } from "./StatesAndCities";
+import { state_arr } from "../../../CONSTANTS";
+import { updateUser } from "../../services/apiAuth";
+import { useSelector } from "react-redux";
 
 const inputStyles =
-  'bg-stone-50 border-[1px] rounded-md p-2 flex-1 placeholder:text-stone-500 placholder:font-light text-stone-700 text-sm';
+  "bg-stone-50 border-[1px] rounded-md p-2 flex-1 placeholder:text-stone-500 placholder:font-light text-stone-700 text-sm";
 
 let city = null;
 let state = null;
 
 function DoctorDetailsForm() {
-  const [selectedState, setSelectedState] = useState('');
-  const [selectedCity, setSelectedCity] = useState('');
+  const [selectedState, setSelectedState] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
+  const [startHour, setStartHour] = useState(10);
+  const [endHour, setEndHour] = useState(18);
 
-  const userObj = useSelector(state => state.auth.user) || JSON.parse(localStorage.getItem('user'));
+  // handleSethour function
+  function handleStarthour(e) {
+    setStartHour(e.target.value);
+  }
+
+  // handle end hour
+  function handleEndhour(e) {
+    setEndHour(e.target.value);
+  }
+
+  const userObj =
+    useSelector((state) => state.auth.user) ||
+    JSON.parse(localStorage.getItem("user"));
 
   const handleStateSelect = (state) => {
     setSelectedState(state);
@@ -36,7 +50,7 @@ function DoctorDetailsForm() {
         <div
           className="absolute left-0 top-0 h-4 rounded-r-md rounded-t-md bg-[#146EB4]"
           style={{
-            transition: 'width 0.3s ease-in-out',
+            transition: "width 0.3s ease-in-out",
           }}
         ></div>
 
@@ -248,34 +262,50 @@ function DoctorDetailsForm() {
             <div className="flex flex-wrap justify-between gap-4">
               <div className="flex w-[24rem] items-center space-x-4">
                 <div className="relative">
-                  <span className="text-stone-700">Start</span>
+                  <span className="text-stone-700">Open Time</span>
                   <span className="absolute right-[-8px] top-[-5px] text-red-400">
                     *
                   </span>
                 </div>
-                <input
-                  type="text"
-                  placeholder="At what time you start working"
+                {/* Issue resolve for staring time scroll  */}
+                <select
                   name="startTime"
-                  required
+                  value={startHour}
+                  onChange={(e) => handleStarthour(e)}
                   className={inputStyles}
-                />
+                >
+                  {Array.from({ length: 24 }, (_, i) => i).map((num) => (
+                    <option value={num} key={num}>
+                      {num <= 12
+                        ? `${num} ${num === 12 ? "pm" : "am"}`
+                        : `${num % 12} ${num === 24 ? "am" : "pm"}`}
+                    </option>
+                  ))}
+                </select>
               </div>
-              
+
               <div className="flex w-[24rem] items-center space-x-4">
                 <div className="relative">
-                  <span className="text-stone-700">End</span>
+                  <span className="text-stone-700">Close Time</span>
                   <span className="absolute right-[-8px] top-[-5px] text-red-400">
                     *
                   </span>
                 </div>
-                <input
-                  type="text"
-                  placeholder="At what time you end working"
+                {/* Issue resolve for staring time scroll  */}
+                <select
                   name="closeTime"
-                  required
+                  value={endHour}
+                  onChange={(e) => handleEndhour(e)}
                   className={inputStyles}
-                />
+                >
+                  {Array.from({ length: 24 }, (_, i) => i).map((num) => (
+                    <option value={num} key={num}>
+                      {num <= 12
+                        ? `${num} ${num === 12 ? "pm" : "am"}`
+                        : `${num % 12} ${num === 24 ? "am" : "pm"}`}
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
           </div>
@@ -308,7 +338,14 @@ export async function action({ request }) {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
 
-  var nestedDoctor = { ...data, state, city, operationalTime: {startTime: data.startTime, closeTime: data.closeTime} };
+  var nestedDoctor = {
+    ...data,
+    state,
+    city,
+    operationalTime: { startTime: data.startTime, closeTime: data.closeTime },
+  };
+
+  console.log(nestedDoctor);
 
   // If OK create new doctor
   const newDoctor = await createDoctor(nestedDoctor);
@@ -317,10 +354,10 @@ export async function action({ request }) {
   // localStorage.setItem('doctor', JSON.stringify(newDoctor));
 
   if (!newDoctor) {
-    return redirect('/form-doctor');
+    return redirect("/form-doctor");
   }
 
-  const oldUser = JSON.parse(localStorage.getItem('user'));
+  const oldUser = JSON.parse(localStorage.getItem("user"));
 
   const updatedUser = await updateUser({
     ...oldUser,
@@ -328,9 +365,9 @@ export async function action({ request }) {
     isOnboard: true,
   });
 
-  localStorage.setItem('user', JSON.stringify(updatedUser));
+  localStorage.setItem("user", JSON.stringify(updatedUser));
 
-  return redirect(`${!updatedUser ? '/form-doctor' : '/just-there'}`);
+  return redirect(`${!updatedUser ? "/form-doctor" : "/just-there"}`);
 }
 
 export default DoctorDetailsForm;
