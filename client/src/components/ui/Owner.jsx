@@ -5,7 +5,7 @@ function Owner({ name }) {
     <div className="mb-2 flex h-fit w-full items-center justify-start space-x-4 p-4">
       <div className="w-[20%]">
         <img
-          src="Owner.avif"
+          src="/Owner.avif"
           alt="Owner_image"
           className="block h-[2.4rem] w-[2.4rem] rounded-md  bg-center object-cover"
         />

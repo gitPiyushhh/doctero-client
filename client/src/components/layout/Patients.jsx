@@ -43,8 +43,6 @@ function Patients() {
 
   const [refetchKey, setRefetchKey] = useState(0);
 
-  
-
   /*
     Global UI state
   */
@@ -160,18 +158,19 @@ function Patients() {
       </div>
     );
 
-  if (error) {
-    toast.error("Error loading the data..");
-    return <Toaster position="top-right"/>
+  if (patients.length) {
+    toast.success(`You got ${patients.length} results`);
   }
 
-  if(patients.length) {
-    toast.success(`You got ${patients.length} results`)
+  if (error) {
+    toast.error("Error loading the data..");
+    return <Toaster position="top-right" />;
   }
 
   return (
     <div className="absolute left-[16%] top-0 z-10 h-[100dvh] w-[84%] overflow-y-scroll">
-      <Toaster position="top-right"/>
+      <Toaster position="top-right" />
+      
       <Header name="Patients" />
       <Overview
         cardMetaData={cardMetaData}

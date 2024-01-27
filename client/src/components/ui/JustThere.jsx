@@ -26,10 +26,11 @@ function JustThere() {
 }
 
 export async function action({ request }) {
+  const user = JSON.parse(localStorage.getItem('user'))
+
   setTimeout(function() {
     console.log('Wait')
   }, 3 * 1000)
-
   
   return redirect('/dashboard');
 }

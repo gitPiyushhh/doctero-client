@@ -242,6 +242,46 @@ function DoctorDetailsForm() {
 
           <div className="relative my-4 mb-8 border-[1px] p-4 py-8">
             <span className="absolute left-2 top-[-12px] bg-stone-50 text-sm text-stone-400">
+              Work timings
+            </span>
+
+            <div className="flex flex-wrap justify-between gap-4">
+              <div className="flex w-[24rem] items-center space-x-4">
+                <div className="relative">
+                  <span className="text-stone-700">Start</span>
+                  <span className="absolute right-[-8px] top-[-5px] text-red-400">
+                    *
+                  </span>
+                </div>
+                <input
+                  type="text"
+                  placeholder="At what time you start working"
+                  name="startTime"
+                  required
+                  className={inputStyles}
+                />
+              </div>
+              
+              <div className="flex w-[24rem] items-center space-x-4">
+                <div className="relative">
+                  <span className="text-stone-700">End</span>
+                  <span className="absolute right-[-8px] top-[-5px] text-red-400">
+                    *
+                  </span>
+                </div>
+                <input
+                  type="text"
+                  placeholder="At what time you end working"
+                  name="closeTime"
+                  required
+                  className={inputStyles}
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="relative my-4 mb-8 border-[1px] p-4 py-8">
+            <span className="absolute left-2 top-[-12px] bg-stone-50 text-sm text-stone-400">
               Avatar
             </span>
 
@@ -268,7 +308,7 @@ export async function action({ request }) {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
 
-  var nestedDoctor = { ...data, state, city };
+  var nestedDoctor = { ...data, state, city, operationalTime: {startTime: data.startTime, closeTime: data.closeTime} };
 
   // If OK create new doctor
   const newDoctor = await createDoctor(nestedDoctor);

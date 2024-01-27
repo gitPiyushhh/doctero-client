@@ -16,9 +16,8 @@ const metaDataDoctor = [
 ];
 
 const metaDataPatient = [
-  { icon: 1, name: 'Home', to: '/dashboard' },
+  { icon: 1, name: 'Home', to: '/patient/dashboard' },
   { icon: 2, name: 'Appointments', to: '/appointments' },
-  { icon: 112, name: 'Doctors', to: '/doctors' },
   { icon: 4, name: 'Billing', to: '/billings' },
   { icon: 5, name: 'Videos', to: '/videos' },
   { icon: 7, name: 'Tele-consultancy', to: '/tele-consultancy' },
@@ -31,7 +30,7 @@ function Sidebar() {
   const isDoctor = userObj.isDoctor;
 
   return (
-    <div className={`absolute left-0 top-0 flex h-[100dvh] w-[16%] flex-col ${isDoctor ? 'bg-[#082F4F]' : 'bg-[#236758]'}`}>
+    <div className={`absolute left-0 top-0 flex h-[100dvh] w-[16%] flex-col ${isDoctor ? 'bg-[#082F4F]' : 'bg-[#7C51C2]'}`}>
       <Owner name={user}/>
 
       

@@ -1,7 +1,7 @@
-import React from 'react';
-import { CiCircleQuestion } from 'react-icons/ci';
-import { FaAngleRight } from 'react-icons/fa';
-import { useSelector } from 'react-redux';
+import React from "react";
+import { CiCircleQuestion } from "react-icons/ci";
+import { FaAngleRight } from "react-icons/fa";
+import { useSelector } from "react-redux";
 
 function OverviewCard({
   isHighlighted,
@@ -15,7 +15,7 @@ function OverviewCard({
 }) {
   const userObj =
     useSelector((state) => state.auth.user) ||
-    JSON.parse(localStorage.getItem('user'));
+    JSON.parse(localStorage.getItem("user"));
   const isDoctor = userObj.isDoctor;
 
   if (!isHighlighted) {
@@ -30,10 +30,14 @@ function OverviewCard({
             <span className="flex items-center space-x-2">
               {hasCta && (
                 <>
-                  <span className="decoration text-[14px] text-[#146EB4] underline underline-offset-2">
+                  <span
+                    className={`decoration text-[14px] ${
+                      isDoctor ? "text-[#146EB4]" : "text-[#9B6DE2]"
+                    } underline underline-offset-2`}
+                  >
                     {ctaContent} {ctaContentType}
                   </span>
-                  <FaAngleRight size={16} fill="#146EB4" />{' '}
+                  <FaAngleRight size={16} fill="#146EB4" />{" "}
                 </>
               )}
             </span>
@@ -47,7 +51,7 @@ function OverviewCard({
     <div className="w-[32%] flex-col text-stone-100">
       <div
         className={`w-full rounded-t-lg ${
-          isDoctor ? 'bg-[#146EB4]' : 'bg-[#349882]'
+          isDoctor ? "bg-[#146EB4]" : "bg-[#9B6DE2]"
         } p-4 py-6 shadow-md`}
       >
         <span className="flex items-center space-x-2 text-[16px]">
@@ -58,10 +62,14 @@ function OverviewCard({
           <span className="flex items-center space-x-2">
             {hasCta && (
               <>
-                <span className="decoration text-[14px] text-[#146EB4] underline underline-offset-2">
+                <span
+                  className={`decoration text-[14px] ${
+                    isDoctor ? "bg-[#146EB4]" : "bg-[#9B6DE2]"
+                  } underline underline-offset-2`}
+                >
                   {ctaContent} {ctaContentType}
                 </span>
-                <FaAngleRight size={16} fill="#146EB4" />{' '}
+                <FaAngleRight size={16} fill="#146EB4" />{" "}
               </>
             )}
           </span>
@@ -69,7 +77,7 @@ function OverviewCard({
       </div>
       <div
         className={`flex w-full items-center justify-between rounded-b-lg ${
-          isDoctor ? 'bg-[#0E4F82]' : 'bg-[#236758]'
+          isDoctor ? "bg-[#0E4F82]" : "bg-[#7C51C2]"
         } px-4 py-2 text-sm`}
       >
         <span>{highlightContentKey}</span>

@@ -19,6 +19,7 @@ import JustThere from './components/ui/JustThere';
 import Doctors from './components/layout/Doctors';
 import { Provider } from 'react-redux';
 import store from './store';
+import DashboardPatient from './components/layout/DashboardPatient';
 
 const router = createBrowserRouter([
   {
@@ -46,6 +47,10 @@ const router = createBrowserRouter([
       {
         path: '/dashboard',
         element: <Dashboard />,
+      },
+      {
+        path: '/patient/dashboard',
+        element: <DashboardPatient />,
       },
       {
         path: '/appointments',

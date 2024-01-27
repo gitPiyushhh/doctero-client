@@ -381,7 +381,7 @@ function Appointments() {
               <div
                 className={`cursor-pointer rounded-full bg-stone-200 px-4 py-2 text-sm font-semibold ${
                   (tabLocal === 'physical' && `${user.doctor ? '!bg-[#146EB4]'
-                : '!bg-[#349882]'} text-stone-50`)
+                : '!bg-[#7C51C2]'} text-stone-50`)
                 }`}
                 onClick={() => setTabLocal('physical')}
               >
@@ -391,7 +391,7 @@ function Appointments() {
               <div
                 className={`cursor-pointer rounded-full bg-stone-200 px-4 py-2 text-sm font-semibold ${
                   (tabLocal === 'online' && `${user.doctor ? '!bg-[#146EB4]'
-                : '!bg-[#349882]'} text-stone-50`)
+                : '!bg-[#7C51C2]'} text-stone-50`)
                 }`}
                 onClick={() => setTabLocal('online')}
               >
