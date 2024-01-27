@@ -3,26 +3,26 @@ import { Form } from "react-router-dom";
 import TimeAvailability from "./TimeAvailability";
 
 const inputStyles =
-  "bg-stone-50 border-[1px] w-[100%] border-stone-200 rounded-md p-3 flex-1 placeholder:text-stone-400 placholder:font-light text-stone-700 text-sm";
+  "bg-stone-50 border-[1px] w-[100%] border-stone-200 rounded-md p-3 flex-1 placeholder:text-stone-400 placholder:font-light text-stone-700 text-sm focus:outline-none";
 
 function Booking() {
   return (
       <Form method="POST" className="h-fit w-full flex flex-col gap-4">
           <input
             type="text"
-            placeholder="Name"
+            placeholder="Your name"
             name="name"
             required
-            className={`${inputStyles} !cursor-pointer !bg-white`}
+            className={`${inputStyles} !bg-white`}
           />
           
           <textarea
             type="text"
-            placeholder="Problem"
+            placeholder="Your problem"
             name="problem"
             required
             rows={6}
-            className={`${inputStyles} !cursor-pointer !bg-white`}
+            className={`${inputStyles} !bg-white`}
           />
 
           <TimeAvailability />
