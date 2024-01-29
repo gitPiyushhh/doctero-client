@@ -165,7 +165,7 @@ function Dashboard() {
 
         <div className=" flex w-[64%] flex-col items-start justify-between gap-2 px-8">
           <span className="text-md text-stone-500">Patient details</span>
-          <div className="flex h-[24rem] w-full flex-col rounded-md bg-white px-8 py-4 shadow-sm">
+          <div className="flex h-[24rem] w-full flex-col rounded-md bg-white px-[20px] py-4 shadow-sm">
             {activeAppointment ? (
               <PatientFullPage data={activeAppointment.patient} />
             ) : (

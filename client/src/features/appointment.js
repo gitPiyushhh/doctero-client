@@ -8,7 +8,6 @@ const API_URL = 'http://localhost:8000/api/v1';
 */
 const initialData = [];
 
-
 const transformAppointment = (appointment) => {
   return {
     appointmentId: `#${
@@ -18,7 +17,7 @@ const transformAppointment = (appointment) => {
     }`,
     name: appointment.patient.name,
     problem: `${
-      appointment.notes.length ? appointment.notes : 'No problem spcified'
+      appointment?.problem?.length ? appointment.problem : 'No problem spcified'
     }`,
     date: `${transformDate(appointment.date, appointment.startTime)}`,
     type: `${appointment.type}`,

@@ -279,6 +279,16 @@ export async function action({ request }) {
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
 
+  if(!data?.startTime) {
+    toast.error('Please choose a time slot')
+    return redirect("/patient/dashboard");
+  }
+  
+  if(!data?.type) {
+    toast.error('Please choose an appointment type')
+    return redirect("/patient/dashboard");
+  }
+
   const newAppointment = await createAppointment(data);
 
   isLoading = true;

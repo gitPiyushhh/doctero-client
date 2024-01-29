@@ -25,10 +25,10 @@ export async function getAppointentsForDoctor({ doctor, span }) {
 export async function getTodayAppointentsForDoctor({ doctor }) {
   try {
     const data = await axios.get(
-      `${API_URL}/therapists/appointments/${doctor}?limit=10000&sortBy=date&sortOrder=asc&dateRange=Today`
+      `${API_URL}/therapists/appointments/${doctor}?limit=10000&sortBy=date&sortOrder=desc&dateRange=Today`
     );
     const dataRemote = await axios.get(
-      `${API_URL}/therapists/appointments/${doctor}?limit=10000&type=Remote&sortBy=date&sortOrder=asc&dateRange=Today`
+      `${API_URL}/therapists/appointments/${doctor}?limit=10000&type=Remote&sortBy=date&sortOrder=desc&dateRange=Today`
     );
 
     const appointments = data.data.data.appointments;

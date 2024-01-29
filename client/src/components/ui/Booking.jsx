@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Form } from "react-router-dom";
 import TimeAvailability from "./TimeAvailability";
 import { useQuery } from "@tanstack/react-query";
@@ -37,7 +37,7 @@ function transformBookingDetails(selected) {
 /*
   Logged in user
 */
-const user = JSON.parse(localStorage.getItem('user'));
+const user = JSON.parse(localStorage.getItem("user"));
 
 const monthNames = [
   "Jan",
@@ -55,6 +55,11 @@ const monthNames = [
 ];
 
 function Booking({ data, selected, handleTimeTaken, onSubmit }) {
+  /*
+    Local state
+  */
+  const [type, setType] = useState("Not selected");
+
   const today = new Date();
   const dayAfterTomorrow = new Date(today);
   dayAfterTomorrow.setDate(today.getDate() + 2);
@@ -68,8 +73,11 @@ function Booking({ data, selected, handleTimeTaken, onSubmit }) {
   }
 
   /*
-    React hook form
+    Event handlers
   */
+  function handleTypeChange(e) {
+    setType(e);
+  }
 
   /*
     React query
@@ -98,6 +106,21 @@ function Booking({ data, selected, handleTimeTaken, onSubmit }) {
       }),
   });
 
+  /*
+    Meta data
+  */
+  const typeMetaData = [
+    {
+      name: "Home visit",
+    },
+    {
+      name: "Remote",
+    },
+  ];
+
+  /*
+    Conditional rendering
+  */
   if (isLoading) {
     return <FullPageSpinner />;
   }
@@ -121,6 +144,27 @@ function Booking({ data, selected, handleTimeTaken, onSubmit }) {
         className={`${inputStyles} !bg-white`}
       />
 
+      <div className="flex space-x-2 justify-between items-center">
+        <select
+          className="text-stone-700 flex flex-col bg-stone-50 py-4"
+          value="Select mode"
+          onChange={(e) => handleTypeChange(e.target.value)}
+        >
+          <option>Select mode</option>
+          {typeMetaData.map((typeOption) => (
+            <option
+              key={type.name}
+              className="text-stone-700"
+              value={type.name}
+            >
+              {typeOption.name}
+            </option>
+          ))}
+        </select>
+
+        <span className="text-stone-500 text-sm">{type}</span>
+      </div>
+
       <input type="text" hidden name="date" value={formattedDate} />
 
       <input type="text" hidden name="startTime" value={startHour} />
@@ -129,11 +173,13 @@ function Booking({ data, selected, handleTimeTaken, onSubmit }) {
 
       <input type="text" hidden name="patient" value={user?.patient} />
 
+      <input type="text" hidden name="type" value={type} />
+
       <input type="text" hidden name="amount" value={data?.fees} />
 
       <input type="text" hidden name="doctorPhone" value={data?.phone} />
 
-      <input type="text" hidden name="doctorName" value={data?.name}/>
+      <input type="text" hidden name="doctorName" value={data?.name} />
 
       <div className="flex flex-col gap-4">
         <TimeAvailability

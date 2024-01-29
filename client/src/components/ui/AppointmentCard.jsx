@@ -14,7 +14,7 @@ function AppointmentCard({ data, isActive, handleCardClick }) {
             {data?.patient.name || 'Name'}
           </span>
           <span className={`text-sm ${isActive ? 'text-[#146fb4d7]' : 'text-stone-400'}`}>
-            {data?.notes || 'Notes here'}
+            {data?.notes || data?.problem || 'Notes here'}
           </span>
         </div>
       </div>
