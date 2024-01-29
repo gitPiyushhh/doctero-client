@@ -118,7 +118,7 @@ function DoctorDetailsForm() {
                   type="text"
                   placeholder="What is your phone number"
                   name="phone"
-                  // required
+                  required
                   className={inputStyles}
                 />
               </div>
@@ -142,7 +142,7 @@ function DoctorDetailsForm() {
                   type="text"
                   placeholder="What is your aadhar number"
                   name="aadharNumber"
-                  // required
+                  required
                   className={inputStyles}
                 />
               </div>
@@ -178,7 +178,7 @@ function DoctorDetailsForm() {
                   type="text"
                   placeholder="What is your address"
                   name="address"
-                  // required
+                  required
                   className={inputStyles}
                 />
               </div>
@@ -233,7 +233,12 @@ function DoctorDetailsForm() {
               </div>
 
               <div className="flex w-[24rem] items-center space-x-4">
-                <span className="text-stone-700">Experience</span>
+                <div className="relative">
+                  <span className="text-stone-700">Experience</span>
+                  <span className="absolute right-[-8px] top-[-5px] text-red-400">
+                    *
+                  </span>
+                </div>
                 <input
                   type="text"
                   placeholder="What is your experience in years"
@@ -243,11 +248,33 @@ function DoctorDetailsForm() {
               </div>
 
               <div className="flex w-[24rem] items-center space-x-4">
-                <span className="text-stone-700">Specialisation</span>
+              <div className="relative">
+                  <span className="text-stone-700">Specialisation</span>
+                  <span className="absolute right-[-8px] top-[-5px] text-red-400">
+                    *
+                  </span>
+                </div>
                 <input
                   type="text"
                   placeholder="What are you good at"
-                  name="specialisation"
+                  name="specialization"
+                  required
+                  className={inputStyles}
+                />
+              </div>
+
+              <div className="flex w-[24rem] items-center space-x-4">
+                <div className="relative">
+                  <span className="text-stone-700">Session fees</span>
+                  <span className="absolute right-[-8px] top-[-5px] text-red-400">
+                    *
+                  </span>
+                </div>
+                <input
+                  type="text"
+                  placeholder="What is your consultation fees"
+                  name="fees"
+                  required
                   className={inputStyles}
                 />
               </div>
@@ -342,16 +369,13 @@ export async function action({ request }) {
     ...data,
     state,
     city,
+    experience: Number(data.experience),
+    fees: Number(data.fees),
     operationalTime: { startTime: data.startTime, closeTime: data.closeTime },
   };
 
-  console.log(nestedDoctor);
-
   // If OK create new doctor
   const newDoctor = await createDoctor(nestedDoctor);
-
-  // Set patient to local storage
-  // localStorage.setItem('doctor', JSON.stringify(newDoctor));
 
   if (!newDoctor) {
     return redirect("/form-doctor");

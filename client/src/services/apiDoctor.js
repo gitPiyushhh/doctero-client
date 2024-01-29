@@ -61,12 +61,16 @@ export async function getAllDoctors(specialization) {
 }
 
 export async function getDoctor(id) {
-  console.log(id.slice(1, id.length));
   try {
     if (id) {
+      const idValue = id.slice(1, id.length);
 
-      const data = await axios.get(`${API_URL}/therapists/${id}`);
+      const data = await axios.get(`${API_URL}/therapists/${idValue}`);
       let doctor = data.data.data.therapist;
+      
+      const reviewsData = await axios.get(`${API_URL}/feedbacks/${idValue}`);
+
+      doctor = {...doctor, feedbacks: reviewsData.data.data.feedbacks}
 
       // Trasform for table
       return doctor;

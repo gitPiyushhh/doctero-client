@@ -8,14 +8,22 @@ import CategoryCard from "../ui/CategoryCard";
 import PatientFeedbackCard from "../ui/PatientFeedbackCard";
 import Booking from "../ui/Booking";
 import { getAllDoctors, getDoctor } from "../../services/apiDoctor";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import FullPageSpinner from "./FullPageSpinner";
+import { redirect } from "react-router-dom";
+import { createAppointment } from "../../services/apiAppointment";
+
+/*
+  Replicating the state
+*/
+let isLoading = false;
 
 function DashboardPatient() {
   /*
     Local state
   */
   const [doctor, setDoctor] = useState(null);
+  const [selected, setSelected] = useState(null);
 
   /*
     Event handlers
@@ -26,6 +34,14 @@ function DashboardPatient() {
 
   function handleDoctorClose() {
     setDoctor(null);
+  }
+
+  function handleTimeTaken(timeSlot) {
+    setSelected(timeSlot);
+  }
+
+  function handleCreateAppointment(data) {
+    mutate(data)
   }
 
   /*
@@ -88,7 +104,16 @@ function DashboardPatient() {
     queryFn: () => getDoctor(doctor.doctorId),
   });
 
-  console.log("Doctor remote: ", doctorRemote)
+  /*
+    React query(Data mutation)
+  */
+  const { mutate, isLoading: isLoadingAppointmentCreation } = useMutation({
+    mutationFn: action,
+    onSuccess: () => {
+      toast.success("Created new appointment");
+    },
+    onError: (err) => toast.error(err.message),
+  });
 
   /*
     Toasts
@@ -108,6 +133,12 @@ function DashboardPatient() {
       <div className="absolute left-[16%] top-0 z-10 h-[100dvh] w-[84%]">
         <FullPageSpinner />
       </div>
+    );
+  }
+
+  if (isLoadingAppointmentCreation) {
+    return (
+      toast.error('Loading the appointment creation')
     );
   }
 
@@ -185,10 +216,10 @@ function DashboardPatient() {
 
                 <div className="flex flex-col justify-center items-start">
                   <span className="text-stone-700 font-semibold text-lg">
-                    Jonas Smedthman
+                    {doctorRemote?.name}
                   </span>
                   <span className="text-stone-500 text-sm font-light">
-                    5+ years of experience
+                    {doctorRemote?.experience}+ years of experience
                   </span>
                 </div>
               </div>
@@ -198,7 +229,7 @@ function DashboardPatient() {
           <div className="flex flex-col gap-4">
             <div className="flex justify-between items-center">
               <span className="text-stone-700 text-md font-semibold">
-                Feedbacks(19)
+                Feedbacks({doctorRemote?.feedbacks.length})
               </span>
 
               <span className="text-sm font-semibold cursor-pointer text-blue-500 underline underline-offset-2 pr-4">
@@ -206,7 +237,19 @@ function DashboardPatient() {
               </span>
             </div>
             <div className="flex flex-col justify-between gap-4 items-center">
-              <PatientFeedbackCard />
+              {doctorRemote?.feedbacks.length ? (
+                <PatientFeedbackCard data={doctorRemote?.feedbacks[0]} />
+              ) : (
+                <div className="text-stone-700 flex flex-col justify-center items-center gap-4 p-4 bg-stone-100 rounded-md w-full py-8">
+                  <span>No feedback to show 😕</span>
+                  <button
+                    className="text-sm outline-none font-semibold bg-[#7C51C2] text-stone-50 px-2 py-1 shadow-md active:shadow-sm active:outline-none active:border-none focus:outline-none"
+                    type="button"
+                  >
+                    Give feedback
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -217,13 +260,34 @@ function DashboardPatient() {
               </span>
             </div>
             <div className="flex flex-col justify-between gap-4 items-center w-[100%]">
-              <Booking />
+              <Booking
+                data={doctorRemote}
+                selected={selected}
+                handleTimeTaken={handleTimeTaken}
+              />
             </div>
           </div>
         </div>
       </div>
     </div>
   );
+}
+
+export async function action({ request }) {
+  isLoading = true;
+
+  const formData = await request.formData();
+  const data = Object.fromEntries(formData);
+
+  const newAppointment = await createAppointment(data);
+
+  isLoading = true;
+
+  if (!newAppointment) {
+    return redirect("/patient/dashboard");
+  }
+
+  return redirect("/appointments");
 }
 
 export default DashboardPatient;

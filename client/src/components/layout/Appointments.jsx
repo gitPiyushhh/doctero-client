@@ -119,8 +119,6 @@ function Appointments() {
       dispatch(getAllRemoteAppointments({ patient: user.patient }));
       dispatch(getTodayAppointments({ patient: user.patient }));
     }
-
-    // user.doctor && dispatch(getAllAppointments(user.doctor));
   }, [dispatch, user.doctor, user.patient]);
 
   useEffect(() => {
@@ -206,10 +204,6 @@ function Appointments() {
   ];
 
   const sortOptions = [
-    // {
-    //   name: 'Sort',
-    //   handler: () => {},
-    // },
     {
       name: 'Recent first',
       handler: handleSortRecent,

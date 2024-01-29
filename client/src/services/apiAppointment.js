@@ -31,7 +31,25 @@ export async function getTodayAppointentsForDoctor({ doctor }) {
       `${API_URL}/therapists/appointments/${doctor}?limit=10000&type=Remote&sortBy=date&sortOrder=asc&dateRange=Today`
     );
 
-    // api/v1/therapists/appointments/656434a39c2ec9617e124254?dateRange=Month&sortBy=date&sortOrder=asc
+    const appointments = data.data.data.appointments;
+    const appointmentsRemote = dataRemote.data.data.appointments;
+
+    const allAppointments = [...appointments, ...appointmentsRemote];
+    return allAppointments;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+export async function getCustomDayAppointmentsForDoctor({ doctor, day }) {
+  try {
+    const data = await axios.get(
+      `${API_URL}/therapists/appointments/${doctor}?limit=10000&sortBy=date&sortOrder=asc&dateRange=${day}`
+    );
+    const dataRemote = await axios.get(
+      `${API_URL}/therapists/appointments/${doctor}?limit=10000&type=Remote&sortBy=date&sortOrder=asc&dateRange=${day}`
+    );
+
     const appointments = data.data.data.appointments;
     const appointmentsRemote = dataRemote.data.data.appointments;
 
@@ -59,5 +77,16 @@ export async function getFirstAppointentsForDoctor({ doctor, patient }) {
     return allAppointments;
   } catch (err) {
     console.error(err);
+  }
+}
+
+export async function createAppointment(appointment) {
+  try {
+    const data = await axios.post(`${API_URL}/appointments`, appointment);
+
+    return data.data;
+  } catch(err) {
+    console.error(err);
+    throw new Error(err.message);
   }
 }
