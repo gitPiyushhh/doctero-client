@@ -1,84 +1,92 @@
-import React from 'react';
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
-import AppLayout from './components/layout/AppLayout';
-import Billings from './components/layout/Billings';
-import Patients from './components/layout/Patients';
-import Appointments from './components/layout/Appointments';
-import Videos from './components/layout/Videos';
-import Dashboard from './components/layout/Dashboard';
-import Teleconsultancy from './components/layout/Teleconsultancy';
-import Medstore from './components/layout/Medstore';
-import Category from './components/ui/Category';
+import React from "react";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import AppLayout from "./components/layout/AppLayout";
+import Billings from "./components/layout/Billings";
+import Patients from "./components/layout/Patients";
+import Appointments from "./components/layout/Appointments";
+import Videos from "./components/layout/Videos";
+import Dashboard from "./components/layout/Dashboard";
+import Teleconsultancy from "./components/layout/Teleconsultancy";
+import Medstore from "./components/layout/Medstore";
+import Category from "./components/ui/Category";
 import PatientDetailsForm, {
   action as createPatientAction,
-} from './components/ui/PatientDetailsForm';
+} from "./components/ui/PatientDetailsForm";
 import DoctorDetailsForm, {
   action as createDoctorAction,
-} from './components/ui/DoctorDetailsForm';
-import JustThere from './components/ui/JustThere';
-import Doctors from './components/layout/Doctors';
-import { Provider } from 'react-redux';
-import store from './store';
-import DashboardPatient, {action as createBookingAction} from './components/layout/DashboardPatient';
+} from "./components/ui/DoctorDetailsForm";
+import JustThere from "./components/ui/JustThere";
+import Doctors from "./components/layout/Doctors";
+import { Provider } from "react-redux";
+import store from "./store";
+import DashboardPatient, {
+  action as createBookingAction,
+} from "./components/layout/DashboardPatient";
+import MeetPatient from "./components/ui/MeetPatient";
+import { SocketProvider } from "./contexts/SocketProvider";
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <AppLayout />,
     children: [
       {
-        path: '/category',
+        path: "/category",
         element: <Category />,
       },
       {
-        path: '/form-patient',
+        path: "/form-patient",
         element: <PatientDetailsForm />,
         action: createPatientAction,
       },
       {
-        path: '/form-doctor',
+        path: "/form-doctor",
         element: <DoctorDetailsForm />,
         action: createDoctorAction,
       },
       {
-        path: '/just-there',
+        path: "/just-there",
         element: <JustThere />,
       },
       {
-        path: '/dashboard',
+        path: "/dashboard",
         element: <Dashboard />,
       },
       {
-        path: '/patient/dashboard',
+        path: "/patient/dashboard",
         element: <DashboardPatient />,
-        action: createBookingAction
+        action: createBookingAction,
       },
       {
-        path: '/appointments',
+        path: "/appointments",
         element: <Appointments />,
       },
       {
-        path: '/patients',
+        path: "/patients",
         element: <Patients />,
       },
       {
-        path: '/doctors',
+        path: "/doctors",
         element: <Doctors />,
       },
       {
-        path: '/billings',
+        path: "/billings",
         element: <Billings />,
       },
       {
-        path: '/videos',
+        path: "/videos",
         element: <Videos />,
       },
       {
-        path: '/tele-consultancy',
+        path: "/tele-consultancy",
         element: <Teleconsultancy />,
       },
       {
-        path: '/medstore',
+        path: "/tele-consultancy/doctor/meet",
+        element: <MeetPatient />,
+      },
+      {
+        path: "/medstore",
         element: <Medstore />,
       },
     ],

@@ -8,15 +8,14 @@ import CategoryCard from "../ui/CategoryCard";
 import PatientFeedbackCard from "../ui/PatientFeedbackCard";
 import Booking from "../ui/Booking";
 import { getAllDoctors, getDoctor } from "../../services/apiDoctor";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import FullPageSpinner from "./FullPageSpinner";
 import { redirect } from "react-router-dom";
 import { createAppointment } from "../../services/apiAppointment";
+import { useSelector } from "react-redux";
+import { createFakeLoading } from "../../features/appointment";
 
-/*
-  Replicating the state
-*/
-let isLoading = false;
+import store from "../../store";
 
 function DashboardPatient() {
   /*
@@ -24,6 +23,11 @@ function DashboardPatient() {
   */
   const [doctor, setDoctor] = useState(null);
   const [selected, setSelected] = useState(null);
+
+  /*
+    Global state
+  */
+  const status = useSelector((state) => state.appointment.status);
 
   /*
     Event handlers
@@ -41,7 +45,7 @@ function DashboardPatient() {
   }
 
   function handleCreateAppointment(data) {
-    mutate(data)
+    mutate(data);
   }
 
   /*
@@ -128,6 +132,9 @@ function DashboardPatient() {
     }
   }, [doctors]);
 
+  /*
+    Conditional rendering
+  */
   if (isLoading) {
     return (
       <div className="absolute left-[16%] top-0 z-10 h-[100dvh] w-[84%]">
@@ -137,8 +144,14 @@ function DashboardPatient() {
   }
 
   if (isLoadingAppointmentCreation) {
+    return toast.error("Loading the appointment creation");
+  }
+
+  if (status === "loading") {
     return (
-      toast.error('Loading the appointment creation')
+      <div className="absolute left-[16%] top-0 z-10 h-[100dvh] w-[84%]">
+        <FullPageSpinner />
+      </div>
     );
   }
 
@@ -274,29 +287,31 @@ function DashboardPatient() {
 }
 
 export async function action({ request }) {
-  isLoading = true;
+  store.dispatch(createFakeLoading("loading"));
 
   const formData = await request.formData();
   const data = Object.fromEntries(formData);
 
-  if(!data?.startTime) {
-    toast.error('Please choose a time slot')
+  if (!data?.startTime) {
+    toast.error("Please choose a time slot");
+    store.dispatch(createFakeLoading("idle"));
     return redirect("/patient/dashboard");
   }
-  
-  if(!data?.type) {
-    toast.error('Please choose an appointment type')
+
+  if (data?.type === "Not selected") {
+    toast.error("Please choose an appointment type");
+    store.dispatch(createFakeLoading("idle"));
     return redirect("/patient/dashboard");
   }
 
   const newAppointment = await createAppointment(data);
 
-  isLoading = true;
-
   if (!newAppointment) {
+    store.dispatch(createFakeLoading("idle"));
     return redirect("/patient/dashboard");
   }
 
+  store.dispatch(createFakeLoading("idle"));
   return redirect("/appointments");
 }
 

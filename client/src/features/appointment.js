@@ -258,6 +258,9 @@ const appointmentSlice = createSlice({
     updateSortAppointments(state, action) {
       state.sort = action.payload;
     },
+    createFakeLoading(state, action) {
+      state.status = action.payload;
+    }
   },
   extraReducers: (builder) =>
     builder
@@ -395,6 +398,7 @@ export const {
   changeActiveTab,
   updateSpanAppointments,
   updateSortAppointments,
+  createFakeLoading
 } = appointmentSlice.actions;
 
 export default appointmentSlice.reducer;
