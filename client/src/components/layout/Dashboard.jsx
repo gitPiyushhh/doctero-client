@@ -19,7 +19,7 @@ import { redirect } from "react-router-dom";
 
 const user = JSON.parse(localStorage.getItem("user"));
 if (!user?.doctor) {
-  redirect('/patient/dashboard')
+  redirect("/patient/dashboard");
 }
 
 function Dashboard() {
@@ -60,9 +60,9 @@ function Dashboard() {
   }, [todayAppointments]);
 
   function handleCardClick(data) {
-    setActiveAppointment(data)
-    dispatch(changeActivePatient(data._id))
-  } 
+    setActiveAppointment(data);
+    dispatch(changeActivePatient(data._id));
+  }
 
   /*
     Local state
@@ -78,6 +78,28 @@ function Dashboard() {
     },
     [appointments, handleActiveAppointmentChange]
   );
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (todayAppointments?.length === 0) {
+        toast.custom(
+          <p className="text-stone-700 bg-white shadow-md p-[0.8rem] rounded-md">
+            🥱 Today you have no appointments
+          </p>
+        );
+      }
+    }, 0);
+  }, [todayAppointments?.length]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (todayAppointments?.length) {
+        toast.success(
+          `You have ${todayAppointments?.length} appointments today`
+        );
+      }
+    }, 0);
+  }, [todayAppointments?.length]);
 
   /*
     Meta data
@@ -116,23 +138,14 @@ function Dashboard() {
     return <FullPageSpinner />;
   }
 
-  if(todayAppointments?.length) {
-    toast.success(`You have ${todayAppointments?.length} appointments today`)
-  }
-  
-  if(todayAppointments?.length === 0) {
-    toast.custom(<p className="text-stone-700 bg-white shadow-md p-[0.8rem] rounded-md">🥱 Today you have no appointments</p>)
-  }
-
   if (isErrorAppointments || isErrorPatients) {
     toast.error("Error loading the data..");
-    return <Toaster position="top-right"/>
+    return <Toaster position="top-right" />;
   }
-  
 
   return (
     <div className="absolute left-[16%] top-0 z-10 h-[100dvh] w-[84%] overflow-y-scroll">
-      <Toaster position="top-right"/>
+      <Toaster position="top-right" />
 
       <Header name="Dashboard" />
 
@@ -158,7 +171,7 @@ function Dashboard() {
                 />
               ))
             ) : (
-                <NoData />
+              <NoData />
             )}
           </div>
         </div>

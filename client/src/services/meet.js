@@ -1,58 +1,64 @@
-let localStream;
-let remoteStream;
-let peerConnection;
-
 /*
   Stun server
 */
 const servers = {
-    iceServers: [
-        {
-            urls: ['stun:stun.l.google.com:19302', 'stun:stun2.l.google.com:19302']
-        }
-    ]
-} 
-
-/*
-  Local stream
-*/
-export async function startStreamUser1() {
-  localStream = await navigator.mediaDevices.getUserMedia({
-    audio: false,
-    video: true,
-  });
-  document.getElementById("user-1").srcObject = localStream;
-
-  createOffer();
-}
+  iceServers: [
+    {
+      urls: ["stun:stun.l.google.com:19302", "stun:stun2.l.google.com:19302"],
+    },
+  ],
+};
 
 /*
   Peer connection
 */
-export async function createOffer() {
-  peerConnection = new RTCPeerConnection(servers);
-
-  remoteStream = new MediaStream();
-  document.getElementById("user-2").srcObject = remoteStream;
-
-  localStream.getTracks().forEach(track => {
-    peerConnection.addTrack(track, localStream)
-  })
-
-  peerConnection.ontrack = (e) => {
-    e.streams[0].getTracks().forEach(track => {
-        remoteStream.addTrack();
-    })
-  }
-
-  peerConnection.onicecandidate = async (e) => {
-    if(e.candidate) {
-        console.log("New ICE candidate: ", e.candidate)
+class PeerService {
+  constructor() {
+    if (!this.peer) {
+      this.peer = new RTCPeerConnection(servers);
     }
   }
 
-  let offer = await peerConnection.createOffer();
-  await peerConnection.setLocalDescription(offer);
+  async getoffer() {
+    if (this.peer) {
+      const offer = await this.peer.createOffer();
+      await this.peer.setLocalDescription(new RTCSessionDescription(offer));
+      
+      console.log("Offer created: ", offer)
 
-  console.log(offer)
+      return offer;
+    }
+  }
+
+  async getAnswer(offer) {
+    if (this.peer) {
+      // Log for debugging
+      console.log('Setting remote description:', offer);
+
+      // Set remote description with the provided offer
+      await this.peer.setRemoteDescription(new RTCSessionDescription(offer));
+
+      // Create an answer
+      const ans = await this.peer.createAnswer();
+
+      // Log for debugging
+      console.log('Answer SDP:', ans);
+
+      // Set local description with the created answer
+      await this.peer.setLocalDescription(new RTCSessionDescription(ans));
+
+      // Return the answer as RTCSessionDescription
+      return new RTCSessionDescription(ans);
+    }
+  }
+
+  async setLocalDescription(ans) {
+    if (this.peer) {
+      await this.peer.setRemoteDescription(new RTCSessionDescription(ans));
+    }
+  }
 }
+
+const peerService = new PeerService();
+
+export default peerService;

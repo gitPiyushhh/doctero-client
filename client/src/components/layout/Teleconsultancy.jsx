@@ -1,22 +1,48 @@
-import React from "react";
-import {useNavigate} from 'react-router-dom';
+import React, { useCallback, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 
 import TodayAppointments from "../ui/TodayAppointments";
 import Header from "../ui/Header";
-import { startStreamUser1 } from "../../services/meet";
+import { useSocket } from "../../contexts/SocketProvider";
 
 function Teleconsultancy() {
+  const user = JSON.parse(localStorage.getItem("user"));
+  const userId = user._id;
+
   const navigate = useNavigate();
+
+  const room = 1;
+
+  /*
+    Socket events
+  */
+  const socket = useSocket();
 
   /*
     Event handlers
   */
   function handleJoinMeet() {
-    startStreamUser1();
-    navigate('/tele-consultancy/doctor/meet');
+    socket.emit("room:join", { userId, room });
   }
-  
+
+  const handleJoinRoom = useCallback(function (data) {
+    const { userId, room } = data;
+
+    console.log(userId, room)
+    navigate("/tele-consultancy/doctor/meet");
+  }, [navigate]);
+
+  /*
+    Socket events
+  */
+  useEffect(() => {
+    socket.on("room:join", (data) => {
+      handleJoinRoom(data);
+
+      return () => socket.off("room:join");
+    });
+  }, [handleJoinRoom, socket]);
 
   /*
     JSX
@@ -39,7 +65,9 @@ function Teleconsultancy() {
 
             <div className="text-stone-700 flex space-x-4 items-end">
               <span className="text-xl font-semibold">Samupatient</span>
-              <span className="text-sm font-semibold text-stone-500">32 yr, Female</span>
+              <span className="text-sm font-semibold text-stone-500">
+                32 yr, Female
+              </span>
             </div>
 
             <span className="text-stone-700">
@@ -49,7 +77,12 @@ function Teleconsultancy() {
               con
             </span>
 
-            <button className="bg-[#136DB4] text-stone-50 w-fit" onClick={handleJoinMeet}>Join now</button>
+            <button
+              className="bg-[#136DB4] text-stone-50 w-fit"
+              onClick={handleJoinMeet}
+            >
+              Join now
+            </button>
           </div>
         </div>
 
