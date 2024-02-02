@@ -26,12 +26,15 @@ function Teleconsultancy() {
     socket.emit("room:join", { userId, room });
   }
 
-  const handleJoinRoom = useCallback(function (data) {
-    const { userId, room } = data;
+  const handleJoinRoom = useCallback(
+    function (data) {
+      const { userId, room } = data;
 
-    console.log(userId, room)
-    navigate("/tele-consultancy/doctor/meet");
-  }, [navigate]);
+      console.log(userId, room);
+      navigate("/tele-consultancy/doctor/meet");
+    },
+    [navigate]
+  );
 
   /*
     Socket events
@@ -54,13 +57,13 @@ function Teleconsultancy() {
 
       <Header name="Tele-consultancy" />
 
-      <div className="flex h-[91%]">
-        <div className="h-[92%] w-[64%] flex flex-col justify-start items-center px-8 py-5 ">
-          <div className="flex flex-col gap-6 outline outline-[1px] outline-stone-300 p-4 h-full rounded-sm">
+      <div className="flex h-fit">
+        <div className="h-full w-[64%] flex flex-col justify-start items-center px-8 py-5 ">
+          <div className="flex flex-col gap-6 outline outline-[1px] outline-stone-200 p-4 h-full rounded-sm">
             <img
               src="/User.png"
               alt="patient_img"
-              className="w-[16rem] h-auto rounded-xl bg-center object-cover border-[1px]"
+              className="w-[36rem] h-[24rem] rounded-md bg-center object-cover border-[1px]"
             />
 
             <div className="text-stone-700 flex space-x-4 items-end">
@@ -78,7 +81,7 @@ function Teleconsultancy() {
             </span>
 
             <button
-              className="bg-[#136DB4] text-stone-50 w-fit px-16 py-2"
+              className="bg-[#136DB4] text-stone-50 w-fit px-16 py-2 rounded-md"
               onClick={handleJoinMeet}
             >
               Join now
@@ -86,7 +89,7 @@ function Teleconsultancy() {
           </div>
         </div>
 
-        <div className="h-[100%] p-4 w-[36%] flex justify-center items-center">
+        <div className="h-[91vh] p-4 w-[36%] flex justify-center items-center">
           <TodayAppointments />
         </div>
       </div>
