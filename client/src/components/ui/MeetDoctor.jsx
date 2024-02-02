@@ -38,7 +38,7 @@ function MeetDoctor() {
     });
 
     // Give a ringing caller tune here as an enhancement
-    setRinging(true);
+      setRinging(true);
 
     const offer = await peerService.getoffer();
     socket.emit("user:call", { to: remoteSocketId, offer });
