@@ -15,14 +15,7 @@ function MeetDoctor() {
   const [myStream, setMyStream] = useState(null);
   const [remoteStream, setRemoteStream] = useState(null);
   const [remoteUserIn, setRemoteUserIn] = useState(null);
-
-  const notificationCount = 0;
-  /*
-   Effects
-  */
-  // useEffect((message) => {
-  //   toast.success(message)
-  // }, [notificationCount])
+  const [ringing, setRinging] = useState(false);
 
   /*
     Socket events
@@ -30,7 +23,7 @@ function MeetDoctor() {
   const socket = useSocket();
 
   /*
-    Evennt handlers
+    Event handlers
   */
   const handleUserJoined = useCallback(({ user, id }) => {
     console.log(`User: ${user} joined the room`);
@@ -53,6 +46,7 @@ function MeetDoctor() {
   const handleIcomingCall = useCallback(
     async ({ from, offer }) => {
       // Give a ringing caller tune here as an enhancement
+      setRinging(true);
 
       setRemoteSocketId(from);
 
@@ -110,9 +104,25 @@ function MeetDoctor() {
     await peerService.setLocalDescription(ans);
   }, []);
 
+  const handlePlayRingtone = useCallback(() => {
+    const audio = new Audio("/sounds-ringtone.mp3");
+    audio.play();
+
+    return () => {
+      audio.pause();
+      audio.currentTime = 0;
+    };
+  }, []);
+
   /*
     Effects
   */
+  useEffect(() => {
+    handlePlayRingtone();
+
+    return () => handlePlayRingtone();
+  }, [handlePlayRingtone, ringing]);
+
   useEffect(() => {
     peerService.peer.addEventListener("negotiationneeded", handleNegoNeeded);
 
