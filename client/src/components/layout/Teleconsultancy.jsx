@@ -52,7 +52,7 @@ function Teleconsultancy() {
   */
 
   return (
-    <div className="absolute left-[16%] top-0 z-10 h-[100dvh] w-[84%] overflow-y-scroll">
+    <div className="absolute left-[16%] top-0 z-10 h-[100dvh] w-[84%] overflow-y-auto">
       <Toaster position="top-right" />
 
       <Header name="Tele-consultancy" />
