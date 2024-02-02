@@ -37,17 +37,17 @@ function MeetDoctor() {
       video: true,
     });
 
+    // Give a ringing caller tune here as an enhancement
+    setRinging(true);
+
     const offer = await peerService.getoffer();
     socket.emit("user:call", { to: remoteSocketId, offer });
     setMyStream(stream);
     setRemoteUserIn(null); // May be remove further
   }, [remoteSocketId, socket]);
 
-  const handleIcomingCall = useCallback(
+  const handleIncomingCall = useCallback(
     async ({ from, offer }) => {
-      // Give a ringing caller tune here as an enhancement
-      setRinging(true);
-
       setRemoteSocketId(from);
 
       toast.success(`Incoming call from ${from}`);
@@ -144,14 +144,14 @@ function MeetDoctor() {
 
   useEffect(() => {
     socket.on("user:joined", handleUserJoined);
-    socket.on("call:incoming", handleIcomingCall);
+    socket.on("call:incoming", handleIncomingCall);
     socket.on("call:accepted", handleCallAccepted);
     socket.on("peer:nego:needed", handleNegoNeededIncoming);
     socket.on("peer:nego:final", handleNegoNeededFinal);
 
     return () => {
       socket.off("user:joined", handleUserJoined);
-      socket.off("call:incoming", handleIcomingCall);
+      socket.off("call:incoming", handleIncomingCall);
       socket.off("call:accepted", handleCallAccepted);
       socket.off("peer:nego:needed", handleNegoNeededIncoming);
       socket.off("peer:nego:final", handleNegoNeededFinal);
@@ -159,7 +159,7 @@ function MeetDoctor() {
   }, [
     socket,
     handleUserJoined,
-    handleIcomingCall,
+    handleIncomingCall,
     handleCallAccepted,
     handleNegoNeededIncoming,
     handleNegoNeededFinal,
