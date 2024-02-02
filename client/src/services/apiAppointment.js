@@ -1,6 +1,6 @@
 import axios from "axios";
 import moment from "moment"
-const API_URL = "http://127.0.0.1:8000/api/v1";
+const API_URL = "https://doctero-api-onrender.onrender.com/api/v1";
 
 export async function getAppointentsForDoctor({ doctor, span }) {
   try {

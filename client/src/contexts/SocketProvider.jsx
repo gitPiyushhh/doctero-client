@@ -22,7 +22,7 @@ export function useSocket() {
 */
 export const SocketProvider = ({ children }) => {
   const socket = useMemo(() => {
-    return io("http://localhost:9000"); 
+    return io("https://doctero-api-onrender2.onrender.com"); 
   }, []);
 
   useEffect(() => {

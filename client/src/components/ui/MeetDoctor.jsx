@@ -14,6 +14,7 @@ function MeetDoctor() {
   const [remoteSocketId, setRemoteSocketId] = useState(null);
   const [myStream, setMyStream] = useState(null);
   const [remoteStream, setRemoteStream] = useState(null);
+  const [remoteUserIn, setRemoteUserIn] = useState(null);
 
   const notificationCount = 0;
   /*
@@ -46,6 +47,7 @@ function MeetDoctor() {
     const offer = await peerService.getoffer();
     socket.emit("user:call", { to: remoteSocketId, offer });
     setMyStream(stream);
+    setRemoteUserIn(null); // May be remove further
   }, [remoteSocketId, socket]);
 
   const handleIcomingCall = useCallback(
@@ -68,6 +70,7 @@ function MeetDoctor() {
 
       const answer = await peerService.getAnswer(offer);
       socket.emit("call:accepted", { to: from, answer });
+      setRemoteUserIn(from); // May be remove further
     },
     [socket]
   );
@@ -85,8 +88,9 @@ function MeetDoctor() {
       peerService.setLocalDescription(answer);
       console.log("Call accepted");
       handleSendStreams();
+      setRemoteUserIn(remoteSocketId); // May be remove further
     },
-    [handleSendStreams]
+    [handleSendStreams, remoteSocketId]
   );
 
   const handleNegoNeeded = useCallback(async () => {
@@ -163,13 +167,13 @@ function MeetDoctor() {
       name: "voice",
       open: "21",
       close: "27",
-      openHandler: () => alert('No handler till 🙂')
+      openHandler: () => alert("No handler till 🙂"),
     },
     {
       name: "call",
       open: "23",
       higlight: true,
-      openHandler: () => alert('No handler till 🙂')
+      openHandler: () => alert("No handler till 🙂"),
     },
     {
       name: "video",
@@ -181,7 +185,7 @@ function MeetDoctor() {
       name: "settings",
       open: "22",
       round: true,
-      openHandler: () => alert('No handler till 🙂')
+      openHandler: () => alert("No handler till 🙂"),
     },
   ];
 
@@ -193,7 +197,7 @@ function MeetDoctor() {
       <Toaster position="top-right" />
 
       <div className="flex h-[100%]">
-        <div className="bg-black rounded-r-md h-full w-[64%] shadow-lg flex flex-col items-center relative">
+        <div className="bg-black h-full w-[64%] shadow-lg flex flex-col items-center relative">
           <div className="p-4 rounded-t-md w-full flex justify-between bg-black absolute z-20">
             {/* About meet */}
             <div className="flex space-x-2 items-center">
@@ -206,7 +210,7 @@ function MeetDoctor() {
             </div>
 
             <div className="flex space-x-4">
-              {remoteSocketId && (
+              {remoteSocketId && !remoteUserIn && (
                 <button
                   onClick={handleCallUser}
                   className="focus:outline-none active:outline-none"
@@ -214,6 +218,16 @@ function MeetDoctor() {
                   Let patient in
                 </button>
               )}
+
+              {/* { remoteSocketId ? (
+                <p className="h-full flex items-center">
+                  Please wait while the host let you in
+                </p>
+              ) : (
+                <p className="h-full flex items-center">
+                  No one else in the room
+                </p>
+              )} */}
 
               <span className="p-2 px-4 rounded-md bg-[#0008] flex items-center">
                 10:00
@@ -246,7 +260,11 @@ function MeetDoctor() {
               </div>
             )}
 
-            <MeetControlPanel localStream={myStream} remoteStream={remoteStream} controlsMetaData={controlsMetaData}/>
+            <MeetControlPanel
+              localStream={myStream}
+              remoteStream={remoteStream}
+              controlsMetaData={controlsMetaData}
+            />
           </div>
         </div>
 
@@ -259,4 +277,3 @@ function MeetDoctor() {
 }
 
 export default MeetDoctor;
-

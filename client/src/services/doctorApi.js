@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-const API_URL = 'http://localhost:8000/api/v1/therpists';
+const API_URL = 'https://doctero-api-onrender.onrender.com/api/v1/therpists';
 
 const doctor = localStorage.getItem('user');
 

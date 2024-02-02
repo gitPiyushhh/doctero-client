@@ -2,7 +2,7 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { transformDate } from '../utilities/transformDate';
 
-const API_URL = 'http://localhost:8000/api/v1';
+const API_URL = 'https://doctero-api-onrender.onrender.com/api/v1';
 /*
   Meta data
 */

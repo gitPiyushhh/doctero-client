@@ -22,7 +22,7 @@ export const signup = createAsyncThunk(
     try {
       // 1. Backend request
       const data = await axios.post(
-        'http://localhost:8000/api/v1/auth/signup',
+        'https://doctero-api-onrender.onrender.com/api/v1/auth/signup',
         formData,
       );
 
@@ -49,7 +49,7 @@ export const login = createAsyncThunk('auth/login', async function (formData) {
   try {
     // 1. Backend request
     const data = await axios.post(
-      'http://localhost:8000/api/v1/auth/login',
+      'https://doctero-api-onrender.onrender.com/api/v1/auth/login',
       formData,
     );
 

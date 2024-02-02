@@ -55,8 +55,8 @@ function Teleconsultancy() {
       <Header name="Tele-consultancy" />
 
       <div className="flex h-[91%]">
-        <div className="h-[92%] p-4 w-[64%] flex flex-col justify-start items-center">
-          <div className="flex flex-col gap-6">
+        <div className="h-[92%] w-[64%] flex flex-col justify-start items-center px-8 py-5 ">
+          <div className="flex flex-col gap-6 outline outline-[1px] outline-stone-300 p-4 h-full rounded-sm">
             <img
               src="/User.png"
               alt="patient_img"
@@ -78,7 +78,7 @@ function Teleconsultancy() {
             </span>
 
             <button
-              className="bg-[#136DB4] text-stone-50 w-fit"
+              className="bg-[#136DB4] text-stone-50 w-fit px-16 py-2"
               onClick={handleJoinMeet}
             >
               Join now
