@@ -49,8 +49,8 @@ function MeetDoctor() {
     async ({ from, offer }) => {
       setRemoteSocketId(from);
 
-      toast.success(`Incoming call from ${from}`);
-      console.log(`Incoming call from ${from}: ${offer}`);
+      toast.success(`User ${from} let you in`);
+      console.log(`User ${from} let you in, ${offer}`);
 
       /*
         Stream (Remote user on)
