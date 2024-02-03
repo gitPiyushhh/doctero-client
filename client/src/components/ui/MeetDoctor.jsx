@@ -16,7 +16,7 @@ function MeetDoctor() {
   const [remoteStream, setRemoteStream] = useState(null);
   const [remoteUserIn, setRemoteUserIn] = useState(null);
   const [ringing, setRinging] = useState(false);
-
+  const [newNotification, setNewNotification] = useState(null);
   /*
     Socket events
   */
@@ -30,6 +30,7 @@ function MeetDoctor() {
     toast.success(`User: ${user} joined the room`);
     setRinging(false);
     setRemoteSocketId(id);
+    setNewNotification(`User: ${user} joined the room`);
   }, []);
 
   const handleCallUser = useCallback(async () => {
@@ -121,16 +122,39 @@ function MeetDoctor() {
     };
   }, [ringing]);
 
+  const handlePlayNotification = useCallback(() => {
+    console.log("Notification recieved");
+    let audio = new Audio("/sounds-notification.mp3");
+
+    if(newNotification) {
+      audio.play();
+      audio.currentTime = 0;
+    }
+
+    return () => {
+      audio.pause();
+      audio.currentTime = 0;
+    };
+  }, [newNotification]);
+
   /*
     Effects
   */
   useEffect(() => {
-    const stopRingtone = handlePlayRingtone();
+    const playRingtone = handlePlayRingtone();
 
     return () => {
-      stopRingtone();
+      playRingtone();
     };
   }, [handlePlayRingtone, ringing]);
+
+  useEffect(() => {
+    const playNotification = handlePlayNotification();
+
+    return () => {
+      playNotification();
+    };
+  }, [handlePlayNotification]);
 
   useEffect(() => {
     peerService.peer.addEventListener("negotiationneeded", handleNegoNeeded);
@@ -148,6 +172,7 @@ function MeetDoctor() {
       console.log("GOT REMOTE TRACKS 🥳");
       console.log(incomingRemoteStream);
       setRemoteStream(incomingRemoteStream[0]);
+      setNewNotification('Remote user opened camera')
     });
   }, []);
 
