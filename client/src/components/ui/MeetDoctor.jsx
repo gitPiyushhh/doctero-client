@@ -28,6 +28,7 @@ function MeetDoctor() {
   const handleUserJoined = useCallback(({ user, id }) => {
     console.log(`User: ${user} joined the room`);
     toast.success(`User: ${user} joined the room`);
+    setRinging(false);
     setRemoteSocketId(id);
   }, []);
 
@@ -36,9 +37,6 @@ function MeetDoctor() {
       audio: true,
       video: true,
     });
-
-    // Give a ringing caller tune here as an enhancement
-      setRinging(true);
 
     const offer = await peerService.getoffer();
     socket.emit("user:call", { to: remoteSocketId, offer });
@@ -104,23 +102,34 @@ function MeetDoctor() {
     await peerService.setLocalDescription(ans);
   }, []);
 
+  const handleRingUser = useCallback(async () => {
+    // Give a ringing caller tune here as an enhancement
+    setRinging(true);
+  }, []);
+
   const handlePlayRingtone = useCallback(() => {
-    const audio = new Audio("/sounds-ringtone.mp3");
-    audio.play();
+    console.log("Played ringtone");
+    let audio = new Audio("/sounds-ringtone.mp3");
+
+    if (ringing) {
+      audio.play();
+    }
 
     return () => {
       audio.pause();
       audio.currentTime = 0;
     };
-  }, []);
+  }, [ringing]);
 
   /*
     Effects
   */
   useEffect(() => {
-    handlePlayRingtone();
+    const stopRingtone = handlePlayRingtone();
 
-    return () => handlePlayRingtone();
+    return () => {
+      stopRingtone();
+    };
   }, [handlePlayRingtone, ringing]);
 
   useEffect(() => {
@@ -219,13 +228,24 @@ function MeetDoctor() {
               <span>Jonas Smedthman</span>
             </div>
 
-            <div className="flex space-x-4">
+            <div className="flex space-x-4 items-center">
               {remoteSocketId && !remoteUserIn && (
                 <button
                   onClick={handleCallUser}
                   className="focus:outline-none active:outline-none"
                 >
                   Let patient in
+                </button>
+              )}
+
+              {!remoteSocketId && <p>No one in room</p>}
+
+              {!remoteSocketId && (
+                <button
+                  onClick={handleRingUser}
+                  className="focus:outline-none active:outline-none"
+                >
+                  Call user
                 </button>
               )}
 
