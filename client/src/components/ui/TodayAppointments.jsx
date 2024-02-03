@@ -1,17 +1,29 @@
 import React from "react";
 import NoData from "../layout/NoData";
 import AppointmentCard from "./AppointmentCard";
-import { getTodayAppointentsForDoctor } from "../../services/apiAppointment";
-import { useQuery } from "@tanstack/react-query";
+import FullPageSpinner from "../layout/FullPageSpinner";
 
-function TodayAppointments() {
-  const user = JSON.parse(localStorage.getItem("user"));
+function TodayAppointments({
+  isLoading,
+  todayAppointments,
+  activeAppointmentId,
+  handleActiveAppointmentId,
+}) {
+  /*
+    Conditional rendering
+  */
+  if (isLoading) {
+    return (
+      <div className="flex h-[100%] w-full flex-col overflow-scroll rounded-md bg-white px-4 py-2 shadow-sm">
+        <span className="text-md text-stone-500">Today appointments</span>
+        <FullPageSpinner />
+      </div>
+    );
+  }
 
-  const { data: todayAppointments } = useQuery({
-    queryKey: ["todayAppointments"],
-    queryFn: () => getTodayAppointentsForDoctor({ doctor: user.doctor }),
-  });
-
+  /*
+    JSX
+  */
   return (
     <div className="flex h-[100%] w-full flex-col overflow-scroll rounded-md bg-white px-4 py-2 shadow-sm">
       <span className="text-md text-stone-500">Today appointments</span>
@@ -19,10 +31,9 @@ function TodayAppointments() {
         todayAppointments.map((appointment) => (
           <AppointmentCard
             key={appointment._id}
-            isActive={true}
-            isLive={true}
+            isActive={appointment?._id === activeAppointmentId}
             data={appointment}
-            handleCardClick={() => console.log("No click assinged")}
+            handleCardClick={handleActiveAppointmentId}
           />
         ))
       ) : (

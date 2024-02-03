@@ -135,7 +135,11 @@ function Dashboard() {
   // }
 
   if (isLoadingAppointments || isLoadingPatients) {
-    return <FullPageSpinner />;
+    return (
+      <div className="absolute left-[16%] top-0 z-10 h-[100dvh] w-[84%]">
+        <FullPageSpinner />
+      </div>
+    );
   }
 
   if (isErrorAppointments || isErrorPatients) {

@@ -1,7 +1,10 @@
 import axios from "axios";
-import moment from "moment"
+import moment from "moment";
 const API_URL = "https://doctero-api-onrender.onrender.com/api/v1";
 
+/*
+  Get
+*/
 export async function getAppointentsForDoctor({ doctor, span }) {
   try {
     const data = await axios.get(
@@ -41,6 +44,20 @@ export async function getTodayAppointentsForDoctor({ doctor }) {
   }
 }
 
+export async function getTodayRemoteAppointentsForDoctor({ doctor }) {
+  try {
+    const dataRemote = await axios.get(
+      `${API_URL}/therapists/appointments/${doctor}?limit=10000&type=Remote&sortBy=date&sortOrder=desc&dateRange=Today`
+    );
+
+    const appointmentsRemote = dataRemote.data.data.appointments;
+
+    return appointmentsRemote;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 export async function getCustomDayAppointmentsForDoctor({ doctor, day }) {
   try {
     const data = await axios.get(
@@ -73,19 +90,36 @@ export async function getFirstAppointentsForDoctor({ doctor, patient }) {
     const appointment = data.data.data.earliestAppointment;
     const appointmentRemote = dataRemote.data.data.earliestAppointment;
 
-    const allAppointments = moment(appointment.date) > moment(appointmentRemote.date) ? appointmentRemote : appointment;
+    const allAppointments =
+      moment(appointment.date) > moment(appointmentRemote.date)
+        ? appointmentRemote
+        : appointment;
     return allAppointments;
   } catch (err) {
     console.error(err);
   }
 }
 
+export async function getAppointment(appointmentId) {
+  try {
+    const data = await axios.get(`${API_URL}/appointments/${appointmentId}`);
+
+    return data.data.data.appointment;
+  } catch (err) {
+    console.error(err);
+    throw new Error(err.message);
+  }
+}
+
+/*
+  Create
+*/
 export async function createAppointment(appointment) {
   try {
     const data = await axios.post(`${API_URL}/appointments`, appointment);
 
     return data.data;
-  } catch(err) {
+  } catch (err) {
     console.error(err);
     throw new Error(err.message);
   }

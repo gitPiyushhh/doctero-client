@@ -15,8 +15,9 @@ function MeetDoctor() {
   const [myStream, setMyStream] = useState(null);
   const [remoteStream, setRemoteStream] = useState(null);
   const [remoteUserIn, setRemoteUserIn] = useState(null);
-  const [ringing, setRinging] = useState(false);
+  const [ringing, setRinging] = useState("Call user");
   const [newNotification, setNewNotification] = useState(null);
+
   /*
     Socket events
   */
@@ -28,7 +29,7 @@ function MeetDoctor() {
   const handleUserJoined = useCallback(({ user, id }) => {
     console.log(`User: ${user} joined the room`);
     toast.success(`User: ${user} joined the room`);
-    setRinging(false);
+    setRinging(null);
     setRemoteSocketId(id);
     setNewNotification(`User: ${user} joined the room`);
   }, []);
@@ -105,20 +106,33 @@ function MeetDoctor() {
 
   const handleRingUser = useCallback(async () => {
     // Give a ringing caller tune here as an enhancement
-    setRinging(true);
+    setRinging('Ringing');
+
+    return () => {
+      setRinging('Not answered');
+    };
   }, []);
 
   const handlePlayRingtone = useCallback(() => {
     console.log("Played ringtone");
     let audio = new Audio("/sounds-ringtone.mp3");
 
-    if (ringing) {
+    audio.addEventListener("timeupdate", () => {
+      if (audio.currentTime >= 15) {
+        audio.pause();
+        audio.currentTime = 0;
+        setRinging('Not answered')
+      }
+    });
+
+    if (ringing === 'Ringing') {
       audio.play();
     }
 
     return () => {
       audio.pause();
       audio.currentTime = 0;
+      audio.removeEventListener("timeupdate", () => {});
     };
   }, [ringing]);
 
@@ -126,7 +140,7 @@ function MeetDoctor() {
     console.log("Notification recieved");
     let audio = new Audio("/sounds-notification.mp3");
 
-    if(newNotification) {
+    if (newNotification) {
       audio.play();
       audio.currentTime = 0;
     }
@@ -172,7 +186,7 @@ function MeetDoctor() {
       console.log("GOT REMOTE TRACKS 🥳");
       console.log(incomingRemoteStream);
       setRemoteStream(incomingRemoteStream[0]);
-      setNewNotification('Remote user opened camera')
+      setNewNotification("Remote user opened camera");
     });
   }, []);
 
@@ -270,7 +284,7 @@ function MeetDoctor() {
                   onClick={handleRingUser}
                   className="focus:outline-none active:outline-none"
                 >
-                  Call user
+                  { ringing }
                 </button>
               )}
 

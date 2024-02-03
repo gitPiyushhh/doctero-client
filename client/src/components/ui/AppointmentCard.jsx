@@ -1,10 +1,24 @@
 import React from "react";
 
-function AppointmentCard({ data, isActive, isLive, handleCardClick }) {
+function AppointmentCard({ data, isActive, handleCardClick }) {
+  const now = new Date().getHours();
+
+  /*
+    State
+  */
+  const isLive = data?.startTime >= now && data?.startTime <= now + 1;
+
+  /*
+    Event handlers
+  */
+  function handleChangeAppointment(appointmentId) {
+    handleCardClick(appointmentId);
+  }
+
   return (
     <div
       className={`my-2 flex w-full items-center justify-between px-4 py-4 ${isActive && "bg-blue-50"} rounded-md cursor-pointer relative`}
-      onClick={() => handleCardClick(data)}
+      onClick={() => handleChangeAppointment(data?._id)}
     >
       {isLive && (
         <div className="absolute right-0 top-0">
@@ -30,7 +44,9 @@ function AppointmentCard({ data, isActive, isLive, handleCardClick }) {
           <span
             className={`text-sm ${isActive ? "text-[#146fb4d7]" : "text-stone-400"}`}
           >
-            {data?.notes || data?.problem || "Notes here"}
+            {data?.notes ||
+              data?.problem.slice(0, 25).concat("...") ||
+              "Notes here"}
           </span>
         </div>
       </div>
