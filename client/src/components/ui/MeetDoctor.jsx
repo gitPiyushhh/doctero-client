@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useReducer, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import ReactPlayer from "react-player";
 import peerService from "../../services/meet";
@@ -6,6 +6,23 @@ import peerService from "../../services/meet";
 import Modal from "./Modal";
 import MeetControlPanel from "./MeetControlPanel";
 import { useSocket } from "../../contexts/SocketProvider";
+
+const initialState = {
+  localMic: false,
+  localCamera: false,
+  remoteMic: false,
+  remoteCamera: false,
+}
+
+const reducer = (state, action) => {
+  switch(action.type) {
+    case 'mute':
+      return {...state, localMic: true}
+    
+    default:
+      return {...state}
+  }
+}
 
 function MeetDoctor() {
   /*
@@ -18,7 +35,8 @@ function MeetDoctor() {
   const [ringing, setRinging] = useState("Call user");
   const [newNotification, setNewNotification] = useState(null);
 
-  const [muted, setMuted] = useState(false);
+
+  const [state, action] = useReducer(reducer, initialState)
 
   /*
     Socket events
@@ -108,10 +126,10 @@ function MeetDoctor() {
 
   const handleRingUser = useCallback(async () => {
     // Give a ringing caller tune here as an enhancement
-    setRinging('Ringing');
+    setRinging("Ringing");
 
     return () => {
-      setRinging('Not answered');
+      setRinging("Not answered");
     };
   }, []);
 
@@ -123,11 +141,11 @@ function MeetDoctor() {
       if (audio.currentTime >= 15) {
         audio.pause();
         audio.currentTime = 0;
-        setRinging('Not answered')
+        setRinging("Not answered");
       }
     });
 
-    if (ringing === 'Ringing') {
+    if (ringing === "Ringing") {
       audio.play();
     }
 
@@ -286,7 +304,7 @@ function MeetDoctor() {
                   onClick={handleRingUser}
                   className="focus:outline-none active:outline-none"
                 >
-                  { ringing }
+                  {ringing}
                 </button>
               )}
 
@@ -308,20 +326,16 @@ function MeetDoctor() {
 
           {/* User screen */}
           <div className="absolute top-0 left-0 w-full h-full">
-            <ReactPlayer
-              url={myStream}
-              playing
-              height="94%"
-              width="100%"
-            />
+            <ReactPlayer url={remoteStream} playing height="94%" width="100%" />
           </div>
 
           <div className="flex justify-center w-full">
             {/* Remote screen */}
-            {remoteStream && (
+            {myStream && (
               <div className=" shadow-sm absolute bottom-0 right-0 w-[40%] h-[20%]  bg-black rounded-md">
                 <ReactPlayer
-                  url={remoteStream}
+                  url={myStream}
+                  muted
                   playing
                   height="100%"
                   width="100%"
