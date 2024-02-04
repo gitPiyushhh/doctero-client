@@ -52,6 +52,8 @@ export async function getTodayRemoteAppointentsForDoctor({ doctor }) {
 
     const appointmentsRemote = dataRemote.data.data.appointments;
 
+    console.log(appointmentsRemote);
+
     return appointmentsRemote;
   } catch (err) {
     console.error(err);
@@ -101,13 +103,15 @@ export async function getFirstAppointentsForDoctor({ doctor, patient }) {
 }
 
 export async function getAppointment(appointmentId) {
-  try {
-    const data = await axios.get(`${API_URL}/appointments/${appointmentId}`);
+  if (appointmentId) {
+    try {
+      const data = await axios.get(`${API_URL}/appointments/${appointmentId}`);
 
-    return data.data.data.appointment;
-  } catch (err) {
-    console.error(err);
-    throw new Error(err.message);
+      return data.data.data.appointment;
+    } catch (err) {
+      console.error(err);
+      throw new Error(err.message);
+    }
   }
 }
 

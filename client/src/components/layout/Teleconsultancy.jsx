@@ -34,7 +34,7 @@ function Teleconsultancy() {
     useQuery({
       queryKey: ["todayAppointments"],
       queryFn: () =>
-        getTodayRemoteAppointentsForDoctor({ doctor: user.doctor }),
+        getTodayRemoteAppointentsForDoctor({ doctor: user?.doctor }),
     });
 
   const { isLoading: isLoadingAppointment, data: appointment } = useQuery({
@@ -52,7 +52,7 @@ function Teleconsultancy() {
     UI effects
   */
   useEffect(() => {
-    setActiveAppointmentId(todayAppointments?.[0]._id);
+    if(todayAppointments?.length) setActiveAppointmentId(todayAppointments?.[0]?._id);
   }, [todayAppointments]);
 
   useEffect(() => {
@@ -148,10 +148,13 @@ function Teleconsultancy() {
                   className={`bg-stone-400 text-stone-50 w-fit px-16 py-2 rounded-md`}
                   disabled
                 >
-                  Scheduled at{" "}
-                  {appointment?.startTime > 12
-                    ? `${Math.round(appointment.startTime % 12)}:00 PM`
-                    : `${appointment.startTime}:00 AM`}
+                  {now > appointment?.startTime ? `Completed at
+                  ${appointment?.startTime > 12
+                    ? `${Math.round(appointment?.startTime % 12)}:00 PM`
+                    : `${appointment?.startTime}:00 AM`}` : `Scheduled at
+                    ${appointment?.startTime > 12
+                      ? `${Math.round(appointment?.startTime % 12)}:00 PM`
+                      : `${appointment?.startTime}:00 AM`}, Today`}
                 </button>
               ) : (
                 <button

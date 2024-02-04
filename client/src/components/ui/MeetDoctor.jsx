@@ -18,6 +18,8 @@ function MeetDoctor() {
   const [ringing, setRinging] = useState("Call user");
   const [newNotification, setNewNotification] = useState(null);
 
+  const [muted, setMuted] = useState(false);
+
   /*
     Socket events
   */
@@ -309,7 +311,6 @@ function MeetDoctor() {
             <ReactPlayer
               url={myStream}
               playing
-              muted
               height="94%"
               width="100%"
             />
@@ -322,7 +323,6 @@ function MeetDoctor() {
                 <ReactPlayer
                   url={remoteStream}
                   playing
-                  muted
                   height="100%"
                   width="100%"
                 />
