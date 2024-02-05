@@ -62,13 +62,13 @@ function MeetDoctor() {
     });
 
     const offer = await peerService.getoffer();
-    socket.emit("user:call", { to: remoteSocketId, offer });
+    socket.emit("user:call", { to: remoteSocketId, offer, stream });
     setMyStream(stream);
     setRemoteUserIn(null); // May be remove further
   }, [remoteSocketId, socket]);
 
   const handleIncomingCall = useCallback(
-    async ({ from, offer }) => {
+    async ({ from, offer, stream: incomingStream }) => {
       setRemoteSocketId(from);
 
       toast.success(`User ${from} let you in`);
@@ -82,6 +82,9 @@ function MeetDoctor() {
         video: true,
       });
       setMyStream(stream);
+      setRemoteStream(incomingStream)
+
+      console.log("Remote stream while accepting call: ", incomingStream)
 
       const answer = await peerService.getAnswer(offer);
       socket.emit("call:accepted", { to: from, answer });
