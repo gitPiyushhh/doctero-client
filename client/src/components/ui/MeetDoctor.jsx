@@ -25,7 +25,7 @@ const reducer = (state, action) => {
 };
 
 function MeetDoctor() {
-  const user = JSON.parse(localStorage.getItem('user'))
+  const user = JSON.parse(localStorage.getItem("user"));
 
   /*
     Local state
@@ -44,16 +44,39 @@ function MeetDoctor() {
   */
   const socket = useSocket();
 
+  const handleSetUserStream = useCallback(async () => {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio: true,
+      video: true,
+    });
+
+    setMyStream(stream);
+  }, []);
+
+  handleSetUserStream();
+
   /*
     Event handlers
   */
+  const handleSendStreams = useCallback(async () => {
+    console.log("myStream from sending stream function: ", myStream);
+
+    if (myStream && myStream.getTracks) {
+      for (const track of myStream.getTracks()) {
+        peerService.peer.addTrack(track, myStream);
+      }
+    }
+  }, [myStream]);
+
   const handleUserJoined = useCallback(({ user, id }) => {
     console.log(`User: ${user} joined the room`);
     toast.success(`User: ${user} joined the room`);
     setRinging(null);
     setRemoteSocketId(id);
     setNewNotification(`User: ${user} joined the room`);
-  }, []);
+
+    handleSendStreams()
+  }, [handleSendStreams]);
 
   const handleCallUser = useCallback(async () => {
     const stream = await navigator.mediaDevices.getUserMedia({
@@ -62,19 +85,19 @@ function MeetDoctor() {
     });
 
     const offer = await peerService.getoffer();
-    socket.emit("user:call", { to: remoteSocketId, offer, stream });
+
+    socket.emit("user:call", { to: remoteSocketId, offer });
     setMyStream(stream);
+    handleSendStreams();
     setRemoteUserIn(null); // May be remove further
-  }, [remoteSocketId, socket]);
+  }, [handleSendStreams, remoteSocketId, socket]);
 
   const handleIncomingCall = useCallback(
-    async ({ from, offer, incomingStream }) => {
+    async ({ from, offer }) => {
       setRemoteSocketId(from);
 
       toast.success(`User ${from} let you in`);
       console.log(`User ${from} let you in, ${offer}`);
-
-      console.log("Remote stream while accepting call: ", incomingStream)
 
       /*
         Stream (Remote user on)
@@ -84,7 +107,6 @@ function MeetDoctor() {
         video: true,
       });
       setMyStream(stream);
-      setRemoteStream(incomingStream)
 
       const answer = await peerService.getAnswer(offer);
       socket.emit("call:accepted", { to: from, answer });
@@ -93,22 +115,13 @@ function MeetDoctor() {
     [socket]
   );
 
-  const handleSendStreams = useCallback(() => {
-    if (myStream && myStream.getTracks) {
-      for (const track of myStream.getTracks()) {
-        peerService.peer.addTrack(track, myStream);
-      }
-    }
-  }, [myStream]);
-
   const handleCallAccepted = useCallback(
     ({ from, answer }) => {
       peerService.setLocalDescription(answer);
       console.log("Call accepted");
-      handleSendStreams();
       setRemoteUserIn(remoteSocketId); // May be remove further
     },
-    [handleSendStreams, remoteSocketId]
+    [remoteSocketId]
   );
 
   const handleNegoNeeded = useCallback(async () => {
@@ -208,13 +221,23 @@ function MeetDoctor() {
     peerService.peer.addEventListener("track", async (ev) => {
       const incomingRemoteStream = ev.streams;
       console.log("GOT REMOTE TRACKS 🥳");
-      console.log(incomingRemoteStream);
       setRemoteStream(incomingRemoteStream[0]);
-      console.log("Remote stream updated: ", remoteStream)
       setNewNotification("Remote user opened camera");
-    });
-  }, [remoteStream]);
 
+      console.log(peerService.peer)
+    });
+
+    return () => {
+      peerService.peer.removeEventListener("track", async (ev) => {
+        const incomingRemoteStream = ev.streams;
+        console.log("GOT REMOTE TRACKS 🥳");
+        console.log(incomingRemoteStream);
+        setRemoteStream(incomingRemoteStream[0]);
+        setNewNotification("Remote user opened camera");
+      });
+    };
+  }, [remoteStream]);
+ 
   useEffect(() => {
     socket.on("user:joined", handleUserJoined);
     socket.on("call:incoming", handleIncomingCall);
