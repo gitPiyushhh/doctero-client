@@ -23,6 +23,7 @@ import DashboardPatient, {
   action as createBookingAction,
 } from "./components/layout/DashboardPatient";
 import MeetDoctor from "./components/ui/MeetDoctor";
+import TeleconsultancyPatient from "./components/layout/TeleconsultancyPatient";
 
 const router = createBrowserRouter([
   {
@@ -83,6 +84,10 @@ const router = createBrowserRouter([
       {
         path: "/tele-consultancy/doctor/meet",
         element: <MeetDoctor />,
+      },
+      {
+        path: "/patient/tele-consultancy",
+        element: <TeleconsultancyPatient />,
       },
       {
         path: "/medstore",

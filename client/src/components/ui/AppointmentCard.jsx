@@ -1,12 +1,13 @@
 import React from "react";
 
-function AppointmentCard({ data, isActive, handleCardClick }) {
+function AppointmentCard({ data, patient, isActive, handleCardClick }) {
   const now = new Date().getHours();
 
   /*
     State
   */
-  const isLive = data?.startTime >= now && data?.startTime <= now + 1;
+    const isLive =
+    data?.startTime >= now && data?.startTime <= now + 1;
 
   /*
     Event handlers
@@ -17,7 +18,7 @@ function AppointmentCard({ data, isActive, handleCardClick }) {
 
   return (
     <div
-      className={`my-2 flex w-full items-center justify-between px-4 py-4 ${isActive && "bg-blue-50"} rounded-md cursor-pointer relative`}
+      className={`my-2 flex w-full items-center justify-between px-4 py-4 ${isActive && (patient ? "bg-[#bd93fc18]" : "bg-blue-50")} rounded-md cursor-pointer relative`}
       onClick={() => handleChangeAppointment(data?._id)}
     >
       {isLive && (
@@ -37,22 +38,22 @@ function AppointmentCard({ data, isActive, handleCardClick }) {
         />
         <div className="flex flex-col">
           <span
-            className={`text-md font-semibold  ${isActive ? "text-[#146EB4]" : "text-stone-700"}  `}
+            className={`text-md font-semibold  ${isActive ? (patient ? "text-[#7C51C2]" : "text-[#146EB4]") : "text-stone-700"}  `}
           >
-            {data?.patient.name || "Name"}
+            {(patient ? data?.therapist.name : data?.patient.name) || "Name"}
           </span>
           <span
-            className={`text-sm ${isActive ? "text-[#146fb4d7]" : "text-stone-400"}`}
+            className={`text-sm ${isActive ? patient ? "text-[#9B6DE2]" : "text-[#146fb4d7]" : "text-stone-400"}`}
           >
             {data?.notes ||
-              data?.problem.slice(0, 25).concat("...") ||
+              data?.problem.slice(0, 25).concat("...") || 
               "Notes here"}
           </span>
         </div>
       </div>
 
       <span
-        className={`text-lg block font-bold ${isActive ? "text-[#146EB4]" : "text-stone-700"}`}
+        className={`text-lg block font-bold ${isActive ? (patient ? "text-[#9B6DE2]" : "text-[#146EB4]") : "text-stone-700"}`}
       >
         {data?.startTime > 12
           ? `${Math.round(data.startTime % 12)}:00 PM`

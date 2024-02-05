@@ -20,7 +20,7 @@ const metaDataPatient = [
   { icon: 2, name: 'Appointments', to: '/appointments' },
   { icon: 4, name: 'Billing', to: '/billings' },
   { icon: 5, name: 'Videos', to: '/videos' },
-  { icon: 7, name: 'Tele-consultancy', to: '/tele-consultancy' },
+  { icon: 7, name: 'Tele-consultancy', to: '/patient/tele-consultancy' },
   { icon: 6, name: 'Medstore', to: '/medstore' },
 ];
 

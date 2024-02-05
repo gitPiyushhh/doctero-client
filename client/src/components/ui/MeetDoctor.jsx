@@ -12,19 +12,21 @@ const initialState = {
   localCamera: false,
   remoteMic: false,
   remoteCamera: false,
-}
+};
 
 const reducer = (state, action) => {
-  switch(action.type) {
-    case 'mute':
-      return {...state, localMic: true}
-    
+  switch (action.type) {
+    case "mute":
+      return { ...state, localMic: true };
+
     default:
-      return {...state}
+      return { ...state };
   }
-}
+};
 
 function MeetDoctor() {
+  const user = JSON.parse(localStorage.getItem('user'))
+
   /*
     Local state
   */
@@ -35,8 +37,7 @@ function MeetDoctor() {
   const [ringing, setRinging] = useState("Call user");
   const [newNotification, setNewNotification] = useState(null);
 
-
-  const [state, action] = useReducer(reducer, initialState)
+  const [state, action] = useReducer(reducer, initialState);
 
   /*
     Socket events
@@ -236,7 +237,38 @@ function MeetDoctor() {
   /*
     Meta data
   */
-  const controlsMetaData = [
+  const controlsMetaDataDoctor = [
+    {
+      name: "recording",
+      open: "26",
+    },
+    {
+      name: "voice",
+      open: "21",
+      close: "27",
+      openHandler: () => alert("No handler till 🙂"),
+    },
+    {
+      name: "call",
+      open: "23",
+      higlight: true,
+      openHandler: () => alert("No handler till 🙂"),
+    },
+    {
+      name: "video",
+      open: "24",
+      close: "25",
+      openHandler: () => alert("No handler till 🙂"),
+    },
+    {
+      name: "settings",
+      open: "22",
+      round: true,
+      openHandler: () => alert("No handler till 🙂"),
+    },
+  ];
+
+  const controlsMetaDataPatient = [
     {
       name: "recording",
       open: "26",
@@ -343,11 +375,19 @@ function MeetDoctor() {
               </div>
             )}
 
-            <MeetControlPanel
-              localStream={myStream}
-              remoteStream={remoteStream}
-              controlsMetaData={controlsMetaData}
-            />
+            {user?.doctor ? (
+              <MeetControlPanel
+                localStream={myStream}
+                remoteStream={remoteStream}
+                controlsMetaData={controlsMetaDataDoctor}
+              />
+            ) : (
+              <MeetControlPanel
+                localStream={myStream}
+                remoteStream={remoteStream}
+                controlsMetaData={controlsMetaDataPatient}
+              />
+            )}
           </div>
         </div>
 

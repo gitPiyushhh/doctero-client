@@ -6,6 +6,7 @@ import FullPageSpinner from "../layout/FullPageSpinner";
 function TodayAppointments({
   isLoading,
   todayAppointments,
+  patient,
   activeAppointmentId,
   handleActiveAppointmentId,
 }) {
@@ -32,6 +33,7 @@ function TodayAppointments({
           <AppointmentCard
             key={appointment._id}
             isActive={appointment?._id === activeAppointmentId}
+            patient={patient}
             data={appointment}
             handleCardClick={handleActiveAppointmentId}
           />

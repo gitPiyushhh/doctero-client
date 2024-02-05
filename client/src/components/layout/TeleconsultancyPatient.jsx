@@ -1,19 +1,18 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import toast, { Toaster } from "react-hot-toast";
-
-import TodayAppointments from "../ui/TodayAppointments";
-import Header from "../ui/Header";
-import { useSocket } from "../../contexts/SocketProvider";
 import { useQuery } from "@tanstack/react-query";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   getAppointment,
-  getTodayRemoteAppointentsForDoctor,
+  getTodayRemoteAppointentsForPatient,
 } from "../../services/apiAppointment";
+import toast, { Toaster } from "react-hot-toast";
+import Header from "../ui/Header";
 import FullPageSpinner from "./FullPageSpinner";
+import { useNavigate } from "react-router-dom";
+import TodayAppointments from "../ui/TodayAppointments";
+import { useSocket } from "../../contexts/SocketProvider";
 import NoData from "./NoData";
 
-function Teleconsultancy() {
+function TeleconsultancyPatient() {
   const user = JSON.parse(localStorage.getItem("user"));
   const userId = user._id;
   const now = new Date().getHours();
@@ -32,9 +31,9 @@ function Teleconsultancy() {
   */
   const { isLoading: isLoadingTodayAppointments, data: todayAppointments } =
     useQuery({
-      queryKey: ["todayAppointments"],
+      queryKey: ["todayAppointmentsPatient"],
       queryFn: () =>
-        getTodayRemoteAppointentsForDoctor({ doctor: user?.doctor }),
+        getTodayRemoteAppointentsForPatient({ patient: user?.patient }),
     });
 
   const { isLoading: isLoadingAppointment, data: appointment } = useQuery({
@@ -106,9 +105,6 @@ function Teleconsultancy() {
     });
   }, [handleJoinRoom, socket]);
 
-  /*
-    JSX
-  */
   return (
     <div className="absolute left-[16%] top-0 z-10 h-[100dvh] w-[84%] overflow-y-auto">
       <Toaster position="top-right" />
@@ -124,19 +120,18 @@ function Teleconsultancy() {
           ) : todayAppointments?.length ? (
             <div className="flex flex-col gap-6 outline outline-[1px] w-[100%] outline-stone-200 p-4 h-full rounded-sm">
               <img
-                src="/User.png"
+                src="/Owner.avif"
                 alt="patient_img"
-                className="w-full h-[24rem] rounded-md bg-center object-cover border-[1px]"
+                className="w-full h-[24rem] bg-black rounded-md bg-cover object-contain border-[1px]"
               />
 
               <div className="text-stone-700 flex space-x-4 items-end">
                 <span className="text-xl font-semibold">
-                  {appointment?.patient.name}
+                  {appointment?.therapist.name}
                 </span>
                 <span className="text-sm font-semibold text-stone-500">
                   {appointment?.patient?.age &&
-                    `${appointment?.patient?.age} years, `}{" "}
-                  {appointment?.patient?.gender}
+                    `Specialised in ${appointment?.therapist?.specialization} with ${appointment?.therapist?.experience} YOE`}
                 </span>
               </div>
 
@@ -151,17 +146,17 @@ function Teleconsultancy() {
                 >
                   {now > appointment?.startTime
                     ? `Completed at
-                  ${
-                    appointment?.startTime > 12
-                      ? `${Math.round(appointment?.startTime % 12)}:00 PM`
-                      : `${appointment?.startTime}:00 AM`
-                  }`
+                      ${
+                        appointment?.startTime > 12
+                          ? `${Math.round(appointment?.startTime % 12)}:00 PM`
+                          : `${appointment?.startTime}:00 AM`
+                      }`
                     : `Scheduled at
-                    ${
-                      appointment?.startTime > 12
-                        ? `${Math.round(appointment?.startTime % 12)}:00 PM`
-                        : `${appointment?.startTime}:00 AM`
-                    }, Today`}
+                        ${
+                          appointment?.startTime > 12
+                            ? `${Math.round(appointment?.startTime % 12)}:00 PM`
+                            : `${appointment?.startTime}:00 AM`
+                        }, Today`}
                 </button>
               ) : (
                 <button
@@ -195,6 +190,7 @@ function Teleconsultancy() {
         <div className="h-[91vh] p-4 w-[36%] flex justify-center items-center">
           <TodayAppointments
             todayAppointments={todayAppointments}
+            patient={true}
             isLoading={isLoadingTodayAppointments}
             activeAppointmentId={activeAppointmentId}
             handleActiveAppointmentId={(appointmentId) =>
@@ -207,4 +203,4 @@ function Teleconsultancy() {
   );
 }
 
-export default Teleconsultancy;
+export default TeleconsultancyPatient;
