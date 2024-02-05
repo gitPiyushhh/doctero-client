@@ -68,11 +68,13 @@ function MeetDoctor() {
   }, [remoteSocketId, socket]);
 
   const handleIncomingCall = useCallback(
-    async ({ from, offer, stream: incomingStream }) => {
+    async ({ from, offer, incomingStream }) => {
       setRemoteSocketId(from);
 
       toast.success(`User ${from} let you in`);
       console.log(`User ${from} let you in, ${offer}`);
+
+      console.log("Remote stream while accepting call: ", incomingStream)
 
       /*
         Stream (Remote user on)
@@ -83,8 +85,6 @@ function MeetDoctor() {
       });
       setMyStream(stream);
       setRemoteStream(incomingStream)
-
-      console.log("Remote stream while accepting call: ", incomingStream)
 
       const answer = await peerService.getAnswer(offer);
       socket.emit("call:accepted", { to: from, answer });
@@ -210,9 +210,10 @@ function MeetDoctor() {
       console.log("GOT REMOTE TRACKS 🥳");
       console.log(incomingRemoteStream);
       setRemoteStream(incomingRemoteStream[0]);
+      console.log("Remote stream updated: ", remoteStream)
       setNewNotification("Remote user opened camera");
     });
-  }, []);
+  }, [remoteStream]);
 
   useEffect(() => {
     socket.on("user:joined", handleUserJoined);
