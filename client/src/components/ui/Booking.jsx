@@ -34,11 +34,6 @@ function transformBookingDetails(selected) {
   return [formattedDate, startHour];
 }
 
-/*
-  Logged in user
-*/
-const user = JSON.parse(localStorage.getItem("user"));
-
 const monthNames = [
   "Jan",
   "Feb",
@@ -55,6 +50,11 @@ const monthNames = [
 ];
 
 function Booking({ data, selected, handleTimeTaken, onSubmit }) {
+  /*
+    Logged in user
+  */
+  const user = JSON.parse(localStorage.getItem("user"));
+
   /*
     Local state
   */

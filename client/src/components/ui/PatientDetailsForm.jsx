@@ -281,6 +281,8 @@ export async function action({ request }) {
     return redirect('/form-patient');
   }
 
+  console.log("New patient: ", newPatient)
+
   const oldUser = JSON.parse(localStorage.getItem('user'));
 
   // Update remote state

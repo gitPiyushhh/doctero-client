@@ -6,18 +6,36 @@ import peerService from "../../services/meet";
 import Modal from "./Modal";
 import MeetControlPanel from "./MeetControlPanel";
 import { useSocket } from "../../contexts/SocketProvider";
+import Message from "./Message";
 
 const initialState = {
   localMic: false,
   localCamera: false,
   remoteMic: false,
   remoteCamera: false,
+  chat: [],
 };
 
 const reducer = (state, action) => {
   switch (action.type) {
     case "mute":
       return { ...state, localMic: true };
+
+    case "messageSent":
+      const newMessage = {
+        text: action.payload.text,
+        time: action.payload.time,
+        type: "local",
+      };
+      return { ...state, chat: [...state.chat, newMessage] };
+
+    case "messageRecieved":
+      const newMessageRemote = {
+        text: action.payload.text,
+        time: action.payload.time,
+        type: "remote",
+      };
+      return { ...state, chat: [...state.chat, newMessageRemote] };
 
     default:
       return { ...state };
@@ -37,7 +55,9 @@ function MeetDoctor() {
   const [ringing, setRinging] = useState("Call user");
   const [newNotification, setNewNotification] = useState(null);
 
-  const [state, action] = useReducer(reducer, initialState);
+  const [message, setMessage] = useState("");
+
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   /*
     Socket events
@@ -58,9 +78,31 @@ function MeetDoctor() {
   /*
     Event handlers
   */
-  const handleSendStreams = useCallback(async () => {
-    console.log("myStream from sending stream function: ", myStream);
+  function hasRemoteStream(peerConnection) {
+    const transceivers = peerConnection.getTransceivers();
 
+    for (const transceiver of transceivers) {
+      if (transceiver.receiver.track) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  const handleSendStreams = useCallback(async () => {
+    if (!hasRemoteStream(peerService.peer)) {
+      if (myStream && myStream.getTracks) {
+        for (const track of myStream.getTracks()) {
+          peerService.peer.addTrack(track, myStream);
+        }
+      }
+
+      console.log("We are setting up the remote stream ..");
+    }
+  }, [myStream]);
+
+  const handleSendStreamHandler = useCallback(() => {
     if (myStream && myStream.getTracks) {
       for (const track of myStream.getTracks()) {
         peerService.peer.addTrack(track, myStream);
@@ -68,15 +110,18 @@ function MeetDoctor() {
     }
   }, [myStream]);
 
-  const handleUserJoined = useCallback(({ user, id }) => {
-    console.log(`User: ${user} joined the room`);
-    toast.success(`User: ${user} joined the room`);
-    setRinging(null);
-    setRemoteSocketId(id);
-    setNewNotification(`User: ${user} joined the room`);
+  const handleUserJoined = useCallback(
+    ({ user, id }) => {
+      console.log(`User: ${user} joined the room`);
+      toast.success(`User: ${user} joined the room`);
+      setRinging(null);
+      setRemoteSocketId(id);
+      setNewNotification(`User: ${user} joined the room`);
 
-    handleSendStreams()
-  }, [handleSendStreams]);
+      handleSendStreams();
+    },
+    [handleSendStreams]
+  );
 
   const handleCallUser = useCallback(async () => {
     const stream = await navigator.mediaDevices.getUserMedia({
@@ -188,6 +233,40 @@ function MeetDoctor() {
     };
   }, [newNotification]);
 
+  const handleSendMessage = useCallback(async () => {
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes().toString().padStart(2, "0");
+
+    const tempMessage = message;
+
+    const messagePayload = {
+      text: tempMessage,
+      time: `${hours}:${minutes}`,
+      type: "local",
+    };
+    dispatch({ type: "messageSent", payload: messagePayload });
+    socket.emit("chat:message", { to: remoteSocketId, message: tempMessage });
+    setMessage("");
+    console.log(message);
+  }, [message, remoteSocketId, socket, dispatch]);
+
+  const handleRecieveMessage = useCallback(({ message }) => {
+    const now = new Date();
+    const hours = now.getHours();
+    const minutes = now.getMinutes().toString().padStart(2, "0");
+
+    const messagePayload = {
+      text: message,
+      time: `${hours}:${minutes}`,
+      type: "remote",
+    };
+
+    toast.success("A new message recieved");
+    setNewNotification(`A new message recieved at: ${Date.now()}`);
+    dispatch({ type: "messageRecieved", payload: messagePayload });
+  }, []);
+
   /*
     Effects
   */
@@ -224,7 +303,7 @@ function MeetDoctor() {
       setRemoteStream(incomingRemoteStream[0]);
       setNewNotification("Remote user opened camera");
 
-      console.log(peerService.peer)
+      console.log(peerService.peer);
     });
 
     return () => {
@@ -237,13 +316,14 @@ function MeetDoctor() {
       });
     };
   }, [remoteStream]);
- 
+
   useEffect(() => {
     socket.on("user:joined", handleUserJoined);
     socket.on("call:incoming", handleIncomingCall);
     socket.on("call:accepted", handleCallAccepted);
     socket.on("peer:nego:needed", handleNegoNeededIncoming);
     socket.on("peer:nego:final", handleNegoNeededFinal);
+    socket.on("chat:message", handleRecieveMessage);
 
     return () => {
       socket.off("user:joined", handleUserJoined);
@@ -251,6 +331,7 @@ function MeetDoctor() {
       socket.off("call:accepted", handleCallAccepted);
       socket.off("peer:nego:needed", handleNegoNeededIncoming);
       socket.off("peer:nego:final", handleNegoNeededFinal);
+      socket.off("chat:message", handleRecieveMessage);
     };
   }, [
     socket,
@@ -259,6 +340,7 @@ function MeetDoctor() {
     handleCallAccepted,
     handleNegoNeededIncoming,
     handleNegoNeededFinal,
+    handleRecieveMessage,
   ]);
 
   /*
@@ -316,7 +398,10 @@ function MeetDoctor() {
       name: "video",
       open: "24",
       close: "25",
-      openHandler: handleSendStreams,
+      openHandler: () => {
+        console.log("Contol has been clicked");
+        handleSendStreamHandler();
+      },
     },
     {
       name: "settings",
@@ -418,8 +503,47 @@ function MeetDoctor() {
           </div>
         </div>
 
-        <div className="w-[36%] h-full p-4">
-          <Modal></Modal>
+        <div className="w-[36%] h-full p-4 relative">
+          <Modal>
+            <div className=" space-x-2 bg-stone-100 p-2 rounded absolute flex justify-center items-center top-4 left-[50%] translate-x-[-50%] w-[93%]">
+              <span className="p-2 px-4 bg-blue-100 text-stone-700 w-[50%] rounded flex justify-center items-center cursor-pointer">
+                Chat
+              </span>
+              <span className="p-2 px-4 text-stone-700 w-[50%] rounded flex justify-center items-center cursor-pointer">
+                Reports
+              </span>
+            </div>
+
+            <div className="flex flex-col gap-4 items-start overflow-scroll pt-16">
+              {state.chat.map((message) => (
+                <Message
+                  key={`${message.time} + ${message.text}`}
+                  text={message.text}
+                  time={message.time}
+                  type={message.type}
+                />
+              ))}
+
+              <div className="w-[93%]  absolute bottom-4 left-[50%] translate-x-[-50%] bg-stone-200 rounded flex justify-between items-center pr-2">
+                <input
+                  type="text"
+                  value={message}
+                  className="w-full bg-transparent p-4 text-stone-700 placeholder:text-stone-500 focus:outline-none"
+                  placeholder="Some thin u wanna say"
+                  onChange={(e) => setMessage(e.target.value)}
+                />
+                <div className="text-stone-700"></div>
+
+                <button
+                  onClick={() => {
+                    handleSendMessage();
+                  }}
+                >
+                  &rarr;
+                </button>
+              </div>
+            </div>
+          </Modal>
         </div>
       </div>
     </div>

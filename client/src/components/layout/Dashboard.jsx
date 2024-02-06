@@ -5,6 +5,7 @@ import AppointmentCard from "../ui/AppointmentCard";
 import PatientFullPage from "./FullPagePatient";
 import {
   getAppointentsForDoctor,
+  getAppointment,
   getTodayAppointentsForDoctor,
 } from "../../services/apiAppointment";
 import FullPageSpinner from "./FullPageSpinner";
@@ -14,7 +15,6 @@ import NoData from "./NoData";
 import { useDispatch } from "react-redux";
 import { changeActivePatient } from "../../features/dashboard";
 import toast, { Toaster } from "react-hot-toast";
-import DashboardPatient from "./DashboardPatient";
 import { redirect } from "react-router-dom";
 
 const user = JSON.parse(localStorage.getItem("user"));
@@ -25,6 +25,11 @@ if (!user?.doctor) {
 function Dashboard() {
   const user = JSON.parse(localStorage.getItem("user"));
   const dispatch = useDispatch();
+
+  /*
+    Local state
+  */
+  const [activeAppointment, setActiveAppointment] = useState(null);
 
   /*
     React query
@@ -43,7 +48,7 @@ function Dashboard() {
     isError: isErrorPatients,
     data: patients,
   } = useQuery({
-    queryKey: ["patient"],
+    queryKey: ["patients"],
     queryFn: () => getPatientsForDoctor({ doctor: user.doctor }),
   });
 
@@ -52,26 +57,31 @@ function Dashboard() {
     queryFn: () => getTodayAppointentsForDoctor({ doctor: user.doctor }),
   });
 
+  const { data: focusAppointment, isLoading: loadingFullPagePatient } =
+    useQuery({
+      queryKey: ["focusAppointment", activeAppointment],
+      queryFn: () => getAppointment(activeAppointment),
+    });
+
   /*
     Event handlers
   */
   const handleActiveAppointmentChange = useCallback(() => {
-    if (todayAppointments) setActiveAppointment(todayAppointments[0]);
+    if (todayAppointments) setActiveAppointment(todayAppointments[0]._id);
   }, [todayAppointments]);
 
   function handleCardClick(data) {
     setActiveAppointment(data);
-    dispatch(changeActivePatient(data._id));
+    dispatch(changeActivePatient(data));
   }
-
-  /*
-    Local state
-  */
-  const [activeAppointment, setActiveAppointment] = useState(null);
 
   /*
     Effects
   */
+  useEffect(() => {
+    setActiveAppointment(todayAppointments?.[0]);
+  }, [todayAppointments]);
+
   useEffect(
     function () {
       handleActiveAppointmentChange();
@@ -169,7 +179,7 @@ function Dashboard() {
               todayAppointments.map((appointment) => (
                 <AppointmentCard
                   key={appointment._id}
-                  isActive={appointment?._id === activeAppointment?._id}
+                  isActive={appointment._id === activeAppointment}
                   data={appointment}
                   handleCardClick={handleCardClick}
                 />
@@ -183,8 +193,10 @@ function Dashboard() {
         <div className=" flex w-[64%] flex-col items-start justify-between gap-2 px-8">
           <span className="text-md text-stone-500">Patient details</span>
           <div className="flex h-[24rem] w-full flex-col rounded-md bg-white px-[20px] py-4 shadow-sm">
-            {activeAppointment ? (
-              <PatientFullPage data={activeAppointment.patient} />
+            {loadingFullPagePatient ? (
+              <FullPageSpinner />
+            ) : focusAppointment ? (
+              <PatientFullPage data={focusAppointment?.patient} />
             ) : (
               <NoData />
             )}

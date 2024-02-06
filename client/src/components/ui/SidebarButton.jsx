@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 
 function SidebarButton({ icon, name, to }) {
   return (
-    <NavLink to={to}>
+    <NavLink to={to} key={to}>
       <div
         role="button"
         className="flex gap-8 bg-transparent px-4 py-[0.6rem] text-stone-200"

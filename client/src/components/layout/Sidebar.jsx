@@ -39,9 +39,9 @@ function Sidebar() {
           icon={item.icon}
           name={item.name}
           to={item.to}
-          key={item.icon}
+          key={item.to}
         />
-      )) : metaDataPatient.map(item  => <SidebarButton icon={item.icon} name={item.name} to={item.to} key={item.key}/>)}
+      )) : metaDataPatient.map(item  => <SidebarButton icon={item.icon} name={item.name} to={item.to} key={item.to}/>)}
 
       <div className="absolute bottom-4 w-[100%]">
         <Logout />
