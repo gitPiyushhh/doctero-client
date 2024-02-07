@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useReducer, useState } from "react";
+import React, {
+  memo,
+  useCallback,
+  useEffect,
+  useReducer,
+  useState,
+} from "react";
 import toast, { Toaster } from "react-hot-toast";
 import ReactPlayer from "react-player";
 import peerService from "../../services/meet";
@@ -7,12 +13,17 @@ import Modal from "./Modal";
 import MeetControlPanel from "./MeetControlPanel";
 import { useSocket } from "../../contexts/SocketProvider";
 import Message from "./Message";
+import TabbedComponent from "./TabbedComponent";
+import { redirect, useNavigate } from "react-router-dom";
+
+import EmojiPicker from "emoji-picker-react";
 
 const initialState = {
   localMic: false,
   localCamera: false,
   remoteMic: false,
   remoteCamera: false,
+  activeTab: "Chat",
   chat: [],
 };
 
@@ -37,6 +48,9 @@ const reducer = (state, action) => {
       };
       return { ...state, chat: [...state.chat, newMessageRemote] };
 
+    case "changeActiveTab":
+      return { ...state, activeTab: action.payload };
+
     default:
       return { ...state };
   }
@@ -44,6 +58,8 @@ const reducer = (state, action) => {
 
 function MeetDoctor() {
   const user = JSON.parse(localStorage.getItem("user"));
+
+  const navigate = useNavigate();
 
   /*
     Local state
@@ -73,7 +89,9 @@ function MeetDoctor() {
     setMyStream(stream);
   }, []);
 
-  handleSetUserStream();
+  useEffect(() => {
+    handleSetUserStream();
+  }, [handleSetUserStream]);
 
   /*
     Event handlers
@@ -267,6 +285,42 @@ function MeetDoctor() {
     dispatch({ type: "messageRecieved", payload: messagePayload });
   }, []);
 
+  const handleChangeTab = useCallback(
+    (tabName) => {
+      if (tabName !== state.activeTab)
+        dispatch({ type: "changeActiveTab", payload: tabName });
+    },
+    [state.activeTab]
+  );
+
+  const handleLeaveMeet = useCallback(async () => {
+    // Close all peer connections
+    // peerService.closePeerConnection();
+
+    if (myStream) {
+      const tracks = myStream.getTracks();
+      tracks.forEach((track) => track.stop());
+      setMyStream(null);
+    }
+
+    if (remoteStream) {
+      const tracks = remoteStream.getTracks();
+      tracks.forEach((track) => track.stop());
+      setRemoteStream(null);
+    }
+
+    setRemoteUserIn(null);
+    setRemoteSocketId(null);
+
+    // Navigate to the desired page
+    navigate(user?.doctor ? "/tele-consultancy" : "/patient/tele-consultancy");
+  }, [myStream, remoteStream, navigate, user?.doctor]);
+
+  useEffect(() => {
+    console.log(remoteSocketId);
+    console.log(remoteStream);
+  }, [remoteSocketId, remoteStream, handleLeaveMeet]);
+
   /*
     Effects
   */
@@ -361,7 +415,7 @@ function MeetDoctor() {
       name: "call",
       open: "23",
       higlight: true,
-      openHandler: () => alert("No handler till 🙂"),
+      openHandler: handleLeaveMeet,
     },
     {
       name: "video",
@@ -392,7 +446,7 @@ function MeetDoctor() {
       name: "call",
       open: "23",
       higlight: true,
-      openHandler: () => alert("No handler till 🙂"),
+      openHandler: handleLeaveMeet,
     },
     {
       name: "video",
@@ -408,6 +462,15 @@ function MeetDoctor() {
       open: "22",
       round: true,
       openHandler: () => alert("No handler till 🙂"),
+    },
+  ];
+
+  const tabbedComponentMetaData = [
+    {
+      name: "Chat",
+    },
+    {
+      name: "Reports",
     },
   ];
 
@@ -505,24 +568,22 @@ function MeetDoctor() {
 
         <div className="w-[36%] h-full p-4 relative">
           <Modal>
-            <div className=" space-x-2 bg-stone-100 p-2 rounded absolute flex justify-center items-center top-4 left-[50%] translate-x-[-50%] w-[93%]">
-              <span className="p-2 px-4 bg-blue-100 text-stone-700 w-[50%] rounded flex justify-center items-center cursor-pointer">
-                Chat
-              </span>
-              <span className="p-2 px-4 text-stone-700 w-[50%] rounded flex justify-center items-center cursor-pointer">
-                Reports
-              </span>
-            </div>
+            <TabbedComponent
+              metaData={tabbedComponentMetaData}
+              activeTab={state.activeTab}
+              handleChangeTab={handleChangeTab}
+            />
 
             <div className="flex flex-col gap-4 items-start overflow-scroll pt-16">
-              {state.chat.map((message) => (
-                <Message
-                  key={`${message.time} + ${message.text}`}
-                  text={message.text}
-                  time={message.time}
-                  type={message.type}
-                />
-              ))}
+              {state.activeTab === "Chat" &&
+                state.chat.map((message) => (
+                  <Message
+                    key={`${message.time} + ${message.text}`}
+                    text={message.text}
+                    time={message.time}
+                    type={message.type}
+                  />
+                ))}
 
               <div className="w-[93%]  absolute bottom-4 left-[50%] translate-x-[-50%] bg-stone-200 rounded flex justify-between items-center pr-2">
                 <input
@@ -532,7 +593,9 @@ function MeetDoctor() {
                   placeholder="Some thin u wanna say"
                   onChange={(e) => setMessage(e.target.value)}
                 />
-                <div className="text-stone-700"></div>
+                {/* <div className="text-stone-700">
+                  <EmojiPicker />
+                </div> */}
 
                 <button
                   onClick={() => {
@@ -550,4 +613,4 @@ function MeetDoctor() {
   );
 }
 
-export default MeetDoctor;
+export default memo(MeetDoctor);

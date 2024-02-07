@@ -67,7 +67,7 @@ function Dashboard() {
     Event handlers
   */
   const handleActiveAppointmentChange = useCallback(() => {
-    if (todayAppointments) setActiveAppointment(todayAppointments[0]._id);
+    if (todayAppointments) setActiveAppointment(todayAppointments[0]?._id);
   }, [todayAppointments]);
 
   function handleCardClick(data) {

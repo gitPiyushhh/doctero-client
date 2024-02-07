@@ -19,7 +19,7 @@ function TeleconsultancyPatient() {
 
   const navigate = useNavigate();
 
-  const room = 1;
+  const room = 1; // Hardcoded, this will come with every appointment
 
   /*
     Local state

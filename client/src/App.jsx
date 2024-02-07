@@ -81,6 +81,7 @@ const router = createBrowserRouter([
         path: "/tele-consultancy",
         element: <Teleconsultancy />,
       },
+      
       {
         path: "/tele-consultancy/doctor/meet",
         element: <MeetDoctor />,
