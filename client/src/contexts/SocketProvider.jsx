@@ -22,8 +22,8 @@ export function useSocket() {
 */
 export const SocketProvider = ({ children }) => {
   const socket = useMemo(() => {
-    // return io("https://doctero-api-onrender2.onrender.com");  
-    return io("http://127.0.0.1:9000");   // For debuggging or checking
+    return io("https://doctero-api-onrender2.onrender.com");  
+    // return io("http://127.0.0.1:9000");   // For debuggging or checking
   }, []);
 
   useEffect(() => {
