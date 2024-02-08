@@ -543,7 +543,7 @@ function MeetDoctor() {
                 alt="doctor_image"
                 className="block w-12 h-12 rounded-full bg-center object-cover"
               />
-              <span>{liveAppointment?.patient.name}</span>
+              <span>{liveAppointment?.patient?.name}</span>
             </div>
 
             <div className="flex space-x-4 items-center">
