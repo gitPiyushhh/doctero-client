@@ -57,6 +57,14 @@ class PeerService {
       await this.peer.setRemoteDescription(new RTCSessionDescription(ans));
     }
   }
+
+  async closePeerConnection(socketId) {
+    if (this.peer[socketId]) {
+      this.peer[socketId].close();
+      delete this.peer[socketId];
+      console.log("Leaving call")
+    }
+  }
 }
 
 const peerService = new PeerService();
