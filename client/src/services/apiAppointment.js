@@ -127,6 +127,20 @@ export async function getTodayRemoteAppointentsForPatient({ patient }) {
   }
 }
 
+export async function getLiveAppointmentForDoctor({doctor}) {
+  try {
+    const data = await axios.get(
+      `${API_URL}/patients/appointments/${doctor}?limit=10000&type=Remote&sortBy=startTime&sortOrder=desc&dateRange=Today`
+    );
+
+    const appointmentsRemote = data.data.data.appointments;
+
+    return appointmentsRemote;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 /*
   Create
 */

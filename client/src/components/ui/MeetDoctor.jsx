@@ -14,9 +14,13 @@ import MeetControlPanel from "./MeetControlPanel";
 import { useSocket } from "../../contexts/SocketProvider";
 import Message from "./Message";
 import TabbedComponent from "./TabbedComponent";
-import { redirect, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import moment from "moment";
 
 import EmojiPicker from "emoji-picker-react";
+import { useQuery } from "@tanstack/react-query";
+import { getLiveAppointmentForDoctor } from "../../services/apiAppointment";
+import FullPageSpinner from "../layout/FullPageSpinner";
 
 const initialState = {
   localMic: false,
@@ -25,6 +29,7 @@ const initialState = {
   remoteCamera: false,
   activeTab: "Chat",
   chat: [],
+  emojiOpen: false,
 };
 
 const reducer = (state, action) => {
@@ -51,6 +56,12 @@ const reducer = (state, action) => {
     case "changeActiveTab":
       return { ...state, activeTab: action.payload };
 
+    case "openEmojiPallete":
+      return { ...state, emojiOpen: true };
+
+    case "closeEmojiPallete":
+      return { ...state, emojiOpen: false };
+
     default:
       return { ...state };
   }
@@ -58,6 +69,7 @@ const reducer = (state, action) => {
 
 function MeetDoctor() {
   const user = JSON.parse(localStorage.getItem("user"));
+  const now = new Date();
 
   const navigate = useNavigate();
 
@@ -74,6 +86,22 @@ function MeetDoctor() {
   const [message, setMessage] = useState("");
 
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  /*
+    React query (fetching)
+  */
+  const { isLoading, data: liveAppointment } = useQuery({
+    queryKey: ["liveAppointment"],
+    queryFn: () => getLiveAppointmentForDoctor({ doctor: user?.doctor }),
+  });
+
+  /*
+    Derived state 
+  */
+  const remainingHours = 0; // HARDCODED, chage further
+  const remainingMinutes = now.getMinutes().toString().padStart(2, '0');
+  const remainingSeconds = now.getSeconds().toString().padStart(2, '0');
+
 
   /*
     Socket events
@@ -258,6 +286,11 @@ function MeetDoctor() {
 
     const tempMessage = message;
 
+    if (!tempMessage.length) {
+      toast("Message feild is empty");
+      return;
+    }
+
     const messagePayload = {
       text: tempMessage,
       time: `${hours}:${minutes}`,
@@ -291,6 +324,14 @@ function MeetDoctor() {
         dispatch({ type: "changeActiveTab", payload: tabName });
     },
     [state.activeTab]
+  );
+
+  const handleSelectEmoji = useCallback(
+    (emojiData, event) => {
+      setMessage(`${message}${emojiData.emoji}`);
+      dispatch({ type: "closeEmojiPallete" });
+    },
+    [message]
   );
 
   const handleLeaveMeet = useCallback(async () => {
@@ -475,6 +516,17 @@ function MeetDoctor() {
   ];
 
   /*
+   Conditional rendering
+ */
+   if (isLoading) {
+    return (
+      <div className="absolute left-[16%] top-0 z-10 h-[100dvh] w-[84%] overflow-y-auto">
+        <FullPageSpinner />
+      </div>
+    );
+  }
+
+  /*
     JSX
   */
   return (
@@ -491,11 +543,11 @@ function MeetDoctor() {
                 alt="doctor_image"
                 className="block w-12 h-12 rounded-full bg-center object-cover"
               />
-              <span>Jonas Smedthman</span>
+              <span>{liveAppointment?.patient.name}</span>
             </div>
 
             <div className="flex space-x-4 items-center">
-              {remoteSocketId && !remoteUserIn && (
+              {remoteSocketId && !remoteUserIn && user?.doctor && (
                 <button
                   onClick={handleCallUser}
                   className="focus:outline-none active:outline-none"
@@ -504,9 +556,13 @@ function MeetDoctor() {
                 </button>
               )}
 
-              {!remoteSocketId && <p>No one in room</p>}
+              {!remoteSocketId && user?.patient && (
+                <p>Please wait while doctor let you in</p>
+              )}
 
-              {!remoteSocketId && (
+              {!remoteSocketId && user?.doctor && <p>No one in room</p>}
+
+              {!remoteSocketId && user?.doctor && (
                 <button
                   onClick={handleRingUser}
                   className="focus:outline-none active:outline-none"
@@ -526,7 +582,7 @@ function MeetDoctor() {
               )} */}
 
               <span className="p-2 px-4 rounded-md bg-[#0008] flex items-center">
-                10:00
+                {remainingHours}:{remainingMinutes}:{remainingSeconds}
               </span>
             </div>
           </div>
@@ -585,7 +641,7 @@ function MeetDoctor() {
                   />
                 ))}
 
-              <div className="w-[93%]  absolute bottom-4 left-[50%] translate-x-[-50%] bg-stone-200 rounded flex justify-between items-center pr-2">
+              <div className="w-[93%]  absolute bottom-4 left-[50%] translate-x-[-50%] bg-stone-200 rounded flex justify-between items-center pr-2 space-x-2">
                 <input
                   type="text"
                   value={message}
@@ -593,11 +649,35 @@ function MeetDoctor() {
                   placeholder="Some thin u wanna say"
                   onChange={(e) => setMessage(e.target.value)}
                 />
-                {/* <div className="text-stone-700">
-                  <EmojiPicker />
-                </div> */}
+                <div className="text-stone-700">
+                  <div
+                    className="w-[3rem] p-2 cursor-pointer"
+                    onClick={() =>
+                      state.emojiOpen
+                        ? dispatch({ type: "closeEmojiPallete" })
+                        : dispatch({ type: "openEmojiPallete" })
+                    }
+                  >
+                    <img
+                      src="/emoji-icon.svg"
+                      alt="Emoji icon"
+                      className="w-full h-auto"
+                    />
+                  </div>
+                  <div className="absolute bottom-16 left-[50%] translate-x-[-50%]">
+                    <EmojiPicker
+                      open={state.emojiOpen}
+                      Theme="dark"
+                      skinTonesDisabled={true}
+                      onEmojiClick={(emojiData, event) => {
+                        handleSelectEmoji(emojiData, event);
+                      }}
+                    />
+                  </div>
+                </div>
 
                 <button
+                  className="focus:outline-none"
                   onClick={() => {
                     handleSendMessage();
                   }}
