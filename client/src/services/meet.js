@@ -59,10 +59,12 @@ class PeerService {
   }
 
   async closePeerConnection(socketId) {
-    if (this.peer[socketId]) {
-      this.peer[socketId].close();
-      delete this.peer[socketId];
-      console.log("Leaving call")
+    console.log("Leaing call: ", socketId )
+    console.log("Leaing call after: ", this.peer )
+
+    if (this.peer) {
+      this.peer.close();
+      delete this.peer;
     }
   }
 }

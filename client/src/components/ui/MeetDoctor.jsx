@@ -338,6 +338,13 @@ function MeetDoctor() {
     [message]
   );
 
+  const stopTracks = (stream) => {
+    if (stream) {
+      const tracks = stream.getTracks();
+      tracks.forEach((track) => track.stop());
+    }
+  };
+
   const handleLeaveMeet = useCallback(async () => {
     // Close all peer connections
     peerService.closePeerConnection(remoteSocketId);
@@ -345,14 +352,12 @@ function MeetDoctor() {
     socket.emit("call:ended", { to: remoteSocketId });
 
     if (myStream) {
-      const tracks = myStream.getTracks();
-      tracks.forEach((track) => track.stop());
+      stopTracks(myStream);
       setMyStream(null);
     }
 
     if (remoteStream) {
-      const tracks = remoteStream.getTracks();
-      tracks.forEach((track) => track.stop());
+      stopTracks(remoteStream);
       setRemoteStream(null);
     }
 
@@ -361,21 +366,22 @@ function MeetDoctor() {
 
     // Navigate to the desired page
     navigate(user?.doctor ? "/tele-consultancy" : "/patient/tele-consultancy");
-  }, [socket, remoteSocketId, myStream, remoteStream, navigate, user?.doctor]);
+
+    // Reload the screen
+    window.location.reload();
+  }, [remoteSocketId, socket, myStream, remoteStream, navigate, user?.doctor]);
 
   const handleEndCall = useCallback(() => {
     peerService.closePeerConnection(remoteSocketId);
     peerService.setLocalDescription(null);
 
     if (myStream) {
-      const tracks = myStream.getTracks();
-      tracks.forEach((track) => track.stop());
+      stopTracks(myStream);
       setMyStream(null);
     }
 
     if (remoteStream) {
-      const tracks = remoteStream.getTracks();
-      tracks.forEach((track) => track.stop());
+      stopTracks(remoteStream);
       setRemoteStream(null);
     }
 
@@ -384,7 +390,10 @@ function MeetDoctor() {
 
     // Navigate to the desired page
     navigate(user?.doctor ? "/tele-consultancy" : "/patient/tele-consultancy");
-  }, [myStream, navigate, remoteStream, user?.doctor]);
+
+    // Reload the screen
+    window.location.reload();
+  }, [myStream, navigate, remoteSocketId, remoteStream, user?.doctor]);
 
   /*
     Effects
@@ -409,7 +418,7 @@ function MeetDoctor() {
     peerService.peer.addEventListener("negotiationneeded", handleNegoNeeded);
 
     return () =>
-      peerService.peer.removeEventListener(
+      peerService?.peer?.removeEventListener(
         "negotiationneeded",
         handleNegoNeeded
       );
@@ -426,7 +435,7 @@ function MeetDoctor() {
     });
 
     return () => {
-      peerService.peer.removeEventListener("track", async (ev) => {
+      peerService?.peer?.removeEventListener("track", async (ev) => {
         const incomingRemoteStream = ev.streams;
         console.log("GOT REMOTE TRACKS 🥳");
         console.log(incomingRemoteStream);
@@ -462,6 +471,7 @@ function MeetDoctor() {
     handleNegoNeededIncoming,
     handleNegoNeededFinal,
     handleRecieveMessage,
+    handleEndCall,
   ]);
 
   /*
