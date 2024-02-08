@@ -128,12 +128,30 @@ export async function getTodayRemoteAppointentsForPatient({ patient }) {
 }
 
 export async function getLiveAppointmentForDoctor({doctor}) {
+  const startTime = moment().hour();
+
   try {
     const data = await axios.get(
-      `${API_URL}/patients/appointments/${doctor}?limit=10000&type=Remote&sortBy=startTime&sortOrder=desc&dateRange=Today`
+      `${API_URL}/therapists/liveAppointment/${doctor}/${startTime}`
     );
 
-    const appointmentsRemote = data.data.data.appointments;
+    const appointmentsRemote = data.data.data.appointments?.[0];
+
+    return appointmentsRemote;
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+export async function getLiveAppointmentForPatient({patient}) {
+  const startTime = moment().hour();
+
+  try {
+    const data = await axios.get(
+      `${API_URL}/patients/liveAppointment/${patient}/${startTime}`
+    );
+
+    const appointmentsRemote = data.data.data.appointments?.[0];
 
     return appointmentsRemote;
   } catch (err) {

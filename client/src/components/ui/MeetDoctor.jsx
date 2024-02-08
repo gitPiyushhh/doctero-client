@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useEffect,
   useReducer,
+  useRef,
   useState,
 } from "react";
 import toast, { Toaster } from "react-hot-toast";
@@ -15,12 +16,16 @@ import { useSocket } from "../../contexts/SocketProvider";
 import Message from "./Message";
 import TabbedComponent from "./TabbedComponent";
 import { useNavigate } from "react-router-dom";
-import moment from "moment";
 
 import EmojiPicker from "emoji-picker-react";
 import { useQuery } from "@tanstack/react-query";
-import { getLiveAppointmentForDoctor } from "../../services/apiAppointment";
+import {
+  getLiveAppointmentForDoctor,
+  getLiveAppointmentForPatient,
+} from "../../services/apiAppointment";
 import FullPageSpinner from "../layout/FullPageSpinner";
+import moment from "moment";
+import Timer from "./Timer";
 
 const initialState = {
   localMic: false,
@@ -69,7 +74,7 @@ const reducer = (state, action) => {
 
 function MeetDoctor() {
   const user = JSON.parse(localStorage.getItem("user"));
-  const now = new Date();
+  const now = moment();
 
   const navigate = useNavigate();
 
@@ -95,13 +100,12 @@ function MeetDoctor() {
     queryFn: () => getLiveAppointmentForDoctor({ doctor: user?.doctor }),
   });
 
-  /*
-    Derived state 
-  */
-  const remainingHours = 0; // HARDCODED, chage further
-  const remainingMinutes = now.getMinutes().toString().padStart(2, '0');
-  const remainingSeconds = now.getSeconds().toString().padStart(2, '0');
+  const { isLoadingPaient, data: liveAppointmentPatient } = useQuery({
+    queryKey: ["liveAppointmentPatient"],
+    queryFn: () => getLiveAppointmentForPatient({ patient: user?.patient }),
+  });
 
+  console.log("Rendered meet component");
 
   /*
     Socket events
@@ -336,7 +340,7 @@ function MeetDoctor() {
 
   const handleLeaveMeet = useCallback(async () => {
     // Close all peer connections
-    // peerService.closePeerConnection();
+    socket.emit("call:ended", { to: remoteSocketId });
 
     if (myStream) {
       const tracks = myStream.getTracks();
@@ -355,12 +359,27 @@ function MeetDoctor() {
 
     // Navigate to the desired page
     navigate(user?.doctor ? "/tele-consultancy" : "/patient/tele-consultancy");
-  }, [myStream, remoteStream, navigate, user?.doctor]);
+  }, [socket, remoteSocketId, myStream, remoteStream, navigate, user?.doctor]);
 
-  useEffect(() => {
-    console.log(remoteSocketId);
-    console.log(remoteStream);
-  }, [remoteSocketId, remoteStream, handleLeaveMeet]);
+  const handleEndCall = useCallback(() => {
+    if (myStream) {
+      const tracks = myStream.getTracks();
+      tracks.forEach((track) => track.stop());
+      setMyStream(null);
+    }
+
+    if (remoteStream) {
+      const tracks = remoteStream.getTracks();
+      tracks.forEach((track) => track.stop());
+      setRemoteStream(null);
+    }
+
+    setRemoteUserIn(null);
+    setRemoteSocketId(null);
+
+    // Navigate to the desired page
+    navigate(user?.doctor ? "/tele-consultancy" : "/patient/tele-consultancy");
+  }, [myStream, navigate, remoteStream, user?.doctor]);
 
   /*
     Effects
@@ -419,6 +438,7 @@ function MeetDoctor() {
     socket.on("peer:nego:needed", handleNegoNeededIncoming);
     socket.on("peer:nego:final", handleNegoNeededFinal);
     socket.on("chat:message", handleRecieveMessage);
+    socket.on("call:ended", handleEndCall);
 
     return () => {
       socket.off("user:joined", handleUserJoined);
@@ -427,6 +447,7 @@ function MeetDoctor() {
       socket.off("peer:nego:needed", handleNegoNeededIncoming);
       socket.off("peer:nego:final", handleNegoNeededFinal);
       socket.off("chat:message", handleRecieveMessage);
+      socket.off("call:ended", handleEndCall);
     };
   }, [
     socket,
@@ -518,7 +539,7 @@ function MeetDoctor() {
   /*
    Conditional rendering
  */
-   if (isLoading) {
+  if (isLoading || isLoadingPaient) {
     return (
       <div className="absolute left-[16%] top-0 z-10 h-[100dvh] w-[84%] overflow-y-auto">
         <FullPageSpinner />
@@ -543,7 +564,11 @@ function MeetDoctor() {
                 alt="doctor_image"
                 className="block w-12 h-12 rounded-full bg-center object-cover"
               />
-              <span>{liveAppointment?.patient?.name}</span>
+              {user?.doctor ? (
+                <span>{liveAppointment?.patient?.name}</span>
+              ) : (
+                <span>{liveAppointmentPatient?.therapist?.name}</span>
+              )}
             </div>
 
             <div className="flex space-x-4 items-center">
@@ -571,19 +596,7 @@ function MeetDoctor() {
                 </button>
               )}
 
-              {/* { remoteSocketId ? (
-                <p className="h-full flex items-center">
-                  Please wait while the host let you in
-                </p>
-              ) : (
-                <p className="h-full flex items-center">
-                  No one else in the room
-                </p>
-              )} */}
-
-              <span className="p-2 px-4 rounded-md bg-[#0008] flex items-center">
-                {remainingHours}:{remainingMinutes}:{remainingSeconds}
-              </span>
+              <Timer />
             </div>
           </div>
 
