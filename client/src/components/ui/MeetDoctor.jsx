@@ -340,6 +340,7 @@ function MeetDoctor() {
 
   const handleLeaveMeet = useCallback(async () => {
     // Close all peer connections
+    peerService.setLocalDescription(null);
     socket.emit("call:ended", { to: remoteSocketId });
 
     if (myStream) {
@@ -362,6 +363,8 @@ function MeetDoctor() {
   }, [socket, remoteSocketId, myStream, remoteStream, navigate, user?.doctor]);
 
   const handleEndCall = useCallback(() => {
+    peerService.setLocalDescription(null);
+
     if (myStream) {
       const tracks = myStream.getTracks();
       tracks.forEach((track) => track.stop());
