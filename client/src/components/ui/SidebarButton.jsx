@@ -6,7 +6,7 @@ function SidebarButton({ icon, name, to }) {
     <NavLink to={to} key={to}>
       <div
         role="button"
-        className="flex gap-8 bg-transparent px-4 py-[0.6rem] text-stone-200"
+        className="flex gap-6 bg-transparent px-4 py-[0.6rem] text-stone-200"
       >
         <img src={`/${icon}.svg`} alt="Icon_img" className="text-stone-200" />
 

@@ -12,7 +12,14 @@ function Timer({ onTimerComplete }) {
 
   useEffect(() => {
     intervalRef.current = setInterval(() => {
-      if (remainingSeconds <= 1) {
+      if (
+        remainingHours <= 0 &&
+        remainingMinutes <= 0 &&
+        remainingSeconds <= 0
+      )
+        onTimerComplete();
+
+      else if (remainingSeconds <= 1) {
         setRemainingMinutes((prev) => Number(String(prev).padStart(2, 0)) - 1);
         setReminingSeconds(Number(String(60).padStart(2, 0)));
       } else {
@@ -21,12 +28,13 @@ function Timer({ onTimerComplete }) {
     }, 1000);
 
     return () => clearInterval(intervalRef.current);
-  }, [remainingSeconds]);
+  }, [onTimerComplete, remainingMinutes, remainingSeconds]);
 
   return (
     <div>
       <span className="p-2 px-4 rounded-md bg-[#0008] flex items-center">
-        {remainingHours}:{remainingMinutes}:{remainingSeconds}
+        {String(remainingHours).padStart(2, 0)}:{String(remainingMinutes).padStart(2, 0)}:
+        {String(remainingSeconds).padStart(2, 0)}
       </span>
     </div>
   );

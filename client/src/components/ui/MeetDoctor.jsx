@@ -34,6 +34,11 @@ const initialState = {
   remoteCamera: false,
   activeTab: "Chat",
   chat: [],
+  reports: [
+    {
+      name: "diabities",
+    },
+  ],
   emojiOpen: false,
 };
 
@@ -575,7 +580,7 @@ function MeetDoctor() {
             {/* About meet */}
             <div className="flex space-x-2 items-center">
               <img
-                src="/Owner.avif"
+                src="/User.png"
                 alt="doctor_image"
                 className="block w-12 h-12 rounded-full bg-center object-cover"
               />
@@ -611,7 +616,7 @@ function MeetDoctor() {
                 </button>
               )}
 
-              <Timer />
+              <Timer onTimerComplete={handleLeaveMeet} />
             </div>
           </div>
 
@@ -667,6 +672,32 @@ function MeetDoctor() {
                     time={message.time}
                     type={message.type}
                   />
+                ))}
+
+              {state.activeTab === "Reports" && (
+                <div className=" absolute bottom-24 left-[50%] translate-x-[-50%] px-4 py-2 rounded bg-stone-100 text-slate-700 flex space-x-2 cursor-pointer shadow-md active:shadow-md hover:shadow-lg transition-all">
+                  <img src="/add-icon.svg" alt="Add icon" className="h-6 w-6" />
+
+                  <span className="text-inherit">Add new report</span>
+
+                  <div className="absolute left-[-10px] w-full h-full ">
+                    <input
+                      type="file"
+                      className="bg-transparent opacity-0 absolute w-full cursor-pointer"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {state.activeTab === "Reports" &&
+                state.reports.map((report) => (
+                  <div className="text-stone-700 p-2 pb-8 bg-stone-100 w-full rounded relative cursor-pointer">
+                    <span className="bg-[#00000010] w-full p-4 h-fit block rounded">
+                      {report.name.slice(0, 1).toUpperCase() +
+                        report.name.slice(1)}
+                    </span>
+                    <span className="absolute right-4 bottom-1">10:00</span>
+                  </div>
                 ))}
 
               <div className="w-[93%]  absolute bottom-4 left-[50%] translate-x-[-50%] bg-stone-200 rounded flex justify-between items-center pr-2 space-x-2">

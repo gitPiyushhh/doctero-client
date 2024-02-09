@@ -39,7 +39,7 @@ function Form({ name, data }) {
   }
 
   return (
-    <div className="flex-col rounded-lg p-8 shadow-md">
+    <div className="flex-col rounded-lg p-8 shadow-md w-full">
       {data?.map((item) => (
         <Input
           name={item.name}

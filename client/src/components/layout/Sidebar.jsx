@@ -1,5 +1,4 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 
 import Owner from '../ui/Owner';
 import SidebarButton from '../ui/SidebarButton';
@@ -13,6 +12,7 @@ const metaDataDoctor = [
   { icon: 5, name: 'Videos', to: '/videos' },
   { icon: 7, name: 'Tele-consultancy', to: '/tele-consultancy' },
   { icon: 6, name: 'Medstore', to: '/medstore' },
+  { icon: 15, name: 'AI diagnose', to: '/ai-med-help' },
 ];
 
 const metaDataPatient = [
@@ -22,6 +22,7 @@ const metaDataPatient = [
   { icon: 5, name: 'Videos', to: '/videos' },
   { icon: 7, name: 'Tele-consultancy', to: '/patient/tele-consultancy' },
   { icon: 6, name: 'Medstore', to: '/medstore' },
+  { icon: 15, name: 'AI diagnose', to: '/ai-med-help' },
 ];
 
 function Sidebar() {

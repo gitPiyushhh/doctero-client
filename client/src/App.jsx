@@ -24,6 +24,7 @@ import DashboardPatient, {
 } from "./components/layout/DashboardPatient";
 import MeetDoctor from "./components/ui/MeetDoctor";
 import TeleconsultancyPatient from "./components/layout/TeleconsultancyPatient";
+import MedHelp from "./components/layout/MedHelp";
 
 const router = createBrowserRouter([
   {
@@ -89,6 +90,10 @@ const router = createBrowserRouter([
       {
         path: "/patient/tele-consultancy",
         element: <TeleconsultancyPatient />,
+      },
+      {
+        path: "/ai-med-help",
+        element: <MedHelp />,
       },
       {
         path: "/medstore",
