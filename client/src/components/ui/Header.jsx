@@ -7,7 +7,9 @@ function Header({ name }) {
   const isDoctor = userObj.isDoctor;
 
   return (
-    <div className="flex h-[8%] w-full items-center justify-between bg-stone-50 p-8 shadow-md">
+    <div className="flex fixed z-[9999999] top-0 md:absolute h-[8%] w-[84vw] items-center justify-between bg-stone-50 p-4 md:p-8 shadow-md">
+      
+
       <div className="flex items-center justify-between space-x-4 text-stone-900">
         <span className="text-[20px] font-medium tracking-[1px]">{name}</span>
       </div>
@@ -15,7 +17,7 @@ function Header({ name }) {
       <input
         type="text"
         placeholder={`Search in your clinic ..`}
-        className=" bottom-1 h-[64%] w-[30%] rounded-md border bg-[#f2f2f2] py-4 pl-4 placeholder:text-[14px] placeholder:text-stone-600"
+        className=" bottom-1 md:block hidden h-[64%] w-[30%] rounded-md border bg-[#f2f2f2] py-4 pl-4 placeholder:text-[14px] placeholder:text-stone-600"
       />
 
       <div className="flex items-center space-x-2">

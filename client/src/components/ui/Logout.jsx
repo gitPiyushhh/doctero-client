@@ -19,7 +19,7 @@ function Logout() {
         className="flex w-full justify-center space-x-2  py-4"
         onClick={handleLogout}
       >
-        <span className="block text-stone-300">Logout</span>
+        <span className="block text-stone-300 md:block hidden">Logout</span>
 
         <img
           src="/logout.svg"

@@ -10,7 +10,7 @@ function SidebarButton({ icon, name, to }) {
       >
         <img src={`/${icon}.svg`} alt="Icon_img" className="text-stone-200" />
 
-        <span>{name}</span>
+        <span className='md:block hidden'>{name}</span>
       </div>
     </NavLink>
   );

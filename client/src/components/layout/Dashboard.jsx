@@ -158,23 +158,26 @@ function Dashboard() {
   }
 
   return (
+    <>
+    <Toaster position="top-right" />
+
     <div className="absolute left-[16%] top-0 z-10 h-[100dvh] w-[84%] overflow-y-scroll">
-      <Toaster position="top-right" />
+      
 
       <Header name="Dashboard" />
 
       {/* Cards */}
-      <div className="my-8 flex items-center justify-between px-8">
+      <div className="my-8 w-[100%] flex flex-wrap items-center justify-between px-4 gap-1 md:gap-0 md:px-8 mt-16 md:mt-24">
         {cardsMetaData.map((card) => (
           <DashboardCard data={card} key={card.name} />
         ))}
       </div>
 
       {/* Today appointments */}
-      <div className="mt-12 flex w-full items-stretch justify-between pl-8">
-        <div className=" flex w-[40%] flex-col items-start justify-between gap-2">
+      <div className=" md:mt-12 flex gap-8 md:gap-0 md:flex-row flex-col w-full items-stretch justify-between md:pl-8 px-4">
+        <div className=" flex w-full md:w-[40%] flex-col items-start justify-between gap-2">
           <span className="text-md text-stone-500">Today appointments</span>
-          <div className="flex h-[24rem] w-full flex-col overflow-scroll rounded-md bg-white px-4 py-2 shadow-sm">
+          <div className="flex h-[16rem] md:h-[24rem] w-full flex-col overflow-scroll rounded-md bg-white px-2 py-2 md:px-4 md:py-2 shadow-sm">
             {todayAppointments && todayAppointments.length > 0 ? (
               todayAppointments.map((appointment) => (
                 <AppointmentCard
@@ -190,9 +193,9 @@ function Dashboard() {
           </div>
         </div>
 
-        <div className=" flex w-[64%] flex-col items-start justify-between gap-2 px-8">
+        <div className=" flex w-full md:w-[64%] flex-col items-start justify-between gap-2 px-0 md:px-8 mb-10 md:mb-0">
           <span className="text-md text-stone-500">Patient details</span>
-          <div className="flex h-[24rem] w-full flex-col rounded-md bg-white px-[20px] py-4 shadow-sm">
+          <div className="flex h-fit md:h-[24rem] w-full flex-col rounded-md bg-white px-[1rem] md:px-[20px] py-4 shadow-sm">
             {loadingFullPagePatient ? (
               <FullPageSpinner />
             ) : focusAppointment ? (
@@ -204,6 +207,7 @@ function Dashboard() {
         </div>
       </div>
     </div>
+    </>
   );
 }
 

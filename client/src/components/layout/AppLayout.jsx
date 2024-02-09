@@ -31,7 +31,7 @@ function AppLayout() {
             <Outlet />
           </>
         ) : (
-          <Outlet />
+            <Outlet />
         )
       ) : (
         <Authentication />

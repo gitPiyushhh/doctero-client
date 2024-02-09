@@ -18,7 +18,7 @@ function AppointmentCard({ data, patient, isActive, handleCardClick }) {
 
   return (
     <div
-      className={`my-2 flex w-full items-center justify-between px-4 py-4 ${isActive && (patient ? "bg-[#bd93fc18]" : "bg-blue-50")} rounded-md cursor-pointer relative`}
+      className={`my-0 mb-4 md:my-2 flex w-full items-center justify-between p-2 md:px-4 md:py-4 ${isActive && (patient ? "bg-[#bd93fc18]" : "bg-blue-50")} rounded-md cursor-pointer relative`}
       onClick={() => handleChangeAppointment(data?._id)}
     >
       {isLive && (
@@ -43,7 +43,7 @@ function AppointmentCard({ data, patient, isActive, handleCardClick }) {
             {(patient ? data?.therapist.name : data?.patient.name) || "Name"}
           </span>
           <span
-            className={`text-sm ${isActive ? patient ? "text-[#9B6DE2]" : "text-[#146fb4d7]" : "text-stone-400"}`}
+            className={`text-sm md:block hidden ${isActive ? patient ? "text-[#9B6DE2]" : "text-[#146fb4d7]" : "text-stone-400"}`}
           >
             {data?.notes ||
               data?.problem.slice(0, 25).concat("...") || 
@@ -53,7 +53,7 @@ function AppointmentCard({ data, patient, isActive, handleCardClick }) {
       </div>
 
       <span
-        className={`text-lg block font-bold ${isActive ? (patient ? "text-[#9B6DE2]" : "text-[#146EB4]") : "text-stone-700"}`}
+        className={`flex md:text-lg font-bold ${isActive ? (patient ? "text-[#9B6DE2]" : "text-[#146EB4]") : "text-stone-700"}`}
       >
         {data?.startTime > 12
           ? `${Math.round(data.startTime % 12)}:00 PM`
