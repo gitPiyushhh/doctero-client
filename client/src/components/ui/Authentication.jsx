@@ -35,7 +35,7 @@ function Authentication() {
             Signup
           </span>
 
-          <span>OR</span>
+          <span>or</span>
 
           <span
             className={`cursor-pointer mx-auto mb-4 block w-fit text-[1.6rem] font-semibold text-[${
@@ -47,7 +47,7 @@ function Authentication() {
           </span>
         </div>
 
-      <div className="mt-10 md:flex items-start justify-center md:space-x-16 transition-all duration-300 p-4 md:p-0">
+      <div className="mt:4 md:mt-10 md:flex items-start justify-center md:space-x-16 transition-all duration-300 p-4 md:p-0">
         <div className="w-full md:w-[28%] flex-col items-center text-stone-600">
           <span
             className={`cursor-pointer mx-auto mb-4  w-fit text-[1.6rem] hidden md:block font-semibold text-[${
