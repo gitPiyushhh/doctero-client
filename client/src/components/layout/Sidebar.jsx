@@ -39,7 +39,7 @@ function Sidebar() {
 
   return (
     <div
-      className={`fixed !md:flex transition-all left-0 bottom-0 ${mobileSidebarOpen ? 'flex' : 'hidden' } h-[100dvh] pt-2 md:pt-0 w-[16%] flex-col ${isDoctor ? "bg-[#082F4F]" : "bg-[#7C51C2]"}`}
+      className={`fixed transition-all left-0 bottom-0 ${mobileSidebarOpen ? 'md:flex flex' : 'md:flex hidden' } w-[16%] h-[100dvh] pt-2 md:pt-0  flex-col ${isDoctor ? "bg-[#082F4F]" : "bg-[#7C51C2]"}`}
     >
       <Owner name={user} />
 

@@ -151,7 +151,7 @@ function Dashboard() {
 
   if (isLoadingAppointments || isLoadingPatients) {
     return (
-      <div className={`absolute  top-0 z-10 h-[100dvh] ${mobileSidebarOpen ? 'left-[16%]' : 'left-0'} ${mobileSidebarOpen ? 'w-[84%]' : 'w-full'}`}>
+      <div className={`absolute  top-0 z-10 h-[100dvh] ${mobileSidebarOpen ? 'left-[16%]' : 'left-0 md:left-[16%]'} ${mobileSidebarOpen ? 'w-[84%]' : 'w-full md:w-[84%]'}`}>
         <FullPageSpinner />
       </div>
     );
@@ -166,7 +166,7 @@ function Dashboard() {
     <>
     <Toaster position="top-right" />
 
-    <div className={`absolute top-0 z-10 h-[100dvh]  overflow-y-scroll ${mobileSidebarOpen ? 'left-[16%]' : 'left-0'} ${mobileSidebarOpen ? 'w-[84%]' : 'w-full'}`}>      
+    <div className={`absolute top-0 z-10 h-[100dvh]  overflow-y-scroll ${mobileSidebarOpen ? 'left-[16%]' : 'left-0 md:left-[16%]'} ${mobileSidebarOpen ? 'w-[84%]' : 'w-full md:w-[84%]'}`}>      
       <Header name="Dashboard" />
 
       {/* Cards */}

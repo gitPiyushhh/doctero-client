@@ -20,7 +20,7 @@ function Header({ name }) {
   }
 
   return (
-    <div className={`flex fixed z-[9999999] top-0 md:absolute h-[8%] ${mobileSidebarOpen ? 'w-[84%]' : 'w-[100%]'} items-center justify-between bg-stone-50 p-4 md:p-8 shadow-md`}>
+    <div className={`flex fixed z-[9999999] top-0 md:absolute h-[8%] ${mobileSidebarOpen ? 'w-[84%]' : 'w-[100%] '} items-center justify-between bg-stone-50 p-4 md:p-8 shadow-md`}>
       <div className="flex items-center justify-between space-x-4 text-stone-900">
         <span className="text-[20px] font-medium tracking-[1px]">{name}</span>
       </div>
