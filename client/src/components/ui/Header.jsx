@@ -62,6 +62,7 @@ function Header({ name }) {
             &nbsp;
           </div>
 
+          {/* Minor refactoring */}
           <span className={`text-stone-500 font-bold text-lg font-sans ${!mobileSidebarOpen && 'hidden'}`}>X</span>
         </div>
       </div>
