@@ -12,7 +12,7 @@ import FullPageSpinner from "./FullPageSpinner";
 import { useQuery } from "@tanstack/react-query";
 import { getPatientsForDoctor } from "../../services/apiPatient";
 import NoData from "./NoData";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { changeActivePatient } from "../../features/dashboard";
 import toast, { Toaster } from "react-hot-toast";
 import { redirect } from "react-router-dom";
@@ -30,6 +30,11 @@ function Dashboard() {
     Local state
   */
   const [activeAppointment, setActiveAppointment] = useState(null);
+
+  /*
+    Global state
+  */
+  const mobileSidebarOpen = useSelector(state => state.ui.mobileSidebarOpen);
 
   /*
     React query
@@ -146,7 +151,7 @@ function Dashboard() {
 
   if (isLoadingAppointments || isLoadingPatients) {
     return (
-      <div className="absolute left-[16%] top-0 z-10 h-[100dvh] w-[84%]">
+      <div className={`absolute  top-0 z-10 h-[100dvh] ${mobileSidebarOpen ? 'left-[16%]' : 'left-0'} ${mobileSidebarOpen ? 'w-[84%]' : 'w-full'}`}>
         <FullPageSpinner />
       </div>
     );
@@ -161,7 +166,7 @@ function Dashboard() {
     <>
     <Toaster position="top-right" />
 
-    <div className="absolute left-[16%] top-0 z-10 h-[100dvh] w-[84%] overflow-y-scroll">      
+    <div className={`absolute top-0 z-10 h-[100dvh]  overflow-y-scroll ${mobileSidebarOpen ? 'left-[16%]' : 'left-0'} ${mobileSidebarOpen ? 'w-[84%]' : 'w-full'}`}>      
       <Header name="Dashboard" />
 
       {/* Cards */}

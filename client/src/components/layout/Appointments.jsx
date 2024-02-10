@@ -359,13 +359,13 @@ function Appointments() {
 
   return (
     <>
-      <Toaster />
+      <Toaster position="top-right" />
 
       <div className="absolute left-[16%] top-0 z-10 h-[100dvh] w-[84%] overflow-y-auto">
         {status === "loading" ? (
           <FullPageSpinner />
         ) : (
-          <>
+          <div className="mt-12">
             <Header name="Appointments" />
             <Overview
               cardMetaData={cardMetaData}
@@ -374,7 +374,7 @@ function Appointments() {
               name={span}
             />
 
-            <div className="mt-4 w-full px-8 text-stone-800">
+            <div className="mt-4 w-full px-4 md:px-8 text-stone-800">
               <span className="text-[18px] font-bold">
                 Appointments | {span}
               </span>
@@ -435,7 +435,7 @@ function Appointments() {
                 />
               )}
             </div>
-          </>
+          </div>
         )}
       </div>
     </>

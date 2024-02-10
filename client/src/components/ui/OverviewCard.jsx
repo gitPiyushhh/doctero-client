@@ -1,5 +1,4 @@
 import React from "react";
-import { CiCircleQuestion } from "react-icons/ci";
 import { FaAngleRight } from "react-icons/fa";
 import { useSelector } from "react-redux";
 
@@ -20,8 +19,8 @@ function OverviewCard({
 
   if (!isHighlighted) {
     return (
-      <div className="w-[32%] flex-col text-stone-900">
-        <div className="w-full rounded-lg p-4 py-6 shadow-md">
+      <div className="w-full md:w-[32%] flex-col text-stone-900">
+        <div className="w-full rounded-lg p-4 md:p-4 md:py-6 shadow-md">
           <span className="flex items-center space-x-2 text-[16px]">
             <span>{heading}</span>
           </span>
@@ -48,11 +47,11 @@ function OverviewCard({
   }
 
   return (
-    <div className="w-[32%] flex-col text-stone-100">
+    <div className="w-full md:w-[32%] flex-col text-stone-100">
       <div
         className={`w-full rounded-t-lg ${
           isDoctor ? "bg-[#146EB4]" : "bg-[#9B6DE2]"
-        } p-4 py-6 shadow-md`}
+        } p-4 md:py-6 shadow-md`}
       >
         <span className="flex items-center space-x-2 text-[16px]">
           <span>{heading}</span>

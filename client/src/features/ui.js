@@ -4,19 +4,23 @@ import { createSlice } from "@reduxjs/toolkit"
   Intiial state
 */
 const initialState = {
-    duration: ''
+    duration: '',
+    mobileSidebarOpen: false
 }
 
 const uiSlice = createSlice({
     name: 'ui',
     initialState,
     reducers: {
-        changeMonth(state, action) {
-            
+        openMobileSideBar(state, action) {
+            state.mobileSidebarOpen = true;
+        },
+        closeMobileSideBar(state, action) {
+            state.mobileSidebarOpen = false;
         }
     }
 })
 
-export const {changeMonth} = uiSlice.actions
+export const {openMobileSideBar, closeMobileSideBar} = uiSlice.actions
 
-export default uiSlice;
+export default uiSlice.reducer;

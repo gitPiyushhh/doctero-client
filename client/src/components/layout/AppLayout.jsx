@@ -23,7 +23,7 @@ function AppLayout() {
   );
 
   return (
-    <div className="flex h-[100dvh] w-[100vw] bg-[#FAFAFA]">
+    <div className="flex fixed bottom-0 h-[100dvh] w-[100vw] bg-[#FAFAFA]">
       {token ? (
         isOnboard ? (
           <>

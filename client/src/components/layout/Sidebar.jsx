@@ -3,6 +3,7 @@ import React from "react";
 import Owner from "../ui/Owner";
 import SidebarButton from "../ui/SidebarButton";
 import Logout from "../ui/Logout";
+import { useSelector } from "react-redux";
 
 const metaDataDoctor = [
   { icon: 1, name: "Home", to: "/dashboard" },
@@ -30,9 +31,15 @@ function Sidebar() {
   const user = userObj?.name;
   const isDoctor = userObj.isDoctor;
 
+  /* 
+    Global state
+  */
+  const mobileSidebarOpen = useSelector(state => state?.ui?.mobileSidebarOpen);
+
+
   return (
     <div
-      className={`fixed left-0 bottom-0 flex h-[100dvh] pt-2 md:pt-0 w-[16%] flex-col ${isDoctor ? "bg-[#082F4F]" : "bg-[#7C51C2]"}`}
+      className={`fixed !md:flex transition-all left-0 bottom-0 ${mobileSidebarOpen ? 'flex' : 'hidden' } h-[100dvh] pt-2 md:pt-0 w-[16%] flex-col ${isDoctor ? "bg-[#082F4F]" : "bg-[#7C51C2]"}`}
     >
       <Owner name={user} />
 

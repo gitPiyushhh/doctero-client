@@ -11,10 +11,10 @@ function Overview({ cardMetaData, spanOptions, name }) {
   };
 
   return (
-    <div className="relative w-full p-8 pt-6 text-stone-800">
+    <div className="relative w-full p-4 md:p-8 pt-6 text-stone-800">
       <span className="text-[18px] font-bold">Overview</span>
 
-      <div className="mt-6 flex w-full items-start justify-between pr-4">
+      <div className="mt-6 flex flex-wrap gap-2 flex-col md:flex-row w-full items-start justify-between md:pr-4">
         {cardMetaData.map((item) => (
           <OverviewCard
             key={item.heading}
@@ -30,7 +30,7 @@ function Overview({ cardMetaData, spanOptions, name }) {
         ))}
       </div>
 
-      <div className="absolute right-12 top-8 flex cursor-pointer items-center justify-between space-x-2 rounded-md border bg-stone-50 px-4 py-2">
+      <div className="absolute right-4 md:right-12 top-4 md:top-8 flex cursor-pointer items-center justify-between space-x-2 rounded-md border bg-stone-50 px-4 py-2">
         <Dropdown
           options={spanOptions}
           name={name}
