@@ -161,9 +161,7 @@ function Dashboard() {
     <>
     <Toaster position="top-right" />
 
-    <div className="absolute left-[16%] top-0 z-10 h-[100dvh] w-[84%] overflow-y-scroll">
-      
-
+    <div className="absolute left-[16%] top-0 z-10 h-[100dvh] w-[84%] overflow-y-scroll">      
       <Header name="Dashboard" />
 
       {/* Cards */}
@@ -195,7 +193,7 @@ function Dashboard() {
 
         <div className=" flex w-full md:w-[64%] flex-col items-start justify-between gap-2 px-0 md:px-8 mb-10 md:mb-0">
           <span className="text-md text-stone-500">Patient details</span>
-          <div className="flex h-fit md:h-[24rem] w-full flex-col rounded-md bg-white px-[0.4rem] md:px-[20px] py-4 shadow-sm">
+          <div className="flex h-fit md:h-[24rem] w-full flex-col rounded-md bg-white px-[0.8rem] md:px-[20px] py-[0.8rem] md:py-4 shadow-sm">
             {loadingFullPagePatient ? (
               <FullPageSpinner />
             ) : focusAppointment ? (
