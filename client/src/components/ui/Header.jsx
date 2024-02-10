@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 
 function Header({ name }) {
   const userObj = useSelector(state => state.auth.user) || JSON.parse(localStorage.getItem('user'));
-  const  user  = userObj?.name;
   const isDoctor = userObj.isDoctor;
 
   return (

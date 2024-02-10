@@ -18,7 +18,7 @@ function AppointmentCard({ data, patient, isActive, handleCardClick }) {
 
   return (
     <div
-      className={`my-0 mb-4 md:my-2 flex w-full items-center justify-between p-2 md:px-4 md:py-4 ${isActive && (patient ? "bg-[#bd93fc18]" : "bg-blue-50")} rounded-md cursor-pointer relative`}
+      className={`my-0 md:my-2 flex w-full items-center justify-between p-2 md:px-4 md:py-4 ${isActive && (patient ? "bg-[#bd93fc18]" : "bg-blue-50")} rounded-md cursor-pointer relative`}
       onClick={() => handleChangeAppointment(data?._id)}
     >
       {isLive && (
