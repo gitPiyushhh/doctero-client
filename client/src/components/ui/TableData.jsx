@@ -9,7 +9,7 @@ function TableData({ data, width, alignRight }) {
 
   if (data?.toString().includes("#")) {
     return (
-      <div className="flex" style={containerStyle}>
+      <div className="md:flex hidden" style={containerStyle}>
         <Link>
           <span className="text-sm font-semibold text-blue-500">
             {`${data.slice(0, 4)}...${data.slice(-4, data.length)}`}
@@ -21,7 +21,7 @@ function TableData({ data, width, alignRight }) {
 
   if (data === "Successful" || data === "Failed" || data === "Pending") {
     return (
-      <div className="flex items-center gap-2" style={containerStyle}>
+      <div className="hidden md:flex items-center gap-2" style={containerStyle}>
         <span
           className={`block h-2 w-2 rounded-full p-1 ${
             data === "Successful"
@@ -39,9 +39,11 @@ function TableData({ data, width, alignRight }) {
   }
 
   return (
-    <div className={`flex text-sm`} style={containerStyle}>
-      {data}
-    </div>
+    <>
+      <div className={`hidden text-sm md:flex`} style={containerStyle}>
+        {data}
+      </div>
+    </>
   );
 }
 

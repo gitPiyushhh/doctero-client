@@ -52,18 +52,20 @@ function Header({ name }) {
           className="p-2 px-[10px] justify-center items-center h-[40px] w-[40px] flex flex-col gap-[3px] bg-stone-200 border-[2px] border-stone-100 rounded-full shadow md:hidden"
           onClick={() => handleChangeSidebarState()}
         >
-          <div className={`w-full ${mobileSidebarOpen && 'hidden'} bg-slate-500 rotate-0 h-[3px] rounded`}>
+          <div className={`w-full ${mobileSidebarOpen && 'hidden'} bg-slate-700 rotate-0 h-[3px] rounded`}>
             &nbsp;
           </div>
-          <div className={`w-full ${mobileSidebarOpen && 'hidden'} bg-slate-500 rotate-0 h-[3px] rounded`}>
+          <div className={`w-full ${mobileSidebarOpen && 'hidden'} bg-slate-700 rotate-0 h-[3px] rounded`}>
             &nbsp;
           </div>
-          <div className={`w-full ${mobileSidebarOpen && 'hidden'} bg-slate-500 rotate-0 h-[3px] rounded`}>
+          <div className={`w-full ${mobileSidebarOpen && 'hidden'} bg-slate-700 rotate-0 h-[3px] rounded`}>
             &nbsp;
           </div>
 
           {/* Minor refactoring */}
-          <span className={`text-stone-500 font-bold text-lg font-sans ${!mobileSidebarOpen && 'hidden'}`}>X</span>
+          <div className={`text-stone-500 flex justify-center items-center ${!mobileSidebarOpen && 'hidden'}`}>
+            <img src="/cross-icon.svg" alt="icon" className="w-fit h-fit"/>
+          </div>
         </div>
       </div>
     </div>

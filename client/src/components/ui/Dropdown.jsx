@@ -6,7 +6,7 @@ function Dropdown({ name, options, onSelect }) {
   }
 
   return (
-    <select onChange={handleChange} className='bg-stone-50 text-stone-600 rounded-sm cursor-pointer py-[1px] focus:outline-none'>
+    <select onChange={handleChange} className='bg-stone-50 text-stone-600  md:w-fit rounded-sm cursor-pointer py-[1px] focus:outline-none'>
       <option key="default" value="default">
         {name}
       </option>
