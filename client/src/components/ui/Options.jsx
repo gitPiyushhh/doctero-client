@@ -42,10 +42,10 @@ function Options({
         className={`bottom-1 h-[48%] w-[40%] md:w-[30%] rounded-md border bg-stone-100 py-3 pl-4 placeholder:text-[14px] placeholder:text-stone-500`}
       />
 
-      <div className="flex items-center justify-between space-x-4">
+      <div className="flex items-center justify-between space-x-2 md:space-x-4">
         {isFilterable && (
           <div className="flex space-x-4">
-            <div className="text-md flex w-fit cursor-pointer items-center space-x-1 rounded-sm border border-stone-400 px-2 py-1">
+            <div className="text-md flex w-fit cursor-pointer items-center space-x-1 rounded-md border border-stone-200 px-2 py-2">
               <Dropdown
                 options={sortOptions}
                 name={name}
@@ -56,7 +56,7 @@ function Options({
         )}
 
         {isDownloadable && (
-          <div className="flex w-fit cursor-pointer py-[6px] items-center rounded-sm border border-stone-400 px-1.5">
+          <div className="flex w-fit cursor-pointer items-center rounded-md border border-stone-200 px-2 md:py-2 py-3">
             <img src="/download.svg" alt="icon" />
           </div>
         )}

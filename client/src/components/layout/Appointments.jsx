@@ -19,7 +19,7 @@ import {
 } from "../../features/appointment";
 import moment from "moment/moment";
 import FullPageSpinner from "./FullPageSpinner";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 
 const tableHeadMetaData = [
   {
@@ -90,11 +90,11 @@ function Appointments() {
 
   // We want to re-render this everytime the user changes even
   const user = JSON.parse(localStorage.getItem("user"));
-  
+
   /*
     Global state
   */
-    const mobileSidebarOpen = useSelector(state => state.ui.mobileSidebarOpen);
+  const mobileSidebarOpen = useSelector((state) => state.ui.mobileSidebarOpen);
 
   const dispatch = useDispatch();
   const tableDataPhysical = useSelector(
@@ -114,6 +114,13 @@ function Appointments() {
     (state) => state.appointment.remote
   );
   const status = useSelector((state) => state.appointment.status);
+
+  /*
+    Effects 
+  */
+  useEffect(() => {
+    tableDataPhysical?.length && toast.success(`You have got ${tableDataPhysical.length} appointments`);
+  }, [tableDataPhysical.length])
 
   const handleFetch = useCallback(() => {
     if (user.doctor) {
@@ -366,7 +373,9 @@ function Appointments() {
     <>
       <Toaster position="top-right" />
 
-      <div className={`absolute ${mobileSidebarOpen ? 'left-[16%]' : 'left-[0%] md:left-[16%]'} ${mobileSidebarOpen ? 'w-[84%]' : 'w-[100%] md:w-[84%]'}  top-0 z-10 h-[100dvh] overflow-y-auto`}>
+      <div
+        className={`absolute ${mobileSidebarOpen ? "left-[16%]" : "left-[0%] md:left-[16%]"} ${mobileSidebarOpen ? "w-[84%]" : "w-[100%] md:w-[84%]"}  top-0 z-10 h-[100dvh] overflow-y-auto`}
+      >
         {status === "loading" ? (
           <FullPageSpinner />
         ) : (
@@ -392,9 +401,15 @@ function Appointments() {
                       user.doctor ? "!bg-[#146EB4]" : "!bg-[#7C51C2]"
                     } text-stone-50`
                   }`}
-                  onClick={() => setTabLocal("physical")}
+                  onClick={() => {
+                    setTabLocal("physical");
+                    toast.success(
+                      `You have got ${tableDataPhysical?.length} appointments`
+                    );
+                  }}
                 >
-                  Physical {!mobileSidebarOpen && `(${tableDataPhysical.length})`}
+                  Physical{" "}
+                  {!mobileSidebarOpen && `(${tableDataPhysical.length})`}
                 </div>
 
                 <div
@@ -404,9 +419,15 @@ function Appointments() {
                       user.doctor ? "!bg-[#146EB4]" : "!bg-[#7C51C2]"
                     } text-stone-50`
                   }`}
-                  onClick={() => setTabLocal("online")}
+                  onClick={() => {
+                    setTabLocal("online");
+                    toast.success(
+                      `You have got ${tableDataRemote?.length} appointments`
+                    );
+                  }}
                 >
-                  Tele-consultancy {!mobileSidebarOpen && `(${tableDataRemote.length})`}
+                  Tele-consultancy{" "}
+                  {!mobileSidebarOpen && `(${tableDataRemote.length})`}
                 </div>
               </div>
             </div>
