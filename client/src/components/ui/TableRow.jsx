@@ -9,8 +9,8 @@ function TableRow({ data, width, handleRowClick }) {
           key={Math.random()}
           data={data[item]}
           width={width}
-          alignLeft={index === 0 ? true : false}
-          alignRight={index === Object.keys(data).length - 1 ? true : false}
+          alignLeft={index === 0}
+          alignRight={index === Object.keys(data).length - 1}
         />
       ))}
     </div>

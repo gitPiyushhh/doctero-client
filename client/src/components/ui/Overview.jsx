@@ -30,7 +30,7 @@ function Overview({ cardMetaData, spanOptions, name }) {
         ))}
       </div>
 
-      <div className="absolute right-4 md:right-12 top-4 md:top-8 flex cursor-pointer items-center justify-between space-x-2 rounded-md border bg-stone-50 px-4 py-2">
+      <div className="absolute right-4 md:right-12 top-4 md:top-8 flex cursor-pointer items-center justify-between space-x-2 rounded-md border mt-1 md:mt-0 bg-stone-50 px-4 py-1 md:py-2">
         <Dropdown
           options={spanOptions}
           name={name}

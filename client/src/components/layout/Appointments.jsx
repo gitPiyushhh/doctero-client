@@ -90,6 +90,11 @@ function Appointments() {
 
   // We want to re-render this everytime the user changes even
   const user = JSON.parse(localStorage.getItem("user"));
+  
+  /*
+    Global state
+  */
+    const mobileSidebarOpen = useSelector(state => state.ui.mobileSidebarOpen);
 
   const dispatch = useDispatch();
   const tableDataPhysical = useSelector(
@@ -361,11 +366,11 @@ function Appointments() {
     <>
       <Toaster position="top-right" />
 
-      <div className="absolute left-[16%] top-0 z-10 h-[100dvh] w-[84%] overflow-y-auto">
+      <div className={`absolute ${mobileSidebarOpen ? 'left-[16%]' : 'left-[0%] md:left-[16%]'} ${mobileSidebarOpen ? 'w-[84%]' : 'w-[100%] md:w-[84%]'}  top-0 z-10 h-[100dvh] overflow-y-auto`}>
         {status === "loading" ? (
           <FullPageSpinner />
         ) : (
-          <div className="mt-12">
+          <div className="mt-12 w-full">
             <Header name="Appointments" />
             <Overview
               cardMetaData={cardMetaData}
@@ -389,7 +394,7 @@ function Appointments() {
                   }`}
                   onClick={() => setTabLocal("physical")}
                 >
-                  Physical ({tableDataPhysical.length})
+                  Physical {!mobileSidebarOpen && `(${tableDataPhysical.length})`}
                 </div>
 
                 <div
@@ -401,7 +406,7 @@ function Appointments() {
                   }`}
                   onClick={() => setTabLocal("online")}
                 >
-                  Tele-consultancy ({tableDataRemote.length})
+                  Tele-consultancy {!mobileSidebarOpen && `(${tableDataRemote.length})`}
                 </div>
               </div>
             </div>
