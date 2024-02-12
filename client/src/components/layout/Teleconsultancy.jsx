@@ -120,11 +120,11 @@ function Teleconsultancy() {
       <Toaster position="top-right" />
 
       <div
-        className={`absolute ${mobileSidebarOpen ? "left-[16%] md:w-[84%] md:left-[16%]" : "left-0 w-full"} md:left-[16%] top-0 z-10 h-[100dvh] md:w-[84%] overflow-y-auto`}
+        className={`absolute ${mobileSidebarOpen ? "left-[16%] w-[84%] md:left-[16%]" : "left-0 w-full"} md:left-[16%] top-0 z-10 h-[100dvh] md:w-[84%] overflow-y-auto`}
       >
         <Header name="Tele-consult" />
 
-        <div className="flex flex-col-reverse md:flex-row h-fit mt-16">
+        <div className="flex flex-col-reverse w-full md:flex-row h-fit mt-16">
           <div className="h-full w-full md:w-[64%] flex flex-col justify-start items-start px-4 md:px-8 py-5">
             {isLoadingAppointment ? (
               <div className="h-[91vh] w-full flex justify-center items-center">

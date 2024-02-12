@@ -115,7 +115,7 @@ function TeleconsultancyPatient() {
     <>
       <Toaster position="top-right" />
       <div
-        className={`absolute ${mobileSidebarOpen ? "left-[16%] md:w-[84%] md:left-[16%]" : "left-0 w-full"} md:left-[16%] top-0 z-10 h-[100dvh] md:w-[84%] overflow-y-auto`}
+        className={`absolute ${mobileSidebarOpen ? "left-[16%] w-[84%] md:left-[16%]" : "left-0 w-full"} md:left-[16%] top-0 z-10 h-[100dvh] md:w-[84%] overflow-y-auto`}
       >
         <Header name="Tele-consult" />
 
