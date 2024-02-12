@@ -26,7 +26,7 @@ function TodayAppointments({
     JSX
   */
   return (
-    <div className="flex h-[100%] w-full flex-col overflow-scroll rounded-md bg-white px-4 py-2 shadow-sm">
+    <div className="flex h-[100%] w-full gap-2 md:gap-0 flex-col overflow-scroll rounded-md bg-white px-4 py-2 shadow-sm pt-3">
       <span className="text-md text-stone-500">Today appointments</span>
       {todayAppointments && todayAppointments.length > 0 ? (
         todayAppointments.map((appointment) => (

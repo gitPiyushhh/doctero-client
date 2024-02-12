@@ -48,6 +48,7 @@ function Patients() {
   */
   const dispatch = useDispatch();
   const span = useSelector((state) => state.patient.span);
+  const mobileSidebarOpen = useSelector((state) => state.ui.mobileSidebarOpen);
 
   /*
     React query component
@@ -169,23 +170,28 @@ function Patients() {
   }
 
   return (
-    <div className="absolute left-[16%] top-0 z-10 h-[100dvh] w-[84%] overflow-y-scroll">
+    <>
       <Toaster position="top-right" />
-
-      <Header name="Patients" />
-      <Overview
-        cardMetaData={cardMetaData}
-        spanOptions={spanOptions}
-        name={span}
-      />
-      <Transactions
-        isFor="Patient"
-        isFilterable={false}
-        tableHeadMetadata={tableHeadMetaData}
-        data={patients}
-        key={Date.now()}
-      />
-    </div>
+      <div
+        className={`absolute md:left-[16%] ${mobileSidebarOpen ? "left-[16%] md:w-[84%] md:left-[16%]" : "left-0 w-full"} top-0 z-10 h-[100dvh] md:w-[84%] overflow-y-scroll`}
+      >
+        <Header name="Patients" />
+        <div className="mt-14">
+          <Overview
+            cardMetaData={cardMetaData}
+            spanOptions={spanOptions}
+            name={span}
+          />
+          <Transactions
+            isFor="Patient"
+            isFilterable={false}
+            tableHeadMetadata={tableHeadMetaData}
+            data={patients}
+            key={Date.now()}
+          />
+        </div>
+      </div>
+    </>
   );
 }
 

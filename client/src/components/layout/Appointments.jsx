@@ -379,7 +379,7 @@ function Appointments() {
         {status === "loading" ? (
           <FullPageSpinner />
         ) : (
-          <div className="mt-12 w-full">
+          <div className="mt-14 w-full">
             <Header name="Appointments" />
             <Overview
               cardMetaData={cardMetaData}

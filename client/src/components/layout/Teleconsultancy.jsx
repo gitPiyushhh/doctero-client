@@ -12,6 +12,7 @@ import {
 } from "../../services/apiAppointment";
 import FullPageSpinner from "./FullPageSpinner";
 import NoData from "./NoData";
+import { useSelector } from "react-redux";
 
 function Teleconsultancy() {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -26,6 +27,11 @@ function Teleconsultancy() {
     Local state
   */
   const [activeAppointmentId, setActiveAppointmentId] = useState(null);
+
+  /* 
+    Global state
+  */
+  const mobileSidebarOpen = useSelector((state) => state.ui.mobileSidebarOpen);
 
   /*
     React query(fetching)
@@ -110,100 +116,106 @@ function Teleconsultancy() {
     JSX
   */
   return (
-    <div className="absolute left-[16%] top-0 z-10 h-[100dvh] w-[84%] overflow-y-auto">
+    <>
       <Toaster position="top-right" />
 
-      <Header name="Tele-consultancy" />
+      <div
+        className={`absolute ${mobileSidebarOpen ? "left-[16%] md:w-[84%] md:left-[16%]" : "left-0 w-full"} md:left-[16%] top-0 z-10 h-[100dvh] md:w-[84%] overflow-y-auto`}
+      >
+        <Header name="Tele-consult" />
 
-      <div className="flex h-fit">
-        <div className="h-full w-[64%] flex flex-col justify-start items-start px-8 py-5">
-          {isLoadingAppointment ? (
-            <div className="h-[91vh] w-full flex justify-center items-center">
-              <FullPageSpinner />
-            </div>
-          ) : todayAppointments?.length ? (
-            <div className="flex flex-col gap-6 outline outline-[1px] w-[100%] outline-stone-200 p-4 h-full rounded-sm">
-              <img
-                src="/User.png"
-                alt="patient_img"
-                className="w-full h-[24rem] rounded-md bg-center object-cover border-[1px]"
-              />
-
-              <div className="text-stone-700 flex space-x-4 items-end">
-                <span className="text-xl font-semibold">
-                  {appointment?.patient.name}
-                </span>
-                <span className="text-sm font-semibold text-stone-500">
-                  {appointment?.patient?.age &&
-                    `${appointment?.patient?.age} years, `}{" "}
-                  {appointment?.patient?.gender}
-                </span>
+        <div className="flex flex-col-reverse md:flex-row h-fit mt-16">
+          <div className="h-full w-full md:w-[64%] flex flex-col justify-start items-start px-4 md:px-8 py-5">
+            {isLoadingAppointment ? (
+              <div className="h-[91vh] w-full flex justify-center items-center">
+                <FullPageSpinner />
               </div>
+            ) : todayAppointments?.length ? (
+              <div className="flex flex-col gap-6 outline outline-[1px] w-[100%] outline-stone-200 p-4 h-full rounded-sm">
+                <img
+                  src="/User.png"
+                  alt="patient_img"
+                  className="h-[12rem] w-full md:h-[24rem] rounded-md bg-center object-cover border-[1px]"
+                />
 
-              <span className="text-stone-700 w-full">
-                {appointment?.problem}
-              </span>
+                <div className="text-stone-700 flex space-x-4 items-end">
+                  <span className="text-xl font-semibold">
+                    {appointment?.patient.name}
+                  </span>
+                  <span className="text-sm font-semibold text-stone-500">
+                    {appointment?.patient?.age &&
+                      `${appointment?.patient?.age} years, `}{" "}
+                    {appointment?.patient?.gender}
+                  </span>
+                </div>
 
-              {!isLive ? (
-                <button
-                  className={`bg-stone-400 text-stone-50 w-fit px-16 py-2 rounded-md`}
-                  disabled
-                >
-                  {now > appointment?.startTime
-                    ? `Completed at
+                <span className="text-stone-700 w-full">
+                  {appointment?.problem}
+                </span>
+
+                {!isLive ? (
+                  <button
+                    className={`bg-stone-400 text-stone-50 w-full md:w-fit px-4 md:px-16 py-2 rounded-md`}
+                    disabled
+                  >
+                    {now > appointment?.startTime
+                      ? `Completed at
                   ${
                     appointment?.startTime > 12
                       ? `${Math.round(appointment?.startTime % 12)}:00 PM`
                       : `${appointment?.startTime}:00 AM`
                   }`
-                    : `Scheduled at
+                      : `Scheduled at
                     ${
                       appointment?.startTime > 12
                         ? `${Math.round(appointment?.startTime % 12)}:00 PM`
                         : `${appointment?.startTime}:00 AM`
                     }, Today`}
-                </button>
-              ) : (
-                <button
-                  className={`${user.doctor ? "bg-[#136DB4]" : "bg-[#7C51C2]"} text-stone-50 w-fit px-16 py-2 rounded-md`}
-                  onClick={handleJoinMeet}
-                >
-                  Join now
-                </button>
-              )}
-            </div>
-          ) : (
-            <div className="w-full flex flex-col gap-8">
-              <NoData />
-              <div className="w-full flex flex-col items-center gap-4">
-                <span className="text-stone-700">
-                  You dont have any appointments today
-                </span>
-                <button
-                  className={`${user.doctor ? "bg-[#136DB4]" : "bg-[#7C51C2]"}`}
-                  onClick={() =>
-                    navigate(user.doctor ? "/dashboard" : "/patient/dashboard")
-                  }
-                >
-                  Create a new appointment
-                </button>
+                  </button>
+                ) : (
+                  <button
+                    className={`${user.doctor ? "bg-[#136DB4]" : "bg-[#7C51C2]"} md:w-fit w-full text-stone-50 px-16 py-2 rounded-md`}
+                    onClick={handleJoinMeet}
+                  >
+                    Join now
+                  </button>
+                )}
               </div>
-            </div>
-          )}
-        </div>
+            ) : (
+              <div className="w-full flex flex-col gap-8">
+                <NoData />
+                <div className="w-full flex flex-col items-center gap-4">
+                  <span className="text-stone-700">
+                    You dont have any appointments today
+                  </span>
+                  <button
+                    className={`${user.doctor ? "bg-[#136DB4]" : "bg-[#7C51C2]"}`}
+                    onClick={() =>
+                      navigate(
+                        user.doctor ? "/dashboard" : "/patient/dashboard"
+                      )
+                    }
+                  >
+                    Create a new appointment
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
 
-        <div className="h-[91vh] p-4 w-[36%] flex justify-center items-center">
-          <TodayAppointments
-            todayAppointments={todayAppointments}
-            isLoading={isLoadingTodayAppointments}
-            activeAppointmentId={activeAppointmentId}
-            handleActiveAppointmentId={(appointmentId) =>
-              handleActiveAppointmentChange(appointmentId)
-            }
-          />
+          <div className="h-[16rem] md:h-[91vh] p-4 w-full md:w-[36%] flex justify-center items-center">
+            <TodayAppointments
+              todayAppointments={todayAppointments}
+              isLoading={isLoadingTodayAppointments}
+              activeAppointmentId={activeAppointmentId}
+              handleActiveAppointmentId={(appointmentId) =>
+                handleActiveAppointmentChange(appointmentId)
+              }
+            />
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

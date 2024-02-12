@@ -3,7 +3,6 @@ import React, {
   useCallback,
   useEffect,
   useReducer,
-  useRef,
   useState,
 } from "react";
 import toast, { Toaster } from "react-hot-toast";
@@ -26,6 +25,7 @@ import {
 import FullPageSpinner from "../layout/FullPageSpinner";
 import moment from "moment";
 import Timer from "./Timer";
+import { useDispatch, useSelector } from "react-redux";
 
 const initialState = {
   localMic: false,
@@ -96,6 +96,12 @@ function MeetDoctor() {
   const [message, setMessage] = useState("");
 
   const [state, dispatch] = useReducer(reducer, initialState);
+
+  /* 
+    Global state
+  */
+  const mobileSidebarOpen = useSelector((state) => state.ui.mobileSidebarOpen);
+  const dispatchGlobal = useDispatch();
 
   /*
     React query (fetching)
@@ -484,10 +490,6 @@ function MeetDoctor() {
   */
   const controlsMetaDataDoctor = [
     {
-      name: "recording",
-      open: "26",
-    },
-    {
       name: "voice",
       open: "21",
       close: "27",
@@ -505,19 +507,9 @@ function MeetDoctor() {
       close: "25",
       openHandler: () => alert("No handler till 🙂"),
     },
-    {
-      name: "settings",
-      open: "22",
-      round: true,
-      openHandler: () => alert("No handler till 🙂"),
-    },
   ];
 
   const controlsMetaDataPatient = [
-    {
-      name: "recording",
-      open: "26",
-    },
     {
       name: "voice",
       open: "21",
@@ -538,13 +530,7 @@ function MeetDoctor() {
         console.log("Contol has been clicked");
         handleSendStreamHandler();
       },
-    },
-    {
-      name: "settings",
-      open: "22",
-      round: true,
-      openHandler: () => alert("No handler till 🙂"),
-    },
+    }
   ];
 
   const tabbedComponentMetaData = [
@@ -571,184 +557,205 @@ function MeetDoctor() {
     JSX
   */
   return (
-    <div className="absolute left-[16%] top-0 z-10 h-[100dvh] w-[84%] overflow-y-scroll">
+    <>
       <Toaster position="top-right" />
 
-      <div className="flex h-[100%]">
-        <div className="bg-black h-full w-[64%] shadow-lg flex flex-col items-center relative">
-          <div className="p-4 rounded-t-md w-full flex justify-between bg-black absolute z-20">
-            {/* About meet */}
-            <div className="flex space-x-2 items-center">
-              <img
-                src="/User.png"
-                alt="doctor_image"
-                className="block w-12 h-12 rounded-full bg-center object-cover"
-              />
-              {user?.doctor ? (
-                <span>{liveAppointment?.patient?.name}</span>
-              ) : (
-                <span>{liveAppointmentPatient?.therapist?.name}</span>
-              )}
-            </div>
-
-            <div className="flex space-x-4 items-center">
-              {remoteSocketId && !remoteUserIn && user?.doctor && (
-                <button
-                  onClick={handleCallUser}
-                  className="focus:outline-none active:outline-none"
-                >
-                  Let patient in
-                </button>
-              )}
-
-              {!remoteSocketId && user?.patient && (
-                <p>Please wait while doctor let you in</p>
-              )}
-
-              {!remoteSocketId && user?.doctor && <p>No one in room</p>}
-
-              {!remoteSocketId && user?.doctor && (
-                <button
-                  onClick={handleRingUser}
-                  className="focus:outline-none active:outline-none"
-                >
-                  {ringing}
-                </button>
-              )}
-
-              <Timer onTimerComplete={handleLeaveMeet} />
-            </div>
-          </div>
-
-          {/* User screen */}
-          <div className="absolute top-0 left-0 w-full h-full">
-            <ReactPlayer url={remoteStream} playing height="94%" width="100%" />
-          </div>
-
-          <div className="flex justify-center w-full">
-            {/* Remote screen */}
-            {myStream && (
-              <div className=" shadow-sm absolute bottom-0 right-0 w-[40%] h-[20%]  bg-black rounded-md">
-                <ReactPlayer
-                  url={myStream}
-                  muted
-                  playing
-                  height="100%"
-                  width="100%"
-                />
-              </div>
-            )}
-
-            {user?.doctor ? (
-              <MeetControlPanel
-                localStream={myStream}
-                remoteStream={remoteStream}
-                controlsMetaData={controlsMetaDataDoctor}
-              />
-            ) : (
-              <MeetControlPanel
-                localStream={myStream}
-                remoteStream={remoteStream}
-                controlsMetaData={controlsMetaDataPatient}
-              />
-            )}
-          </div>
-        </div>
-
-        <div className="w-[36%] h-full p-4 relative">
-          <Modal>
-            <TabbedComponent
-              metaData={tabbedComponentMetaData}
-              activeTab={state.activeTab}
-              handleChangeTab={handleChangeTab}
-            />
-
-            <div className="flex flex-col gap-4 items-start overflow-scroll pt-16">
-              {state.activeTab === "Chat" &&
-                state.chat.map((message) => (
-                  <Message
-                    key={`${message.time} + ${message.text}`}
-                    text={message.text}
-                    time={message.time}
-                    type={message.type}
+      <div
+        className={`absolute md:left-[16%] ${mobileSidebarOpen ? "left-[16%] md:w-[84%] md:left-[16%]" : "left-0 w-full"} top-0 z-10 h-[100dvh] md:w-[84%] overflow-y-scroll`}
+      >
+        <div className="flex h-[100%] flex-col md:flex-row">
+          <div className="bg-black h-full w-full md:w-[64%] shadow-lg flex flex-col items-center relative">
+            <div className="p-4 rounded-t-md w-full flex justify-between items-start bg-black absolute z-20">
+              {/* About meet */}
+              <div className="flex flex-col items-start gap-1">
+                <div className="flex md:flex-row space-x-2 items-center">
+                  <img
+                    src="/User.png"
+                    alt="doctor_image"
+                    className="block w-8 h-8 md:w-12 md:h-12 rounded-full bg-center object-cover"
                   />
-                ))}
+                  {user?.doctor ? (
+                    <span>{liveAppointment?.patient?.name}</span>
+                  ) : (
+                    <span>{liveAppointmentPatient?.therapist?.name}</span>
+                  )}
+                </div>
 
-              {state.activeTab === "Reports" && (
-                <div className=" absolute bottom-24 left-[50%] translate-x-[-50%] px-4 py-2 rounded bg-stone-100 text-slate-700 flex space-x-2 cursor-pointer shadow-md active:shadow-md hover:shadow-lg transition-all">
-                  <img src="/add-icon.svg" alt="Add icon" className="h-6 w-6" />
+                <div className="md:hidden block ml-[-1rem]">
+                  <Timer onTimerComplete={handleLeaveMeet} />
+                </div>
+              </div>
 
-                  <span className="text-inherit">Add new report</span>
+              <div className="flex flex-col md:flex-row md:space-x-4 justify-center items-end md:items-center">
+                {remoteSocketId && !remoteUserIn && user?.doctor && (
+                  <button
+                    onClick={handleCallUser}
+                    className="focus:outline-none active:outline-none"
+                  >
+                    Let patient in
+                  </button>
+                )}
 
-                  <div className="absolute left-[-10px] w-full h-full ">
-                    <input
-                      type="file"
-                      className="bg-transparent opacity-0 absolute w-full cursor-pointer"
-                    />
-                  </div>
+                {!remoteSocketId && user?.patient && (
+                  <p>Please wait while doctor let you in</p>
+                )}
+
+                {!remoteSocketId && user?.doctor && <p>No one in room</p>}
+
+                {!remoteSocketId && user?.doctor && (
+                  <button
+                    onClick={handleRingUser}
+                    className="focus:outline-none active:outline-none"
+                  >
+                    {ringing}
+                  </button>
+                )}
+
+                <div className="md:block hidden">
+                  <Timer onTimerComplete={handleLeaveMeet} />
+                </div>
+              </div>
+            </div>
+
+            {/* User screen */}
+            <div className="absolute top-0 left-0 w-full h-full">
+              <ReactPlayer
+                url={remoteStream}
+                playing
+                height="94%"
+                width="100%"
+              />
+            </div>
+
+            <div className="flex justify-center w-full">
+              {/* Remote screen */}
+              {myStream && (
+                <div className=" shadow-sm absolute bottom-0 right-0 w-[40%] h-[20%]  bg-black rounded-md">
+                  <ReactPlayer
+                    url={myStream}
+                    muted
+                    playing
+                    height="100%"
+                    width="100%"
+                  />
                 </div>
               )}
 
-              {state.activeTab === "Reports" &&
-                state.reports.map((report) => (
-                  <div className="text-stone-700 p-2 pb-8 bg-stone-100 w-full rounded relative cursor-pointer">
-                    <span className="bg-[#00000010] w-full p-4 h-fit block rounded">
-                      {report.name.slice(0, 1).toUpperCase() +
-                        report.name.slice(1)}
-                    </span>
-                    <span className="absolute right-4 bottom-1">10:00</span>
-                  </div>
-                ))}
-
-              <div className="w-[93%]  absolute bottom-4 left-[50%] translate-x-[-50%] bg-stone-200 rounded flex justify-between items-center pr-2 space-x-2">
-                <input
-                  type="text"
-                  value={message}
-                  className="w-full bg-transparent p-4 text-stone-700 placeholder:text-stone-500 focus:outline-none"
-                  placeholder="Some thin u wanna say"
-                  onChange={(e) => setMessage(e.target.value)}
+              {user?.doctor ? (
+                <MeetControlPanel
+                  localStream={myStream}
+                  remoteStream={remoteStream}
+                  controlsMetaData={controlsMetaDataDoctor}
                 />
-                <div className="text-stone-700">
-                  <div
-                    className="w-[3rem] p-2 cursor-pointer"
-                    onClick={() =>
-                      state.emojiOpen
-                        ? dispatch({ type: "closeEmojiPallete" })
-                        : dispatch({ type: "openEmojiPallete" })
-                    }
-                  >
-                    <img
-                      src="/emoji-icon.svg"
-                      alt="Emoji icon"
-                      className="w-full h-auto"
-                    />
-                  </div>
-                  <div className="absolute bottom-16 left-[50%] translate-x-[-50%]">
-                    <EmojiPicker
-                      open={state.emojiOpen}
-                      Theme="dark"
-                      skinTonesDisabled={true}
-                      onEmojiClick={(emojiData, event) => {
-                        handleSelectEmoji(emojiData, event);
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <button
-                  className="focus:outline-none"
-                  onClick={() => {
-                    handleSendMessage();
-                  }}
-                >
-                  &rarr;
-                </button>
-              </div>
+              ) : (
+                <MeetControlPanel
+                  localStream={myStream}
+                  remoteStream={remoteStream}
+                  controlsMetaData={controlsMetaDataPatient}
+                />
+              )}
             </div>
-          </Modal>
+          </div>
+
+          <div className="w-full md:w-[36%] h-full p-4 relative overflow-y-scroll pb-12">
+            <Modal>
+              <TabbedComponent
+                metaData={tabbedComponentMetaData}
+                activeTab={state.activeTab}
+                handleChangeTab={handleChangeTab}
+              />
+
+              <div className="flex flex-col gap-4 items-start overflow-scroll pt-16">
+                {state.activeTab === "Chat" &&
+                  state.chat.map((message) => (
+                    <Message
+                      key={`${message.time} + ${message.text}`}
+                      text={message.text}
+                      time={message.time}
+                      type={message.type}
+                    />
+                  ))}
+
+                {state.activeTab === "Reports" && (
+                  <div className=" absolute bottom-24 left-[50%] translate-x-[-50%] px-4 py-2 rounded bg-stone-100 text-slate-700 flex space-x-2 cursor-pointer shadow-md active:shadow-md hover:shadow-lg transition-all">
+                    <img
+                      src="/add-icon.svg"
+                      alt="Add icon"
+                      className="h-6 w-6"
+                    />
+
+                    <span className="text-inherit">Add new report</span>
+
+                    <div className="absolute left-[-10px] w-full h-full ">
+                      <input
+                        type="file"
+                        className="bg-transparent opacity-0 absolute w-full cursor-pointer"
+                      />
+                    </div>
+                  </div>
+                )}
+
+                {state.activeTab === "Reports" &&
+                  state.reports.map((report) => (
+                    <div className="text-stone-700 p-2 pb-8 bg-stone-100 w-full rounded relative cursor-pointer">
+                      <span className="bg-[#00000010] w-full p-4 h-fit block rounded">
+                        {report.name.slice(0, 1).toUpperCase() +
+                          report.name.slice(1)}
+                      </span>
+                      <span className="absolute right-4 bottom-1">10:00</span>
+                    </div>
+                  ))}
+
+                <div className="w-[93%]  absolute bottom-4 left-[50%] translate-x-[-50%] bg-stone-200 rounded flex justify-between items-center pr-2 space-x-2">
+                  <input
+                    type="text"
+                    value={message}
+                    className="w-full bg-transparent p-4 text-stone-700 placeholder:text-stone-500 focus:outline-none"
+                    placeholder="Some thin u wanna say"
+                    onChange={(e) => setMessage(e.target.value)}
+                  />
+                  <div className="text-stone-700">
+                    <div
+                      className="w-[3rem] p-2 cursor-pointer"
+                      onClick={() =>
+                        state.emojiOpen
+                          ? dispatch({ type: "closeEmojiPallete" })
+                          : dispatch({ type: "openEmojiPallete" })
+                      }
+                    >
+                      <img
+                        src="/emoji-icon.svg"
+                        alt="Emoji icon"
+                        className="w-full h-auto"
+                      />
+                    </div>
+                    <div className="absolute bottom-16 left-[50%] translate-x-[-50%]">
+                      <EmojiPicker
+                        open={state.emojiOpen}
+                        Theme="dark"
+                        skinTonesDisabled={true}
+                        onEmojiClick={(emojiData, event) => {
+                          handleSelectEmoji(emojiData, event);
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    className="focus:outline-none"
+                    onClick={() => {
+                      handleSendMessage();
+                    }}
+                  >
+                    &rarr;
+                  </button>
+                </div>
+              </div>
+            </Modal>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
