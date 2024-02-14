@@ -61,6 +61,7 @@ function Table({
           ))}
         </div>
 
+        {/* Custom table for mobile */}
         {data.length ? (
           <>
             <div className="md:block hidden">
