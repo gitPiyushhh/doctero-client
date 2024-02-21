@@ -165,7 +165,7 @@ function DashboardPatient() {
       <Header name="Dashboard" />
 
       {/* Left */}
-      <div className="flex space-x-4 items-stretch h-fit p-8">
+      <div className="flex space-x-4 items-stretch h-fit p-8 mt-16">
         <div
           className={`${doctor ? "w-[64%]" : "w-full"} h-full transition ease-in-out delay-150`}
         >
